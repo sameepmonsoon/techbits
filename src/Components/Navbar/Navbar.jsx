@@ -5,7 +5,7 @@ import Button from "../Button/Button";
 import { RxCross1, CiMenuBurger } from "react-icons/all";
 const Navbar = ({ Links }) => {
   const location = useLocation();
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(true);
 
   const handleToggle = () => {
     setOpenModal(!openModal);
@@ -49,8 +49,8 @@ const Navbar = ({ Links }) => {
       </div>
       {/*  for small devices modal*/}
       <div
-        className={`absolute transition-all ease-in-out overflow-hidden duration-700 flex sm:hidden flex-col justify-start items-center w-[80%] right-0 top-[-4.2rem] h-[110vh] border-l-[1px] ${
-          openModal && "right-[-200%]"
+        className={`absolute transition-all ease-in-out overflow-hidden duration-900 flex sm:hidden flex-col justify-start items-center w-[80%] right-0 top-[-4.2rem] h-[110vh] border-l-[1px] ${
+          openModal && "left-[-200%]"
         } border-l-gray-100`}>
         <span className="absolute top-[5.1rem] right-4 z-10 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">
           <RxCross1 size={25} onClick={handleToggle} />
