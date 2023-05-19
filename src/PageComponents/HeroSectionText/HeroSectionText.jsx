@@ -1,9 +1,10 @@
 import React from "react";
 import Button from "../../Components/Button/Button";
 
-const HeroSectionText = () => {
+const HeroSectionText = ({ align }) => {
   return (
-    <div className="p-1 flex flex-col justify-center items-center w-full h-[20rem] gap-3 sm:gap-5">
+    <div
+      className={`p-1 flex flex-col justify-center ${align=='center'?'items-center':align=='start'?'items-start':'items-center'} w-full h-[20rem] gap-3 sm:gap-5`}>
       <span className="bg-gray-100/50 text-[13px] text-purple h-[1.5rem] min-w-[8rem] max-w-[20rem]  flex justify-center items-center rounded-[5rem]">
         Latest Updates
       </span>
