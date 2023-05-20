@@ -20,6 +20,8 @@ const HomePage = () => {
             cardImage={image}
             cardPostDate={"May 19, 2022"}
             cardUserImage={image}
+            // row={true}
+            // autoHeight={true}
           />
           <Card
             tag={"Mobile"}
