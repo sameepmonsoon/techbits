@@ -12,7 +12,7 @@ const Navbar = ({ Links }) => {
   };
   return (
     <>
-      <div className="h-[3.5rem] flex justify-start items-center gap-10 px-4 0 border-b-[1px] border-b-gray-100/70 overflow-hidden">
+      <div className="font-sans fixed w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  border-b-[1px] border-b-gray-100/70 overflow-hidden">
         <div>
           <Logo />
         </div>
@@ -40,6 +40,7 @@ const Navbar = ({ Links }) => {
               border={false}
               color={false}
               background={true}
+              linkName={"/signup"}
             />
           </div>
           <span className="sm:hidden flex text-[#9E77ED] hover:text-[#53389e] cursor-pointer">
@@ -49,7 +50,7 @@ const Navbar = ({ Links }) => {
       </div>
       {/*  for small devices modal*/}
       <div
-        className={`absolute transition-all ease-in-out overflow-hidden duration-900 flex sm:hidden flex-col justify-start items-center w-[80%] right-0 top-[-4.2rem] h-[110vh] border-l-[1px] ${
+        className={`absolute z-[100] transition-all ease-in-out overflow-hidden duration-900 flex sm:hidden flex-col justify-start items-center w-[80%] right-0 top-[-4.2rem] h-[108vh] border-l-[1px] ${
           openModal && "left-[-200%]"
         } border-l-gray-100`}>
         <span className="absolute top-[5.1rem] right-4 z-10 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">

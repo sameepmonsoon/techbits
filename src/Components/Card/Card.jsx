@@ -13,12 +13,12 @@ const Card = ({
 }) => {
   return (
     <div
-      className={`${
+      className={`font-sans ${
         autoHeight
           ? "w-[40rem] h-[30rem] flex-col"
           : row
-          ? "w-[34rem] h-[15rem] gap-2"
-          : "w-[20rem] h-[28.2rem] flex-col"
+          ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
+          : "w-[18rem] sm:w-[20rem] h-[28.2rem] flex-col"
       } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-1 flex  justify-start items-start`}>
       <img
         src={cardImage}
@@ -27,7 +27,7 @@ const Card = ({
           autoHeight
             ? "h-[50%] w-full"
             : row
-            ? "h-full w-[50%]"
+            ? "h-[60%] sm:h-full w-full sm:w-[50%] "
             : "h-[60%]  w-full"
         }  object-cover`}
       />
@@ -37,7 +37,7 @@ const Card = ({
           <span>{cardTitle}</span>
           <MdArrowOutward size={25} />
         </div>
-        <span className="text-black/70 text-[13px] h-[5.2rem] overflow-hidden">
+        <span className="text-black/80 text-[13px] max-h-[5rem] overflow-hidden">
           {cardDescription}
         </span>
         <div className="text-black/70 text-[13px] h-20 overflow-hidden flex justify-start items-center gap-3 w-full">
