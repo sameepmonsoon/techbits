@@ -17,9 +17,22 @@ const SignUpPage = () => {
       setViewPassword(true);
     }
   };
+  // yup validation
+  let schema = yup.object().shape({
+    username: yup.string().required("User name is required."),
+    password: yup
+      .string()
+      .min(6, "At least 6 characters required.")
+      .required("Password is required"),
+    email: yup.string().email().required("Email is required"),
+  });
 
   // formik form validation
-  const formik = useFormik({ initialValues: "", onSubmit: () => {} });
+  const formik = useFormik({
+    initialValues: { username: "", password: "", email: "" },
+    onSubmit: () => {},
+    validationSchema: schema,
+  });
   return (
     <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
       <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-5 order-2 lg:order-1">
@@ -32,17 +45,28 @@ const SignUpPage = () => {
         <span className="flex px-2 justify-center text-[38px] sm:text-[48px] font-[600] text-gray-600">
           Sign Up to TechBits
         </span>
+
+        {/* sign up form */}
         <form
           action=""
+          onSubmit={formik.handleSubmit}
           className="p-5 w-full flex flex-col justify-center gap-8 font-sans">
           <label htmlFor="username">
             <input
               type="text"
               name="username"
               id="username"
-              placeholder="User name"
+              placeholder={
+                formik.touched && formik.errors.username
+                  ? formik.errors.username
+                  : "User name"
+              }
               maxLength={30}
-              className="border-[1px] text-[20px] border-gray-200 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4"
+              className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
+                formik.touched && formik.errors.username
+                  ? " placeholder-red-600 outline-1 focus:border-red-500"
+                  : ""
+              }`}
             />
           </label>
           <label htmlFor="email">
@@ -50,9 +74,16 @@ const SignUpPage = () => {
               type="email"
               name="email"
               id="email"
-              placeholder="Email"
+              placeholder={
+                formik.touched && formik.errors.email
+                  ? formik.errors.email
+                  : "Email"
+              }
               maxLength={30}
-              className="border-[1px] text-[20px] border-gray-200 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4"
+              className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
+                formik.touched && formik.errors.email
+                  && " placeholder-red-600 "
+              }`}
             />
           </label>
           <label htmlFor="password" className="relative text-gray-700 group">
@@ -80,10 +111,15 @@ const SignUpPage = () => {
               id="password"
               placeholder="Password"
               maxLength={10}
-              className="border-[1px] text-[20px] border-gray-200 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4"
+              className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
+                formik.touched && formik.errors.password
+                  ? " placeholder-red-600 outline-1 outline-red-500"
+                  : null
+              }`}
             />
           </label>
           <Button
+            onClick={formik.handleSubmit}
             title={"Sign Up"}
             color={false}
             background={true}

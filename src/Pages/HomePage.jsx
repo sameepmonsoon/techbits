@@ -15,7 +15,6 @@ const HomePage = () => {
             <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
             <div className="flex justify-center items-center gap-x-[5rem] gap-y-[3rem] flex-wrap py-10">
               <Card
-              row={true}
                 tag={"Mobile"}
                 cardTitle={"New Mobile"}
                 cardDescription={
