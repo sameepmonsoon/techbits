@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
-import signUp from "../assets/login.svg";
+import signInImage from "../assets/login.svg";
 import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  Link,
-  useLocation,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { signUp } from "../Store/authSlice";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ImSpinner5 } from "react-icons/im";
 import { HttpCalls } from "../utils/HttpCalls";
 const LoginPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const [authType, setAuthType] = useState("Sign Up");
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
+
   const [loading, setLoading] = useState(false);
   // yup validation
   let schema = yup.object().shape({
@@ -75,6 +77,7 @@ const LoginPage = () => {
               type="email"
               name="email"
               id="email"
+              onChange={formik.handleChange}
               placeholder={
                 formik.touched && formik.errors.email
                   ? formik.errors.email
@@ -109,6 +112,7 @@ const LoginPage = () => {
               type={togglePassword}
               name="password"
               id="password"
+              onChange={formik.handleChange}
               placeholder={
                 formik.touched && formik.errors.password
                   ? formik.errors.password
@@ -124,7 +128,13 @@ const LoginPage = () => {
           </label>
           <Button
             onClick={formik.handleSubmit}
-            title={"Continue"}
+            title={
+              isLoading ? (
+                <ImSpinner5 size={25} className="animate-spin" />
+              ) : (
+                "Continue"
+              )
+            }
             color={false}
             background={true}
             fullWidth={true}
@@ -140,7 +150,7 @@ const LoginPage = () => {
         </p>
       </div>
       <img
-        src={signUp}
+        src={signInImage}
         alt=""
         className="h-[50%] w-[30rem] lg:h-[30rem] lg:w-[40rem] order-1 lg:order-2"
       />

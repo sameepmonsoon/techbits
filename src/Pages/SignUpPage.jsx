@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
-import signUp from "../assets/signup-4.svg";
+import signUpImage from "../assets/signup-4.svg";
 import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  Link,
-  useLocation,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import { HttpCalls } from "../utils/HttpCalls";
+import { signUp } from "../Store/authSlice";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ImSpinner5 } from "react-icons/im";
 const SignUpPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
-  const [loading, setLoading] = useState(false);
-  // const [authType, setAuthType] = useState("Sign Up");
+
+  //  redux store dispatch
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
 
   // yup validation
   let schema = yup.object().shape({
@@ -32,15 +32,17 @@ const SignUpPage = () => {
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values, action) => {
-      setLoading(true);
-      HttpCalls.post("", values)
-        .then((res) => {
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err.message);
-          setLoading(false);
-        });
+      // setLoading(true);
+      dispatch(signUp(values));
+      console.log(values);
+      // HttpCalls.post("", values)
+      //   .then((res) => {
+      //     setLoading(false);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err.message);
+      //     setLoading(false);
+      //   });
     },
     validationSchema: schema,
   });
@@ -92,6 +94,7 @@ const SignUpPage = () => {
                   ? formik.errors.username
                   : "User name"
               }
+              onChange={formik.handleChange}
               maxLength={30}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
                 formik.touched && formik.errors.username
@@ -110,6 +113,7 @@ const SignUpPage = () => {
                   ? formik.errors.email
                   : "Email"
               }
+              onChange={formik.handleChange}
               maxLength={30}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
                 formik.touched && formik.errors.email && " placeholder-red-600 "
@@ -144,6 +148,7 @@ const SignUpPage = () => {
                   ? formik.errors.password
                   : "Password"
               }
+              onChange={formik.handleChange}
               maxLength={10}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
                 formik.touched && formik.errors.password
@@ -154,7 +159,13 @@ const SignUpPage = () => {
           </label>
           <Button
             onClick={formik.handleSubmit}
-            title={"Register"}
+            title={
+              isLoading ? (
+                <ImSpinner5 size={25} className="animate-spin" />
+              ) : (
+                "Register"
+              )
+            }
             color={false}
             background={true}
             fullWidth={true}
@@ -179,7 +190,7 @@ const SignUpPage = () => {
         </p>
       </div>
       <img
-        src={signUp}
+        src={signUpImage}
         alt=""
         className="h-[50%] w-[30rem] lg:h-[30rem] lg:w-[40rem] order-1 lg:order-2"
       />

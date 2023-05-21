@@ -1,5 +1,36 @@
-const express = require('express')
-// express app
-const app = express()
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const authRoutes = require("./routes/authRoute.js");
+dotenv.config();
 
-app.listen(8000,()=>{console.log("Listening to port 8000")})
+// express app
+const app = express();
+
+// connect to the database
+const connect = () => {
+  mongoose.set("strictQuery", false);
+  mongoose
+    .connect(process.env.MONGO, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log("Connected to MongoDB database");
+    })
+    .catch((err) => {
+      console.error("Error connecting to MongoDB database:", err.message);
+      process.exit(1); // Exit the process with a non-zero status code to indicate failure
+    });
+};
+app.use(cors({ origin: "*" }));
+app.use(express.json());
+// app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+// app.use("/api/tweets", tweetRoutes);
+
+app.listen(8000, () => {
+  connect();
+  console.log("Listening on port 8000");
+});
