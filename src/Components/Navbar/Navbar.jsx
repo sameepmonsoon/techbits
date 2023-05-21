@@ -20,6 +20,7 @@ const Navbar = ({ Links }) => {
           <div className="hidden sm:flex justify-start gap-5 items-center">
             {Links.map((item, index) => (
               <Link
+                key={index}
                 to={item.link}
                 className={`cursor-pointer hover:text-[#53389E] ${
                   location.pathname === `${item.link}` && "text-[#53389E]"
@@ -34,6 +35,7 @@ const Navbar = ({ Links }) => {
               border={true}
               color={true}
               background={false}
+              linkName={"/login"}
             />
             <Button
               title={"Sign up"}
@@ -60,6 +62,7 @@ const Navbar = ({ Links }) => {
           <div className="flex flex-col gap-7">
             {Links.map((item, index) => (
               <Link
+                key={index}
                 to={item.link}
                 className={`cursor-pointer text-[#9E77ED] text-[20px] hover:text-[#53389E] ${
                   location.pathname === `${item.link}` && "text-[#53389E]"

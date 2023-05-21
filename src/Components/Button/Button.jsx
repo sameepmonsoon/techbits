@@ -15,7 +15,7 @@ const Button = ({
       {...rest}
       to={linkName ? linkName : null}
       className={`font-sans flex justify-center items-center text-[16px] sm:text-[15px] font-[500] h-[2.2rem]  ${
-        fullWidth ? "w-full h-[2.5rem]" : "min-w-[6rem] max-w-[8rem]"
+        fullWidth ? "min-w-[60%] sm:w-full h-[2.5rem]" : "min-w-[6rem] max-w-[8rem]"
       } rounded-md ${border && "border-[1px] border-gray-300"} ${
         background
           ? "bg-deep-purple hover:bg-blue-purple"

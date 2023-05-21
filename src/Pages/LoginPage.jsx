@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
-import signUp from "../assets/signup-4.svg";
+import signUp from "../assets/login.svg";
 import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
@@ -12,25 +12,23 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { HttpCalls } from "../utils/HttpCalls";
-const SignUpPage = () => {
+const LoginPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
+  const [authType, setAuthType] = useState("Sign Up");
   const [loading, setLoading] = useState(false);
-  // const [authType, setAuthType] = useState("Sign Up");
-
   // yup validation
   let schema = yup.object().shape({
-    username: yup.string().required("User name is required."),
     password: yup
       .string()
       .min(6, "At least 6 characters required.")
-      .required("Password is required."),
-    email: yup.string().email().required("Email is required."),
+      .required("Password is required"),
+    email: yup.string().email().required("Email is required"),
   });
 
   // formik form validation
   const formik = useFormik({
-    initialValues: { username: "", password: "", email: "" },
+    initialValues: { password: "", email: "" },
     onSubmit: (values, action) => {
       setLoading(true);
       HttpCalls.post("", values)
@@ -44,17 +42,7 @@ const SignUpPage = () => {
     },
     validationSchema: schema,
   });
-  // use params
-  // const location = useLocation();
-  // useEffect(() => {
-  //   if (location.pathname === "/login") {
-  //     setAuthType("Log in");
-  //     formik.resetForm();
-  //   } else {
-  //     setAuthType("Sign Up");
-  //     formik.resetForm();
-  //   }
-  // }, [location]);
+
   const handleToggle = () => {
     if (viewPassword) {
       setTogglePassword("text");
@@ -74,7 +62,7 @@ const SignUpPage = () => {
           </span>
         </div>
         <span className="flex px-2 justify-center text-[38px] sm:text-[48px] font-[600] text-gray-600 min-w-[30rem]">
-          Sign Up to TechBits
+          Sign in to TechBits
         </span>
 
         {/* sign up form */}
@@ -82,24 +70,6 @@ const SignUpPage = () => {
           action=""
           onSubmit={formik.handleSubmit}
           className="p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-8 font-sans">
-          <label htmlFor="username">
-            <input
-              type="text"
-              name="username"
-              id="username"
-              placeholder={
-                formik.touched && formik.errors.username
-                  ? formik.errors.username
-                  : "User name"
-              }
-              maxLength={30}
-              className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.username
-                  ? " placeholder-red-600 outline-1 focus:border-red-500"
-                  : ""
-              }`}
-            />
-          </label>
           <label htmlFor="email">
             <input
               type="email"
@@ -154,28 +124,19 @@ const SignUpPage = () => {
           </label>
           <Button
             onClick={formik.handleSubmit}
-            title={"Register"}
+            title={"Continue"}
             color={false}
             background={true}
             fullWidth={true}
           />
         </form>
         <p className="w-full flex justify-center items-center px-5">
-          {/* {authType == "Log in" ? (
-            <span>
-              Create a new account?{" "}
-              <Link to={"/signup"} className="underline text-deep-purple">
-                Sign up
-              </Link>
-            </span>
-          ) : ( */}
           <span>
-            Already have an account?{" "}
-            <Link to={"/login"} className="underline text-deep-purple">
-              Log in
+            Create a new account?{" "}
+            <Link to={"/signup"} className="underline text-deep-purple">
+              Sign up
             </Link>
           </span>
-          {/* )} */}
         </p>
       </div>
       <img
@@ -187,4 +148,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default LoginPage;
