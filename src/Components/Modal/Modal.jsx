@@ -20,16 +20,31 @@ const Modal = ({
   useEffect(() => {
     setFocusModal(false);
   }, [openCloseModal]);
+  useEffect(() => {
+    const handleResize = () => {
+      if (openCloseModal) {
+        const fullscreenDiv = document.getElementById("fullscreenDiv");
+        fullscreenDiv.style.height = window.innerHeight + "px";
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [openCloseModal]);
   return (
     <div
+      id="fullscreenDiv"
       onClick={() => {
         setFocusModal(true);
       }}
-      className={`${
-        focusModal === true ? "bg-red-300/10 backdrop-blur-sm" : " bg-white/10"
-      } ${
+      className={` bg-white/10
+       
+      ${
         openCloseModal ? "flex" : " hidden"
-      } absolute w-full h-full items-center justify-center  z-20`}>
+      } absolute w-full  h-full items-center justify-center  z-20`}>
       <div
         className={`cursor-pointer ${
           top

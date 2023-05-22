@@ -11,12 +11,15 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import { HttpCalls } from "../utils/HttpCalls";
+import Modal from "../Components/Modal/Modal";
 const LoginPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const [authType, setAuthType] = useState("Sign Up");
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state.auth);
+  const { error, isLoading } = useSelector((state) => state.auth);
+  // for modal open and close
+  const [toggleModal, setToggleModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
   // yup validation
@@ -56,6 +59,16 @@ const LoginPage = () => {
   };
   return (
     <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
+      <Modal
+        autoHeight={true}
+        error={true}
+        info={true}
+        toggleModal={setToggleModal}
+        openCloseModal={toggleModal}
+        modalMessage={error}
+        modalDescription={""}
+        bottom={true}
+      />
       <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
         <div className="h-20 w-full flex justify-center items-center gap-4 ">
           <Logo />

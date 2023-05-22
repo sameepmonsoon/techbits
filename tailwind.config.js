@@ -14,6 +14,13 @@ module.exports = {
         "deep-purple": "#53389E",
         "blue-purple": "#42307D;",
       },
+      screens: {
+        sm: "576px",
+        md: "960px",
+        midmd: "1150px",
+        bigmd: "1250px",
+        lg: "1440px",
+      },
     },
   },
   plugins: [],
