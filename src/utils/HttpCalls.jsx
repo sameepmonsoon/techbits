@@ -6,18 +6,19 @@ function get(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.get(BASEURL + url, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axios.get(BASEURL + url, );
 }
 function post(url, data) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.post(BASEURL + url, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axios.post(BASEURL + url, data, );
 }
+
+
+// {
+//   headers: { Authorization: `Bearer ${token}` },
+// }
 function put(url, data) {
   if (!url) {
     throw new Error("Url not provided");

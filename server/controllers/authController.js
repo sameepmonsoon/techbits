@@ -4,6 +4,21 @@ const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res, next) => {
   try {
+    // Check if the user already exists
+    const existingUserName = await User.findOne({
+      username: req.body.username,
+    });
+    const existingUserEmail = await User.findOne({ email: req.body.email });
+
+    if (existingUserName) {
+      return res.status(400).json({
+        error: "Username is already taken. Please choose a different username.",
+      });
+    } else if (existingUserEmail) {
+      return res
+        .status(400)
+        .json({ error: "The email address you provided is already in use." });
+    }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     const newUser = new User({ ...req.body, password: hash });
@@ -19,9 +34,14 @@ exports.signup = async (req, res, next) => {
         httpOnly: true,
         sameSite: "strict",
       })
-
       .status(200)
-      .json({ token: token, ...othersData });
+      .json({
+        token: token,
+        ...othersData,
+        message: "Welcome to TechBits.",
+        token: token,
+        ...othersData,
+      });
   } catch (err) {
     next(err);
   }

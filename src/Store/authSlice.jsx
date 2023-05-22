@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HttpCalls } from "../utils/HttpCalls";
 
-const initialState = { isLoading: false, error: "false", token: "" };
+const initialState = { isLoading: false, error: "", token: "" };
 
 // const fetch2 = async (api, body, token = "") => {
 //   console.log("inside fetch2", body);
@@ -17,11 +17,12 @@ export const signUp = createAsyncThunk("signup", async (body) => {
     console.log("response ", result.data);
     return result.data;
   } catch (error) {
-    console.log(error);
+    console.log("error", error.response.data.error);
+    return { error: error.response.data.error };
   }
 });
 
-export const login = createAsyncThunk("login", async (userData) => {
+export const login = createAsyncThunk("login", async (body) => {
   const result = await HttpCalls.get("login", body);
   return result.data;
 });
@@ -34,14 +35,18 @@ const authSlice = createSlice({
   extraReducers: {
     [signUp.fulfilled]: (state, action) => {
       state.isLoading = false;
-      if (action.payload.error) {
+
+      if (action.payload && action.payload.error) {
         state.error = action.payload.error;
+        console.log(state.error);
       } else {
         state.token = action.payload;
+        state.error = "";
       }
     },
     [signUp.pending]: (state, action) => {
       state.isLoading = true;
+      state.error = "";
     },
     [signUp.rejected]: (state, action) => {
       state.isLoading = false;
@@ -49,7 +54,7 @@ const authSlice = createSlice({
     },
     [login.fulfilled]: (state, action) => {
       state.isLoading = false;
-      if (action.payload.error) {
+      if (action.payload && action.payload.error) {
         state.error = action.payload.error;
       } else {
         state.token = action.payload.token;
@@ -64,5 +69,4 @@ const authSlice = createSlice({
     },
   },
 });
-
 export default authSlice.reducer;
