@@ -27,7 +27,7 @@ const connect = () => {
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 // app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 // app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {

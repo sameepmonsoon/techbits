@@ -77,15 +77,17 @@ const LoginPage = () => {
               type="email"
               name="email"
               id="email"
-              onChange={formik.handleChange}
+              onChange={(e) => formik.handleChange(e)}
               placeholder={
-                formik.touched && formik.errors.email
+                formik.touched.email && formik.errors.email
                   ? formik.errors.email
                   : "Email"
               }
               maxLength={30}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.email && " placeholder-red-600 "
+                formik.touched.email &&
+                formik.errors.email &&
+                " placeholder-red-600 "
               }`}
             />
           </label>
@@ -112,15 +114,15 @@ const LoginPage = () => {
               type={togglePassword}
               name="password"
               id="password"
-              onChange={formik.handleChange}
+              onChange={(e) => formik.handleChange(e)}
               placeholder={
-                formik.touched && formik.errors.password
+                formik.touched.password && formik.errors.password
                   ? formik.errors.password
                   : "Password"
               }
               maxLength={10}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.password
+                formik.touched.password && formik.errors.password
                   ? " placeholder-red-600 outline-1 outline-red-500"
                   : null
               }`}

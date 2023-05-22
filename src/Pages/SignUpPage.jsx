@@ -34,7 +34,7 @@ const SignUpPage = () => {
     onSubmit: (values, action) => {
       // setLoading(true);
       dispatch(signUp(values));
-      console.log(values);
+      // console.log(values);
       // HttpCalls.post("", values)
       //   .then((res) => {
       //     setLoading(false);
@@ -90,14 +90,14 @@ const SignUpPage = () => {
               name="username"
               id="username"
               placeholder={
-                formik.touched && formik.errors.username
+                formik.touched.username && formik.errors.username
                   ? formik.errors.username
                   : "User name"
               }
               onChange={formik.handleChange}
               maxLength={30}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.username
+                formik.touched.username && formik.errors.username
                   ? " placeholder-red-600 outline-1 focus:border-red-500"
                   : ""
               }`}
@@ -109,14 +109,16 @@ const SignUpPage = () => {
               name="email"
               id="email"
               placeholder={
-                formik.touched && formik.errors.email
+                formik.touched.email && formik.errors.email
                   ? formik.errors.email
                   : "Email"
               }
               onChange={formik.handleChange}
               maxLength={30}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.email && " placeholder-red-600 "
+                formik.touched.email &&
+                formik.errors.email &&
+                " placeholder-red-600 "
               }`}
             />
           </label>
@@ -144,14 +146,14 @@ const SignUpPage = () => {
               name="password"
               id="password"
               placeholder={
-                formik.touched && formik.errors.password
+                formik.touched.password && formik.errors.password
                   ? formik.errors.password
                   : "Password"
               }
               onChange={formik.handleChange}
               maxLength={10}
               className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 ${
-                formik.touched && formik.errors.password
+                formik.touched.password && formik.errors.password
                   ? " placeholder-red-600 outline-1 outline-red-500"
                   : null
               }`}
