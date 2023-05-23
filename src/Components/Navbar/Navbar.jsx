@@ -2,49 +2,77 @@ import React, { useState } from "react";
 import Logo from "../Logo/Logo";
 import { Link, useLocation } from "react-router-dom";
 import Button from "../Button/Button";
-import { RxCross1, CiMenuBurger } from "react-icons/all";
+import { RxCross1, CiMenuBurger, BsPencilSquare, CiUser } from "react-icons/all";
+import { useSelector } from "react-redux";
 const Navbar = ({ Links }) => {
   const location = useLocation();
   const [openModal, setOpenModal] = useState(true);
-
+  // function
   const handleToggle = () => {
     setOpenModal(!openModal);
   };
+
+  //
+  const { currentUserDetail, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+  console.log(currentUserDetail.username, isAuthenticated);
   return (
     <>
       <div className="font-sans fixed w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  border-b-[1px] border-b-gray-100/70 overflow-hidden">
         <div>
           <Logo />
         </div>
-        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-[#9E77ED]">
+        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80">
           <div className="hidden sm:flex justify-start gap-5 items-center">
             {Links.map((item, index) => (
               <Link
                 key={index}
                 to={item.link}
-                className={`cursor-pointer hover:text-[#53389E] ${
+                className={`cursor-pointer hover:text-blue-purple ${
                   location.pathname === `${item.link}` && "text-[#53389E]"
                 }`}>
                 {item.title}
               </Link>
             ))}
           </div>
-          <div className="hidden sm:flex gap-4 px-5">
-            <Button
-              title={"Log in"}
-              border={true}
-              color={true}
-              background={false}
-              linkName={"/login"}
-            />
-            <Button
-              title={"Sign up"}
-              border={false}
-              color={false}
-              background={true}
-              linkName={"/signup"}
-            />
-          </div>
+          {isAuthenticated ? (
+            <div className="hidden sm:flex gap-4 px-5">
+              <Button
+              icon={<BsPencilSquare size={20}/>}
+                title={"Write"}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/writeBlog"}
+              />
+              <Button
+              icon={<CiUser size={20}/>}
+                title={currentUserDetail.username}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/profile"}
+              />
+            </div>
+          ) : (
+            <div className="hidden sm:flex gap-4 px-5">
+              <Button
+                title={"Log in"}
+                border={true}
+                color={true}
+                background={false}
+                linkName={"/login"}
+              />
+              <Button
+                title={"Sign up"}
+                border={false}
+                color={false}
+                background={true}
+                linkName={"/signup"}
+              />
+            </div>
+          )}
           <span className="sm:hidden flex text-[#9E77ED] hover:text-[#53389e] cursor-pointer">
             <CiMenuBurger size={25} onClick={handleToggle} />
           </span>
@@ -77,12 +105,14 @@ const Navbar = ({ Links }) => {
               border={true}
               color={true}
               background={false}
+              linkName={"/login"}
             />
             <Button
               title={"Sign up"}
               border={false}
               color={false}
               background={true}
+              linkName={"/signup"}
             />
           </div>
         </div>

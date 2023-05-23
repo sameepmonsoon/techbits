@@ -7,6 +7,7 @@ const initialState = {
   token: "",
   success: "",
   currentUserDetail: [],
+  isAuthenticated: false,
 };
 
 // const fetch2 = async (api, body, token = "") => {
@@ -46,8 +47,9 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.currentUserDetail = "";
+      state.isAuthenticated = false;
       localStorage.removeItem("localToken");
-      return{}
+      return {};
     },
   },
   extraReducers: {
@@ -80,6 +82,7 @@ const authSlice = createSlice({
         localStorage.setItem("localToken", action.payload.token);
         state.token = action.payload.token;
         state.currentUserDetail = action.payload;
+        state.isAuthenticated = true;
         console.log(state.currentUserDetail);
         state.success = action.payload.message;
       }
@@ -91,6 +94,7 @@ const authSlice = createSlice({
     },
     [login.rejected]: (state, action) => {
       state.isLoading = false;
+      state.isAuthenticated = false;
       state.error = action.payload
         ? action.payload.error
         : "An error occurred.";
