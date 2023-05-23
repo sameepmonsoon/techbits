@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RxCross2 } from "react-icons/all";
+import { RxCross2, TiTick, TiTickOutline } from "react-icons/all";
 const Modal = ({
   autoHeight,
   info,
@@ -20,69 +20,76 @@ const Modal = ({
   useEffect(() => {
     setFocusModal(false);
   }, [openCloseModal]);
-  useEffect(() => {
-    const handleResize = () => {
-      if (openCloseModal) {
-        const fullscreenDiv = document.getElementById("fullscreenDiv");
-        fullscreenDiv.style.height = window.innerHeight + "px";
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [openCloseModal]);
   return (
     <div
-      id="fullscreenDiv"
       onClick={() => {
         setFocusModal(true);
       }}
-      className={` bg-white/10
-       
-      ${
+      className={`${
+        focusModal === true && error
+          ? "bg-red-100/20 backdrop-blur-sm"
+          : focusModal === true && info
+          ? "bg-green-300/10 backdrop-blur-sm"
+          : " bg-white/10"
+      } ${
         openCloseModal ? "flex" : " hidden"
-      } absolute w-full  h-full items-center justify-center  z-20`}>
+      } absolute w-full h-[137vh] lg:h-full items-center justify-center  z-20`}>
       <div
         className={`cursor-pointer ${
           top
             ? "top-[6em]"
             : bottom
-            ? "bottom-[0rem] sm:bottom-0 lg:bottom-[2rem]"
+            ? "bottom-[4rem] sm:bottom-[4rem] md:bottom-[4rem] lg:bottom-[5rem]"
             : ""
-        } backdrop-blur-sm animate-[modalPop_100ms_ease-in-out_1]  z-[200] max-h-[30rem] absolute m-auto flex flex-col justify-start items-center gap-1 ${
+        } backdrop-blur-sm animate-[modalPop_100ms_ease-in-out_1]  z-[200] max-h-[30rem] absolute m-auto flex flex-col justify-start items-start gap-1 ${
           error
             ? "bg-red-300/20 border-red-300/30  w-auto hover:border-red-300/50 h-auto hover:bg-red-300/25"
             : info
-            ? "bg-green-300/10 border-green-400/30 hover:border-green-400/40 w-auto hover:bg-green-400/25 h-auto"
-            : "bg-purple/20"
+            ? "bg-green-300/10 border-green-300/30  w-auto hover:border-green-300/50 h-auto hover:bg-green-300/23"
+            : "bg-purple/20 border-[1px] border-purple/30 hover:border-purple/50"
         } p-2 border-[1px]  backdrop-blur-sm rounded-lg first-letter $ ${
           autoHeight
-            ? "max-w-[20rem] sm:min-w-[25rem] w-[50%] h-[50%]"
-            : "w-auto max-w-[5rem] sm:max-w-[22rem]"
+            ? "max-w-[60%] sm:min-w-[25rem] w-[40%] h-[40%] max-h-[60%]"
+            : "w-auto max-w-[16rem] sm:max-w-[25rem]"
         }`}>
         <p
           className={`${
             error
               ? "border-b-white border-b-0 max-h-full text-red-600"
               : info
-              ? "border-b-white border-b-0 max-h-full text-green-600"
+              ? "border-b-white border-b-0 max-h-[2rem] text-green-600"
               : "border-b-white border-b-2 max-h-[2rem]"
           }  w-full flex items-start justify-between px-1 gap-1  overflow-hidden `}>
           <span className="flex-1 max-h-full flex justify-start overflow-hidden">
             {modalMessage}
           </span>
-          <RxCross2
-            size={24}
-            className={`${
-              error ? "hover:text-red-900" : "hover:text-red-500"
-            } cursor-pointer`}
-            onClick={handleToggle}
-          />
+          {info ? (
+            <RxCross2
+              size={24}
+              className={`${
+                error
+                  ? "hover:text-red-900"
+                  : info
+                  ? "hover:text-green-900"
+                  : "text-gray-500  hover:text-blue-purple"
+              } cursor-pointer`}
+              onClick={handleToggle}
+            />
+          ) : (
+            <RxCross2
+              size={24}
+              className={`${
+                error
+                  ? "hover:text-red-900"
+                  : info
+                  ? "hover:text-green-900"
+                  : "text-gray-500  hover:text-blue-purple"
+              } cursor-pointer`}
+              onClick={handleToggle}
+            />
+          )}
         </p>
-        {error ? (
+        {error || info ? (
           <></>
         ) : (
           <div className="flex justify-start items-center w-full text-[15px] font-[500] p-1 text-black/60">

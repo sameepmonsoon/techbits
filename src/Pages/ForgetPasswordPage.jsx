@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
-import signUpImage from "../assets/signup-4.svg";
+import signUpImage from "../assets/forget-password.svg";
 import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import GoogleLogin from "react-google-login";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
-const SignUpPage = () => {
+const ForgetPasswordPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const [showSignUpPage, setShowSignUpPage] = useState(false);
+
   // for modal open and close
   const [toggleModal, setToggleModal] = useState(false);
-  const location = useLocation();
-
-  // functions
   useEffect(() => {
     dispatch(clearState());
     setTimeout(() => {
@@ -48,6 +45,7 @@ const SignUpPage = () => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/,
         "At least one uppercase letter,number, and  special character required."
       )
+
       .test(
         "not-same-as-username",
         "Password must not match the username",
@@ -82,7 +80,9 @@ const SignUpPage = () => {
   useEffect(() => {
     setTogglePassword(viewPassword ? "text" : "password");
   }, [viewPassword]);
-
+  useEffect(() => {
+    dispatch(clearState());
+  }, []);
   console.log(success);
   // to show modal on error change
   useEffect(() => {
@@ -90,9 +90,6 @@ const SignUpPage = () => {
       setToggleModal(true);
     }
   }, [error, success]);
-  const responseGoogle = (response) => {
-    console.log(response);
-  };
   return (
     <>
       {!showSignUpPage ? (
@@ -103,7 +100,7 @@ const SignUpPage = () => {
       ) : (
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
           {/* to disable the navigation while loading-- lock the page */}
-          <LoadingOverlayComponent openCloseOverlay={isLoading} />{" "}
+          <LoadingOverlayComponent openCloseOverlay={isLoading} />
           <Modal
             autoHeight={false}
             error={error ? true : false}
@@ -130,33 +127,14 @@ const SignUpPage = () => {
               onSubmit={formik.handleSubmit}
               className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
               <label
-                htmlFor="username"
-                className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  placeholder={"User name"}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  maxLength={30}
-                  className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
-                />
-                {formik.errors.username && formik.touched.username && (
-                  <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
-                    {formik.errors.username}
-                  </span>
-                )}
-              </label>
-              <label
                 htmlFor="email"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
                   onBlur={formik.handleBlur}
-                  placeholder={"Email"}
+                  placeholder={"Email or User name"}
                   onChange={formik.handleChange}
                   maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
@@ -212,7 +190,7 @@ const SignUpPage = () => {
                   isLoading ? (
                     <ImSpinner5 size={25} className="animate-spin" />
                   ) : (
-                    "Register"
+                    "Continue"
                   )
                 }
                 color={false}
@@ -237,15 +215,6 @@ const SignUpPage = () => {
               </span>
               {/* )} */}
             </p>
-            {/* <div className="w-full flex justify-center items-center">
-          <GoogleLogin
-            clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-            buttonText="Sign Up with Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={"single_host_origin"}
-          />
-        </div> */}
           </div>
           <img
             src={signUpImage}
@@ -258,4 +227,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default ForgetPasswordPage;
