@@ -9,7 +9,7 @@ import {
   CiUser,
 } from "react-icons/all";
 import { useSelector } from "react-redux";
-const Navbar = ({ Links }) => {
+const Navbar = ({ Links ,fixed,border}) => {
   const location = useLocation();
   const [openModal, setOpenModal] = useState(true);
   // function
@@ -21,16 +21,14 @@ const Navbar = ({ Links }) => {
   const { currentUserDetail, isAuthenticated } = useSelector(
     (state) => state.auth
   );
-  console.log(currentUserDetail.username, isAuthenticated);
   const currentLoggedUser = JSON.parse(localStorage.getItem("user"));
-  console.log(currentLoggedUser);
   return (
     <>
-      <div className="font-sans fixed w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  border-b-[1px] border-b-gray-100/70 overflow-hidden">
+      <div className={`font-sans ${fixed && 'fixed'} w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${border?'border-b-[1px] border-b-gray-100/70':'border-b-0'} overflow-hidden`}>
         <div>
           <Logo />
         </div>
-        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80">
+        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80 text-[16px] font-[400]">
           <div className="hidden sm:flex justify-start gap-5 items-center">
             {Links.map((item, index) => (
               <Link

@@ -10,12 +10,12 @@ const HomeLayout = ({ children, renderComponents }) => {
     { title: "Blogs", link: "/blogs" },
   ];
   return (
-    <div className="overflow-x-hidden h-screen w-full font-sans">
-      <div className="">
-        <Navbar Links={NavbarLinks} />
+    <div className="overflow-x-hidden h-screen w-full font-sans snap-y overflow-y-auto scroll-smooth">
+      <div className="snap-start">
+        <Navbar Links={NavbarLinks} fixed={true} border={true}/>
       </div>
-      <div className="">{children}</div>
-      <div className="flex justify-start items-center px-10 flex-wrap min-h-screen">
+      <div className="snap-start ">{children}</div>
+      <div className="flex justify-start items-center px-10 flex-wrap min-h-screen snap-start">
         {renderComponents}
       </div>
       <div>
