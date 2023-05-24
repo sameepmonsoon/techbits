@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import Logo from "../Logo/Logo";
 import { Link, useLocation } from "react-router-dom";
 import Button from "../Button/Button";
-import { RxCross1, CiMenuBurger, BsPencilSquare, CiUser } from "react-icons/all";
+import {
+  RxCross1,
+  CiMenuBurger,
+  BsPencilSquare,
+  CiUser,
+} from "react-icons/all";
 import { useSelector } from "react-redux";
 const Navbar = ({ Links }) => {
   const location = useLocation();
@@ -17,6 +22,8 @@ const Navbar = ({ Links }) => {
     (state) => state.auth
   );
   console.log(currentUserDetail.username, isAuthenticated);
+  const currentLoggedUser = JSON.parse(localStorage.getItem("user"));
+  console.log(currentLoggedUser);
   return (
     <>
       <div className="font-sans fixed w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  border-b-[1px] border-b-gray-100/70 overflow-hidden">
@@ -36,10 +43,10 @@ const Navbar = ({ Links }) => {
               </Link>
             ))}
           </div>
-          {isAuthenticated ? (
+          {currentLoggedUser?.length != 0 ? (
             <div className="hidden sm:flex gap-4 px-5">
               <Button
-              icon={<BsPencilSquare size={20}/>}
+                icon={<BsPencilSquare size={20} />}
                 title={"Write"}
                 border={false}
                 color={true}
@@ -47,8 +54,8 @@ const Navbar = ({ Links }) => {
                 linkName={"/writeBlog"}
               />
               <Button
-              icon={<CiUser size={20}/>}
-                title={currentUserDetail.username}
+                icon={<CiUser size={20} />}
+                title={currentLoggedUser?.username}
                 border={false}
                 color={true}
                 background={false}
@@ -99,22 +106,43 @@ const Navbar = ({ Links }) => {
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-4 px-0 z-10">
-            <Button
-              title={"Log in"}
-              border={true}
-              color={true}
-              background={false}
-              linkName={"/login"}
-            />
-            <Button
-              title={"Sign up"}
-              border={false}
-              color={false}
-              background={true}
-              linkName={"/signup"}
-            />
-          </div>
+          {currentLoggedUser?.length != 0 ? (
+            <div className="flex flex-col gap-4 px-0 z-10 ">
+              <Button
+                icon={<BsPencilSquare size={20} />}
+                title={"Write"}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/writeBlog"}
+              />
+              <Button
+                icon={<CiUser size={20} />}
+                title={currentLoggedUser?.username}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/profile"}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 px-0 z-10 ">
+              <Button
+                title={"Log in"}
+                border={true}
+                color={true}
+                background={false}
+                linkName={"/login"}
+              />
+              <Button
+                title={"Sign up"}
+                border={false}
+                color={false}
+                background={true}
+                linkName={"/signup"}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

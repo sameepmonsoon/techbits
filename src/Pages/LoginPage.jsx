@@ -7,7 +7,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { login, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import { HttpCalls } from "../utils/HttpCalls";
@@ -23,6 +23,7 @@ const LoginPage = () => {
   const [toggleModal, setToggleModal] = useState(false);
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   // yup validation
   let schema = yup.object().shape({
     password: yup.string().required("Password is required."),
@@ -52,7 +53,6 @@ const LoginPage = () => {
   useEffect(() => {
     setTogglePassword(viewPassword ? "text" : "password");
   }, [viewPassword]);
-  console.log(success);
   // to show modal on error change
   useEffect(() => {
     if ((error !== "") | (success !== "")) {
@@ -64,7 +64,7 @@ const LoginPage = () => {
       {!showSignUpPage ? (
         // Show spinner while loading
         <div className="flex justify-center items-center h-screen">
-          <PageLoadingSpinner allowBackground={true}/>
+          <PageLoadingSpinner allowBackground={true} />
         </div>
       ) : (
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
@@ -75,7 +75,7 @@ const LoginPage = () => {
             error={error ? true : false}
             info={success ? true : false}
             toggleModal={setToggleModal}
-            openCloseModal={error || (success && toggleModal)}
+            openCloseModal={(error && toggleModal) || (success && toggleModal)}
             modalMessage={success ? success : error}
             bottom={true}
           />

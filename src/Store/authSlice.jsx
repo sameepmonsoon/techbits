@@ -49,6 +49,7 @@ const authSlice = createSlice({
       state.currentUserDetail = "";
       state.isAuthenticated = false;
       localStorage.removeItem("localToken");
+      localStorage.removeItem("user");
       return {};
     },
   },
@@ -80,6 +81,7 @@ const authSlice = createSlice({
         state.error = action.payload.error;
       } else {
         localStorage.setItem("localToken", action.payload.token);
+        localStorage.setItem("user",  JSON.stringify(action.payload ));
         state.token = action.payload.token;
         state.currentUserDetail = action.payload;
         state.isAuthenticated = true;

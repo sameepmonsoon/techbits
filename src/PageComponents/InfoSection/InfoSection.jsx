@@ -23,7 +23,7 @@ const InfoSection = ({ infoText, infoImage }) => {
         <img src={infoImage} alt="" className="h-full w-full object-cover" />
         <div className="bllur absolute bottom-0 flex flex-col justify-center items-start gap-3 h-[50%] bg-gray-200/20 w-full backdrop-blur-sm p-5 text-white">
           <span className="text-[18px] h-[4.5rem] p-[1px] overflow-hidden">
-            “Untitled has saved us thousands of dollars.”
+            “TechBits has saved us thousands of Rupees.”
           </span>
           <div className=" w-full">
             <div className="flex justify-between items-center text-[18px] sm:text-[24px] min-w-full">

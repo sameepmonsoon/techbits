@@ -106,7 +106,7 @@ const ForgetPasswordPage = () => {
             error={error ? true : false}
             info={success ? true : false}
             toggleModal={setToggleModal}
-            openCloseModal={error || (success && toggleModal)}
+            openCloseModal={error  && toggleModal || (success && toggleModal)}
             modalMessage={success ? success : error}
             bottom={true}
           />
