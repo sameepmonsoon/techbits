@@ -192,6 +192,7 @@ const WriteBlogPage = () => {
                 placeholder="Enter your blog title"
                 id="myTextarea"
                 name=""
+                maxLength={300}
                 value={textareaValue}
                 onChange={handleChange}
                 onFocus={() => {

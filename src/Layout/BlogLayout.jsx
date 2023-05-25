@@ -11,7 +11,7 @@ const BlogLayout = ({ children, renderComponents }) => {
     <div className="overflow-x-hidden h-screen w-full font-sans">
       <div className="">
         <div
-          className={`font-sans fixed w-full z-[12] h-[5rem] flex justify-center items-center gap-10 px-4 0  bg-white/30 backdrop-blur-sm  border-b-0 overflow-hidden`}>
+          className={`font-sans fixed w-full z-[12] h-[5rem] flex justify-center items-center gap-10 px-4 0  bg-white backdrop-blur-sm  border-b-0 overflow-hidden`}>
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
             <Logo />
             <span className="text-deep-purple text-[16px]">Saved</span>
