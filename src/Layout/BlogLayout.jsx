@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
 import { CgOptions } from "react-icons/cg";
+import Modal from "../Components/Modal/Modal";
 
 const BlogLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
+  const [toggleModal, setToggleModal] = useState(true);
+
   return (
     <div className="overflow-x-hidden h-screen w-full font-sans">
       <div className="">
@@ -29,6 +32,9 @@ const BlogLayout = ({ children, renderComponents }) => {
               <CgOptions
                 size={23}
                 className="text-purple cursor-pointer group-hover:text-deep-purple/70"
+                onClick={() => {
+                  setToggleModal((prev) => !prev);
+                }}
               />
             </span>
           </div>
