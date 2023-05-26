@@ -4,6 +4,8 @@ import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
 import { CgOptions } from "react-icons/cg";
 import Modal from "../Components/Modal/Modal";
+import { AiFillSetting } from "react-icons/ai";
+import { IoSettingsOutline } from "react-icons/io5";
 
 const BlogLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
@@ -22,14 +24,14 @@ const BlogLayout = ({ children, renderComponents }) => {
           <div className="flex justify-start items-center gap-4 ">
             <Button
               icon={<CiUser size={20} />}
-              title={currentUserDetails.username}
+              title={currentUserDetails?.username}
               border={true}
               color={true}
               background={false}
               linkName={"/writeBlog"}
             />
             <span className="group cursor-pointer flex justify-center items-center rounded-full hover:bg-purple/10 p-1">
-              <CgOptions
+              <IoSettingsOutline
                 size={23}
                 className="text-purple cursor-pointer group-hover:text-deep-purple/70"
                 onClick={() => {

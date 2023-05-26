@@ -1,7 +1,6 @@
 import axios from "axios";
 import { BASEURL } from "./Credentials";
 const token = localStorage.getItem("locaToken");
-console.log(token);
 // http calls using axios
 function get(url) {
   if (!url) {

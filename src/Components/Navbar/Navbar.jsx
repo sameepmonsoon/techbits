@@ -9,7 +9,7 @@ import {
   CiUser,
 } from "react-icons/all";
 import { useSelector } from "react-redux";
-const Navbar = ({ Links ,fixed,border}) => {
+const Navbar = ({ Links, fixed, border }) => {
   const location = useLocation();
   const [openModal, setOpenModal] = useState(true);
   // function
@@ -22,9 +22,15 @@ const Navbar = ({ Links ,fixed,border}) => {
     (state) => state.auth
   );
   const currentLoggedUser = JSON.parse(localStorage.getItem("user"));
+  console.log(currentLoggedUser?.username);
   return (
     <>
-      <div className={`font-sans ${fixed && 'fixed'} w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${border?'border-b-[1px] border-b-gray-100/70':'border-b-0'} overflow-hidden`}>
+      <div
+        className={`font-sans ${
+          fixed && "fixed"
+        } w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${
+          border ? "border-b-[1px] border-b-gray-100/70" : "border-b-0"
+        } overflow-hidden`}>
         <div>
           <Logo />
         </div>
@@ -41,7 +47,7 @@ const Navbar = ({ Links ,fixed,border}) => {
               </Link>
             ))}
           </div>
-          {currentLoggedUser?.length != 0 ? (
+          {currentLoggedUser ? (
             <div className="hidden sm:flex gap-4 px-5">
               <Button
                 icon={<BsPencilSquare size={20} />}
@@ -104,7 +110,7 @@ const Navbar = ({ Links ,fixed,border}) => {
               </Link>
             ))}
           </div>
-          {currentLoggedUser?.length != 0 ? (
+          {currentLoggedUser ? (
             <div className="flex flex-col gap-4 px-0 z-10 ">
               <Button
                 icon={<BsPencilSquare size={20} />}

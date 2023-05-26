@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoute.js");
+const blogPostRoutes = require("./routes/blogPostRoutes.js");
 dotenv.config();
 
 // express app
@@ -28,6 +29,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 // app.use("/api/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/blogPost", blogPostRoutes);
 // app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {

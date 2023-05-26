@@ -10,9 +10,11 @@ import { BsImage, BsUpload } from "react-icons/bs";
 import { BiText } from "react-icons/bi";
 import { IoIosAdd } from "react-icons/io";
 import Button from "../Components/Button/Button";
+import { HttpCalls } from "../utils/HttpCalls";
 const WriteBlogPage = () => {
   const [editorContent, setEditorContent] = useState("");
-
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  console.log(currentUser._id);
   const [textareaValue, setTextareaValue] = useState("");
   const [showAddCategories, setShowAddCategories] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -80,11 +82,45 @@ const WriteBlogPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission with the selected photo and entered text
-    console.log("Selected Photo:", selectedPhoto);
+
+    const formData = new FormData();
+    formData.append("userId", currentUser._id);
+    formData.append("categoryList", JSON.stringify(categoryListItem));
+    formData.append("titleContent", textareaValue);
+    formData.append("selectedPhoto", selectedPhoto);
+    formData.append("editorContent", editorContent);
+    // Access the form data values
+    const editorContentValue = formData.get("editorContent");
+    const selectedPhotoValue = formData.get("selectedPhoto");
+    const titleContentValue = formData.get("titleContent");
+    const categoryListValue = formData.get("categoryList");
+
+    console.log("Editor Content:", editorContentValue);
+    console.log("Selected Photo:", selectedPhotoValue);
+    console.log("Title Content:", titleContentValue);
+    console.log("Category List:", categoryListValue);
+    const requestData = {
+      userId: currentUser._id,
+      categoryList: categoryListItem,
+      titleContent: textareaValue,
+      // selectedPhoto: selectedPhoto,
+      editorContent: editorContent,
+    };
+
+    HttpCalls.post("/blogPost", requestData)
+      .then((response) => {
+        // Handle successful response
+        console.log(response.data);
+        // Perform any additional actions after successful post
+      })
+      .catch((error) => {
+        // Handle error
+        console.log(error);
+        // Perform any additional error handling
+      });
     // Reset form fields
-    setSelectedPhoto(null);
-    setTextareaValue("");
+    // setSelectedPhoto(null);
+    // setTextareaValue("");
   };
 
   return (
@@ -100,10 +136,11 @@ const WriteBlogPage = () => {
                 color={true}
                 background={false}
                 linkName={"/writeBlog"}
+                onClick={handleSubmit}
               />
             </div>{" "}
             {/* category component */}
-            <div className="absolute left-[-4.8rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+            <div className="relative sm:absolute left-0 sm:left-[-4.8rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
               <IoAdd
                 onClick={handleIconClick}
                 size={30}
@@ -160,7 +197,7 @@ const WriteBlogPage = () => {
 
           {/* form */}
           <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start">
-            <div className="absolute left-[-5rem] bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+            <div className="relative left-0 sm:absolute sm:left-[-5rem] bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
               <IoAdd
                 onClick={() => {
                   setOpenBlogCategory(!openBlogCategory);
@@ -252,7 +289,12 @@ const WriteBlogPage = () => {
               />
             </div>
           </form>
-        </div>
+        </div>{" "}
+        {editorContent.includes("<img") && (
+          <div>
+            <div dangerouslySetInnerHTML={{ __html: editorContent }}></div>
+          </div>
+        )}
       </div>
     </BlogLayout>
   );

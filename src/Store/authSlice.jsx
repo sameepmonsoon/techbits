@@ -10,13 +10,6 @@ const initialState = {
   isAuthenticated: false,
 };
 
-// const fetch2 = async (api, body, token = "") => {
-//   console.log("inside fetch2", body);
-//   const res = await HttpCalls.post(api, body);
-//   console.log("response ", res);
-
-//   return res.data;
-// };
 export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
@@ -26,6 +19,7 @@ export const signUp = createAsyncThunk("signup", async (body) => {
     return { error: error.response.data.error };
   }
 });
+
 export const login = createAsyncThunk("login", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signin", body);
@@ -36,6 +30,7 @@ export const login = createAsyncThunk("login", async (body) => {
     return { error: error.response.data.error };
   }
 });
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -53,54 +48,55 @@ const authSlice = createSlice({
       return {};
     },
   },
-  extraReducers: {
-    [signUp.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      if (action.payload && action.payload.error) {
-        state.error = action.payload.error;
-        console.log(state.error);
-      } else {
-        localStorage.setItem("localToken", action.payload.token);
-        state.token = action.payload.token;
-        state.success = action.payload.message;
+  extraReducers: (builder) => {
+    builder
+      .addCase(signUp.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload && action.payload.error) {
+          state.error = action.payload.error;
+          console.log(state.error);
+        } else {
+          localStorage.setItem("localToken", action.payload.token);
+          state.token = action.payload.token;
+          state.success = action.payload.message;
+          state.error = "";
+        }
+      })
+      .addCase(signUp.pending, (state, action) => {
+        state.isLoading = true;
         state.error = "";
-      }
-    },
-    [signUp.pending]: (state, action) => {
-      state.isLoading = true;
-      state.error = "";
-      state.success = "";
-    },
-    [signUp.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload.error;
-    },
-    [login.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      if (action.payload && action.payload.error) {
+        state.success = "";
+      })
+      .addCase(signUp.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload.error;
-      } else {
-        localStorage.setItem("localToken", action.payload.token);
-        localStorage.setItem("user",  JSON.stringify(action.payload ));
-        state.token = action.payload.token;
-        state.currentUserDetail = action.payload;
-        state.isAuthenticated = true;
-        console.log(state.currentUserDetail);
-        state.success = action.payload.message;
-      }
-    },
-    [login.pending]: (state, action) => {
-      state.isLoading = true;
-      state.error = "";
-      state.success = "";
-    },
-    [login.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.isAuthenticated = false;
-      state.error = action.payload
-        ? action.payload.error
-        : "An error occurred.";
-    },
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload && action.payload.error) {
+          state.error = action.payload.error;
+        } else {
+          localStorage.setItem("localToken", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload));
+          state.token = action.payload.token;
+          state.currentUserDetail = action.payload;
+          state.isAuthenticated = true;
+          console.log(state.currentUserDetail);
+          state.success = action.payload.message;
+        }
+      })
+      .addCase(login.pending, (state, action) => {
+        state.isLoading = true;
+        state.error = "";
+        state.success = "";
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload
+          ? action.payload.error
+          : "An error occurred.";
+      });
   },
 });
 
