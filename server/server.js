@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoute.js");
 const blogPostRoutes = require("./routes/blogPostRoutes.js");
+const bodyParser = require("body-parser");
 dotenv.config();
 
 // express app
@@ -25,6 +26,9 @@ const connect = () => {
       process.exit(1); // Exit the process with a non-zero status code to indicate failure
     });
 };
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 // app.use("/api/users", userRoutes);

@@ -26,15 +26,13 @@ const Navbar = ({ Links, fixed, border }) => {
   return (
     <>
       <div
-        className={`font-sans ${
-          fixed && "fixed"
-        } w-full z-[10] h-[3.5rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${
-          border ? "border-b-[1px] border-b-gray-100/70" : "border-b-0"
+        className={`font-sans w-full z-[10] h-[4rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${
+          border ? "border-b-[1px] border-b-gray-100" : "border-b-0"
         } overflow-hidden`}>
         <div>
           <Logo />
         </div>
-        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80 text-[16px] font-[400]">
+        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80 text-[18px] font-[350]">
           <div className="hidden sm:flex justify-start gap-5 items-center">
             {Links.map((item, index) => (
               <Link
@@ -50,7 +48,7 @@ const Navbar = ({ Links, fixed, border }) => {
           {currentLoggedUser ? (
             <div className="hidden sm:flex gap-4 px-5">
               <Button
-                icon={<BsPencilSquare size={20} />}
+                icon={<BsPencilSquare size={23} />}
                 title={"Write"}
                 border={false}
                 color={true}
@@ -58,7 +56,7 @@ const Navbar = ({ Links, fixed, border }) => {
                 linkName={"/writeBlog"}
               />
               <Button
-                icon={<CiUser size={20} />}
+                icon={<CiUser size={25} />}
                 title={currentLoggedUser?.username}
                 border={false}
                 color={true}
@@ -91,63 +89,63 @@ const Navbar = ({ Links, fixed, border }) => {
       </div>
       {/*  for small devices modal*/}
       <div
-        className={`absolute z-[100] transition-all ease-in-out overflow-hidden duration-900 flex sm:hidden flex-col justify-start items-center w-[80%] right-0 top-[-4.2rem] h-[108vh] border-l-[1px] ${
-          openModal && "left-[-200%]"
+        className={`absolute transition-all z-10 min-h-full ease-in-out overflow-hidden border-b-[1px]  border-b-black/50  duration-900 flex sm:hidden flex-col justify-start items-center w-full right-0 top-[-4.2rem] border-l-[1px] ${
+          openModal && "left-[-200%] "
         } border-l-gray-100`}>
-        <span className="absolute top-[5.1rem] right-4 z-10 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">
+        <span className="absolute z-10 top-[10rem] right-4 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">
           <RxCross1 size={25} onClick={handleToggle} />
         </span>
-        <div className="flex flex-col  justify-start pt-3 px-20 gap-7 items-start  bg-gray-100/70  relative top-[4.2rem] h-full w-full  backdrop-blur-sm  ">
-          <div className="flex flex-col gap-7">
-            {Links.map((item, index) => (
-              <Link
-                key={index}
-                to={item.link}
-                className={`cursor-pointer text-[#9E77ED] text-[20px] hover:text-[#53389E] ${
-                  location.pathname === `${item.link}` && "text-[#53389E]"
-                }`}>
-                {item.title}
-              </Link>
-            ))}
+          <div className="flex flex-col absolute justify-start pt-3 px-20 gap-7 items-center top-[9rem] h-full w-full bg-white/70 backdrop-blur-sm  ">
+            <div className="flex flex-col gap-7">
+              {Links.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.link}
+                  className={`cursor-pointer text-[#9E77ED] text-[20px] hover:text-[#53389E] ${
+                    location.pathname === `${item.link}` && "text-[#53389E]"
+                  }`}>
+                  {item.title}
+                </Link>
+              ))}
+            </div>
+            {currentLoggedUser ? (
+              <div className="flex flex-col gap-4 px-0 z-10 ">
+                <Button
+                  icon={<BsPencilSquare size={20} />}
+                  title={"Write"}
+                  border={false}
+                  color={true}
+                  background={false}
+                  linkName={"/writeBlog"}
+                />
+                <Button
+                  icon={<CiUser size={25} />}
+                  title={currentLoggedUser?.username}
+                  border={false}
+                  color={true}
+                  background={false}
+                  linkName={"/profile"}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 px-0 z-10 ">
+                <Button
+                  title={"Log in"}
+                  border={true}
+                  color={true}
+                  background={false}
+                  linkName={"/login"}
+                />
+                <Button
+                  title={"Sign up"}
+                  border={false}
+                  color={false}
+                  background={true}
+                  linkName={"/signup"}
+                />
+              </div>
+            )}
           </div>
-          {currentLoggedUser ? (
-            <div className="flex flex-col gap-4 px-0 z-10 ">
-              <Button
-                icon={<BsPencilSquare size={20} />}
-                title={"Write"}
-                border={false}
-                color={true}
-                background={false}
-                linkName={"/writeBlog"}
-              />
-              <Button
-                icon={<CiUser size={20} />}
-                title={currentLoggedUser?.username}
-                border={false}
-                color={true}
-                background={false}
-                linkName={"/profile"}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4 px-0 z-10 ">
-              <Button
-                title={"Log in"}
-                border={true}
-                color={true}
-                background={false}
-                linkName={"/login"}
-              />
-              <Button
-                title={"Sign up"}
-                border={false}
-                color={false}
-                background={true}
-                linkName={"/signup"}
-              />
-            </div>
-          )}
-        </div>
       </div>
     </>
   );

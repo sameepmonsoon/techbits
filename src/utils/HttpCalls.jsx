@@ -6,7 +6,9 @@ function get(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.get(BASEURL + url, data);
+  return axios.get(BASEURL + url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }
 function post(url, data) {
   if (!url) {

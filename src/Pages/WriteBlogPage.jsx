@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import the default Quill styles
-
+import "react-quill/dist/quill.snow.css";
 import { IoAdd } from "react-icons/io5";
 import { blogCategories, randomColors } from "../Details";
 import { RxCross2 } from "react-icons/rx";
@@ -14,7 +13,6 @@ import { HttpCalls } from "../utils/HttpCalls";
 const WriteBlogPage = () => {
   const [editorContent, setEditorContent] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  console.log(currentUser._id);
   const [textareaValue, setTextareaValue] = useState("");
   const [showAddCategories, setShowAddCategories] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -83,46 +81,52 @@ const WriteBlogPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("userId", currentUser._id);
-    formData.append("categoryList", JSON.stringify(categoryListItem));
-    formData.append("titleContent", textareaValue);
-    formData.append("selectedPhoto", selectedPhoto);
-    formData.append("editorContent", editorContent);
-    // Access the form data values
-    const editorContentValue = formData.get("editorContent");
-    const selectedPhotoValue = formData.get("selectedPhoto");
-    const titleContentValue = formData.get("titleContent");
-    const categoryListValue = formData.get("categoryList");
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+      const fileData = fileReader.result; // This contains the file data as a data URL (base64 format)
+      const requestData = {
+        username: currentUser.username,
+        userId: currentUser._id,
+        categoryList: categoryListItem,
+        titleContent: textareaValue,
+        selectedPhoto: fileData,
+        editorContent: editorContent,
+      };
 
-    console.log("Editor Content:", editorContentValue);
-    console.log("Selected Photo:", selectedPhotoValue);
-    console.log("Title Content:", titleContentValue);
-    console.log("Category List:", categoryListValue);
-    const requestData = {
-      userId: currentUser._id,
-      categoryList: categoryListItem,
-      titleContent: textareaValue,
-      // selectedPhoto: selectedPhoto,
-      editorContent: editorContent,
+      // Make the API call with the updated request data
+      HttpCalls.post("/blogPost", requestData)
+        .then((response) => {
+          console.log(response.data);
+          // setSelectedPhoto(null);
+          // setTextareaValue("");
+          // setEditorContent("");
+          // setCategoryListItem([{ id: "", item: "" }]);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     };
 
-    HttpCalls.post("/blogPost", requestData)
-      .then((response) => {
-        // Handle successful response
-        console.log(response.data);
-        // Perform any additional actions after successful post
-      })
-      .catch((error) => {
-        // Handle error
-        console.log(error);
-        // Perform any additional error handling
-      });
-    // Reset form fields
-    // setSelectedPhoto(null);
-    // setTextareaValue("");
+    fileReader.readAsDataURL(selectedPhoto);
   };
 
+  const [result, setResult] = useState([]);
+
+  useEffect(() => {
+    HttpCalls.get("/blogPost/getAll")
+      .then((response) => {
+        console.log(response.data);
+        setResult(response.data.getAllBlog);
+        // setSelectedPhoto(null);
+        // setTextareaValue("");
+        // setEditorContent("");
+        // setCategoryListItem([{ id: "", item: "" }]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  console.log(result);
   return (
     <BlogLayout renderComponents={""}>
       <div className="min-h-screen w-full flex flex-col justify-start items-center scroll-smooth ">
@@ -277,8 +281,8 @@ const WriteBlogPage = () => {
                   toolbar: [
                     [{ header: [1, 2, 3, 4, 5, 6, false] }],
                     ["bold", "italic", "underline", "strike"],
-                    ["link", "image"],
                     [{ list: "ordered" }, { list: "bullet" }],
+                    ["link", "image"],
                     ["clean"],
                   ],
                   clipboard: {
@@ -289,12 +293,21 @@ const WriteBlogPage = () => {
               />
             </div>
           </form>
-        </div>{" "}
-        {editorContent.includes("<img") && (
-          <div>
-            <div dangerouslySetInnerHTML={{ __html: editorContent }}></div>
-          </div>
-        )}
+        </div>
+        <div>
+          {result.map((item) => (
+            <div>
+              <img src={item.selectedPhoto} alt="a" />
+              <span>{item.titleContent}</span>
+              <span>{item.categoryList.map((item) => item.item)}</span>
+              <span>{item.titleContent}</span>
+              <ReactQuill
+                value={item.editorContent}
+           
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </BlogLayout>
   );

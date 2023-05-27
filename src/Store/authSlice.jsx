@@ -14,6 +14,7 @@ export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
     console.log("response ", result.data);
+    login({})
     return result.data;
   } catch (error) {
     return { error: error.response.data.error };

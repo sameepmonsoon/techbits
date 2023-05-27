@@ -1,6 +1,8 @@
 import React from "react";
-import { MdArrowOutward } from "react-icons/all";
+import { HiOutlineDotsHorizontal, MdArrowOutward } from "react-icons/all";
+import { Link } from "react-router-dom";
 const Card = ({
+  cardId,
   tag,
   cardTitle,
   cardDescription,
@@ -18,8 +20,8 @@ const Card = ({
           ? "w-[40rem] h-[30rem] flex-col"
           : row
           ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
-          : "w-[18rem] sm:w-[20rem] h-[28.2rem] flex-col"
-      } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-1 flex  justify-start items-start`}>
+          : "w-[20rem] sm:w-[24rem] h-[28.2rem] flex-col"
+      } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-2 flex justify-start items-start`}>
       <img
         src={cardImage}
         alt=""
@@ -31,11 +33,15 @@ const Card = ({
             : "h-[60%]  w-full"
         }  object-cover`}
       />
-      <div className="flex flex-col justify-start items-start">
-        <span className="text-deep-purple capitalize text-[16px]">{tag}</span>
-        <div className="text-black capitalize text-[20px] w-full flex justify-between items-center">
+      <div className="flex flex-col justify-start items-start overflow-hidden w-full">
+        <div className="text-deep-purple capitalize text-[16px] flex gap-1 justify-start items-center ">
+          {tag} <span>{tag != "" && '. . .'}</span>
+        </div>
+        <div className="text-black capitalize text-[18px] w-full flex justify-between items-center">
           <span>{cardTitle}</span>
-          <MdArrowOutward size={25} />
+          <Link to={`/read/${cardId}`}>
+            <MdArrowOutward size={23} className="text-black/70 hover:text-black"/>
+          </Link>
         </div>
         <span className="text-black/80 text-[13px] max-h-[5rem] overflow-hidden">
           {cardDescription}
@@ -50,7 +56,14 @@ const Card = ({
             <span className="text-[16px] text-black font-[500] capitalize ">
               {cardUserName}
             </span>
-            <span className="text-[14px]">{cardPostDate}</span>
+            <span className="text-[14px]">
+              {" "}
+              {new Date(cardPostDate).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
           </div>
         </div>
       </div>
