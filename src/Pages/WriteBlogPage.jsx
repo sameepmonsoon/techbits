@@ -10,7 +10,11 @@ import { BiText } from "react-icons/bi";
 import { IoIosAdd } from "react-icons/io";
 import Button from "../Components/Button/Button";
 import { HttpCalls } from "../utils/HttpCalls";
+import { useDispatch } from "react-redux";
+import { fetchAllBlogs } from "../Store/blogPostSlice";
+import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 const WriteBlogPage = () => {
+  const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const [textareaValue, setTextareaValue] = useState("");
@@ -24,6 +28,8 @@ const WriteBlogPage = () => {
     setShowDropdown(false);
   };
 
+  // use dispatch
+  const dispatch = useDispatch();
   const handleAddCategoriesClick = () => {
     setShowDropdown(!showDropdown);
   };
@@ -78,33 +84,66 @@ const WriteBlogPage = () => {
     }
   }, [isFocused]);
 
+  //this part is  refactored using chatgpt
   const handleSubmit = (event) => {
     event.preventDefault();
+    setDisableSubmission(true);
 
     const fileReader = new FileReader();
     fileReader.onload = function () {
-      const fileData = fileReader.result; // This contains the file data as a data URL (base64 format)
-      const requestData = {
-        username: currentUser.username,
-        userId: currentUser._id,
-        categoryList: categoryListItem,
-        titleContent: textareaValue,
-        selectedPhoto: fileData,
-        editorContent: editorContent,
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 800; // Maximum width of the compressed image
+        const MAX_HEIGHT = 800; // Maximum height of the compressed image
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate new dimensions if needed
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+
+        // Set the canvas dimensions and draw the compressed image
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Get the compressed image data as a data URL (base64 format)
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7); // Adjust the compression quality as needed (0.8 represents 80% quality)
+
+        const requestData = {
+          username: currentUser.username,
+          userId: currentUser._id,
+          categoryList: categoryListItem,
+          titleContent: textareaValue,
+          selectedPhoto: compressedDataUrl,
+          editorContent: editorContent,
+        };
+
+        // Make the API call with the updated request data
+        HttpCalls.post("/blogPost", requestData)
+          .then((response) => {
+            console.log(response.data);
+            dispatch(fetchAllBlogs());
+            setDisableSubmission(false);
+            // setSelectedPhoto(null);
+            // setTextareaValue('');
+            // setEditorContent('');
+            // setCategoryListItem([{ id: '', item: '' }]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       };
 
-      // Make the API call with the updated request data
-      HttpCalls.post("/blogPost", requestData)
-        .then((response) => {
-          console.log(response.data);
-          // setSelectedPhoto(null);
-          // setTextareaValue("");
-          // setEditorContent("");
-          // setCategoryListItem([{ id: "", item: "" }]);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      img.src = fileReader.result; // Set the image source to trigger the onload event
     };
 
     fileReader.readAsDataURL(selectedPhoto);
@@ -130,6 +169,7 @@ const WriteBlogPage = () => {
   return (
     <BlogLayout renderComponents={""}>
       <div className="min-h-screen w-full flex flex-col justify-start items-center scroll-smooth ">
+        <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
         <div className="gap-2 w-full sm:w-3/5 flex justify-center items-center flex-col h-auto max-h-full ">
           <div className="relative w-full min-h-[2.5rem] max-h-none flex-wrap flex justify-start items-center border-b-[1px] gap-2 border-b-purple/30 p-2 ">
             <div className="absolute right-0 top-[-2rem]">
@@ -142,7 +182,7 @@ const WriteBlogPage = () => {
                 linkName={"/writeBlog"}
                 onClick={handleSubmit}
               />
-            </div>{" "}
+            </div>
             {/* category component */}
             <div className="relative sm:absolute left-0 sm:left-[-4.8rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
               <IoAdd
@@ -279,12 +319,11 @@ const WriteBlogPage = () => {
                 theme="snow"
                 modules={{
                   toolbar: [
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    [{ header: [1, 2,] }],
                     ["bold", "italic", "underline", "strike"],
                     [{ list: "ordered" }, { list: "bullet" }],
                     ["link", "image"],
-                    ["clean"],
-                  ],
+                  ],  
                   clipboard: {
                     matchVisual: false,
                   },
@@ -293,20 +332,6 @@ const WriteBlogPage = () => {
               />
             </div>
           </form>
-        </div>
-        <div>
-          {result.map((item) => (
-            <div>
-              <img src={item.selectedPhoto} alt="a" />
-              <span>{item.titleContent}</span>
-              <span>{item.categoryList.map((item) => item.item)}</span>
-              <span>{item.titleContent}</span>
-              <ReactQuill
-                value={item.editorContent}
-           
-              />
-            </div>
-          ))}
         </div>
       </div>
     </BlogLayout>

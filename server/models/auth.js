@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     following: { type: Array, defaultValue: [] },
     description: { type: String },
     profilePicture: { type: String },
+    bookmarks: { type: Array, defaultValue: [] },
   },
   { timestamps: true }
 );

@@ -13,7 +13,6 @@ exports.createBlogPost = async (req, res, next) => {
     });
 
     const savedBlog = await newBlog.save();
-    console.log(savedBlog);
     res.status(200).json(savedBlog);
   } catch (err) {
     console.log(err);
@@ -53,7 +52,7 @@ exports.likeDislikeBlog = async (req, res) => {
     const userId = req.body.userId;
     console.log(blogId, userId);
 
-    const likeBlog = await Blog.findOne({ userId: blogId });
+    const likeBlog = await Blog.findById(blogId);
 
     if (!likeBlog) {
       return res.status(404).json({ error: "Blog not found" });
@@ -64,10 +63,8 @@ exports.likeDislikeBlog = async (req, res) => {
     );
 
     if (existingLikeIndex !== -1) {
-      // remove the like
       likeBlog.likes.splice(existingLikeIndex, 1);
     } else {
-      //  add the like
       likeBlog.likes.push(userId);
     }
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -12,13 +12,17 @@ import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
   useEffect(() => {
     dispatch(fetchAllBlogs());
+    setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
   }, []);
-
-  const { currentBlogPosts, isLoading } = useSelector((state) => state.blog);
-
-  console.log(currentBlogPosts);
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 800);
+  // const { isLoading } = useSelector((state) => state.blog);
+  console.log("current post", currentBlogPosts);
 
   return (
     <HomeLayout

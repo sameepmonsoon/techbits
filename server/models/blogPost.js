@@ -17,7 +17,7 @@ const BlogSchema = new mongoose.Schema(
       required: true,
       default: [],
     },
-    selectedPhoto: { type: String, required: true },
+    selectedPhoto: { type: String, default: "" },
     titleContent: {
       type: String,
       required: true,
@@ -34,6 +34,7 @@ const BlogSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    comments: { type: Array, default: [] },
   },
   { timestamps: true }
 );

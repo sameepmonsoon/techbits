@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoute.js");
 const blogPostRoutes = require("./routes/blogPostRoutes.js");
+const blogReactionRoutes = require("./routes/blogReactionRoutes");
 const bodyParser = require("body-parser");
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(express.json());
 // app.use("/api/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/blogPost", blogPostRoutes);
+app.use("/blogReact", blogReactionRoutes);
 // app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {

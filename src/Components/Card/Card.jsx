@@ -35,12 +35,15 @@ const Card = ({
       />
       <div className="flex flex-col justify-start items-start overflow-hidden w-full">
         <div className="text-deep-purple capitalize text-[16px] flex gap-1 justify-start items-center ">
-          {tag} <span>{tag != "" && '. . .'}</span>
+          {tag} <span>{tag != "" && ""}</span>
         </div>
         <div className="text-black capitalize text-[18px] w-full flex justify-between items-center">
           <span>{cardTitle}</span>
           <Link to={`/read/${cardId}`}>
-            <MdArrowOutward size={23} className="text-black/70 hover:text-black"/>
+            <MdArrowOutward
+              size={23}
+              className="text-black/70 hover:text-black"
+            />
           </Link>
         </div>
         <span className="text-black/80 text-[13px] max-h-[5rem] overflow-hidden">

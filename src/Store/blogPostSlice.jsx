@@ -31,6 +31,10 @@ const blogPostSlice = createSlice({
           state.error = action.payload.error;
         } else {
           localStorage.setItem("localToken", action.payload.token);
+          localStorage.setItem(
+            "currentBlogPosts",
+            JSON.stringify(action.payload?.getAllBlog)
+          );
           state.token = action.payload.token;
           state.currentBlogPosts = action.payload?.getAllBlog;
           state.isAuthenticated = true;

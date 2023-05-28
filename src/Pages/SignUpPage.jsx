@@ -103,13 +103,13 @@ const SignUpPage = () => {
       ) : (
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
           {/* to disable the navigation while loading-- lock the page */}
-          <LoadingOverlayComponent openCloseOverlay={isLoading} />{" "}
+          <LoadingOverlayComponent openCloseOverlay={isLoading} />
           <Modal
             autoHeight={false}
             error={error ? true : false}
             info={success ? true : false}
             toggleModal={setToggleModal}
-            openCloseModal={error  && toggleModal || (success && toggleModal)}
+            openCloseModal={(error && toggleModal) || (success && toggleModal)}
             modalMessage={success ? success : error}
             bottom={true}
           />

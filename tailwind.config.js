@@ -10,9 +10,9 @@ module.exports = {
         },
       },
       colors: {
-        purple: "#9E77ED",
-        "deep-purple": "#53389E",
-        "blue-purple": "#42307D;",
+        purple: "#292f34",
+        "deep-purple": "#000000",
+        "blue-purple": " #0a0a0a",
       },
       screens: {
         sm: "576px",

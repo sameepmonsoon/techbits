@@ -79,3 +79,30 @@ exports.signin = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.bookmark = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const blogId = req.body.blogId;
+    const userFound = await User.findOne({ _id: userId });
+    if (!userFound) {
+      res.status(200).json({ error: "User not found" });
+    }
+    const bookMarked = userFound.bookmarks?.findIndex(
+      (blog) => blog === userId
+    );
+    if (bookMarked !== -1) {
+      userFound.bookmarks.splice(bookMarked, 1);
+    } else {
+      userFound.bookmarks.push(userId);
+    }
+
+    userFound.save();
+    res.status(200).json({
+      message: "Success",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "bookmark failed" });
+  }
+};
