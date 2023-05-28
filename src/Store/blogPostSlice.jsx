@@ -12,7 +12,6 @@ const initialState = {
 export const fetchAllBlogs = createAsyncThunk("fetchBlogs", async () => {
   try {
     const result = await HttpCalls.get("/blogPost/getAll");
-    console.log("response ", result);
     return result.data;
   } catch (error) {
     console.log(error);

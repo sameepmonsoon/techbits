@@ -85,10 +85,57 @@ exports.bookmark = async (req, res) => {
     const userId = req.body.userId;
     const blogId = req.body.blogId;
     const userFound = await User.findOne({ _id: userId });
+
+    if (!userFound) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!userFound.bookmarks) {
+      userFound.bookmarks = [];
+    }
+
+    const bookmarkIndex = userFound.bookmarks.indexOf(blogId);
+
+    if (bookmarkIndex !== -1) {
+      userFound.bookmarks.splice(bookmarkIndex, 1);
+      await userFound.save();
+      const updatedUser = await User.findOne({ _id: userId });
+
+      res
+        .status(200)
+        .json({ updatedUser, message: "Bookmark Removed", bookmarked: false });
+    } else {
+      userFound.bookmarks.push(blogId);
+      await userFound.save();
+      const updatedUser = await User.findOne({ _id: userId });
+
+      res
+        .status(200)
+        .json({ updatedUser, message: "Bookmarked", bookmarked: true });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Bookmark failed" });
+  }
+};
+exports.getAllBookmark = async (req, res) => {
+  try {
+    const getAll = await User.find({}, "bookmarks");
+    res.status(200).json({ getAll, message: "success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Bookmark failed" });
+  }
+};
+exports.follow = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const follower = req.body.followerId;
+    const userFound = await User.findOne({ _id: userId });
     if (!userFound) {
       res.status(200).json({ error: "User not found" });
     }
-    const bookMarked = userFound.bookmarks?.findIndex(
+    const bookMarked = userFound.following?.findIndex(
       (blog) => blog === userId
     );
     if (bookMarked !== -1) {

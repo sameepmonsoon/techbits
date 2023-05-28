@@ -22,7 +22,6 @@ const HomePage = () => {
     setIsLoading(false);
   }, 800);
   // const { isLoading } = useSelector((state) => state.blog);
-  console.log("current post", currentBlogPosts);
 
   return (
     <HomeLayout
@@ -40,6 +39,7 @@ const HomePage = () => {
               ) : (
                 currentBlogPosts.map((item, index) => (
                   <Card
+                    key={index}
                     cardId={item._id}
                     tag={
                       <div className="flex gap-2 overflow-hidden">

@@ -22,7 +22,6 @@ const Navbar = ({ Links, fixed, border }) => {
     (state) => state.auth
   );
   const currentLoggedUser = JSON.parse(localStorage.getItem("user"));
-  console.log(currentLoggedUser?.username);
   return (
     <>
       <div
@@ -32,14 +31,14 @@ const Navbar = ({ Links, fixed, border }) => {
         <div>
           <Logo />
         </div>
-        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/80 text-[18px] font-[350]">
+        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/50 text-[18px] font-[350]">
           <div className="hidden sm:flex justify-start gap-5 items-center">
             {Links.map((item, index) => (
               <Link
                 key={index}
                 to={item.link}
                 className={`cursor-pointer hover:text-blue-purple ${
-                  location.pathname === `${item.link}` && "text-[#53389E]"
+                  location.pathname === `${item.link}` && "text-purple"
                 }`}>
                 {item.title}
               </Link>
@@ -95,57 +94,57 @@ const Navbar = ({ Links, fixed, border }) => {
         <span className="absolute z-10 top-[10rem] right-4 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">
           <RxCross1 size={25} onClick={handleToggle} />
         </span>
-          <div className="flex flex-col absolute justify-start pt-3 px-20 gap-7 items-center top-[9rem] h-full w-full bg-white/70 backdrop-blur-sm  ">
-            <div className="flex flex-col gap-7">
-              {Links.map((item, index) => (
-                <Link
-                  key={index}
-                  to={item.link}
-                  className={`cursor-pointer text-[#9E77ED] text-[20px] hover:text-[#53389E] ${
-                    location.pathname === `${item.link}` && "text-[#53389E]"
-                  }`}>
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-            {currentLoggedUser ? (
-              <div className="flex flex-col gap-4 px-0 z-10 ">
-                <Button
-                  icon={<BsPencilSquare size={20} />}
-                  title={"Write"}
-                  border={false}
-                  color={true}
-                  background={false}
-                  linkName={"/writeBlog"}
-                />
-                <Button
-                  icon={<CiUser size={25} />}
-                  title={currentLoggedUser?.username}
-                  border={false}
-                  color={true}
-                  background={false}
-                  linkName={"/profile"}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 px-0 z-10 ">
-                <Button
-                  title={"Log in"}
-                  border={true}
-                  color={true}
-                  background={false}
-                  linkName={"/login"}
-                />
-                <Button
-                  title={"Sign up"}
-                  border={false}
-                  color={false}
-                  background={true}
-                  linkName={"/signup"}
-                />
-              </div>
-            )}
+        <div className="flex flex-col absolute justify-start pt-3 px-20 gap-7 items-center top-[9rem] h-full w-full bg-white/70 backdrop-blur-sm  ">
+          <div className="flex flex-col gap-7">
+            {Links.map((item, index) => (
+              <Link
+                key={index}
+                to={item.link}
+                className={`cursor-pointer text-[#9E77ED] text-[20px] hover:text-[#53389E] ${
+                  location.pathname === `${item.link}` && "text-[#53389E]"
+                }`}>
+                {item.title}
+              </Link>
+            ))}
           </div>
+          {currentLoggedUser ? (
+            <div className="flex flex-col gap-4 px-0 z-10 ">
+              <Button
+                icon={<BsPencilSquare size={20} />}
+                title={"Write"}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/writeBlog"}
+              />
+              <Button
+                icon={<CiUser size={25} />}
+                title={currentLoggedUser?.username}
+                border={false}
+                color={true}
+                background={false}
+                linkName={"/profile"}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 px-0 z-10 ">
+              <Button
+                title={"Log in"}
+                border={true}
+                color={true}
+                background={false}
+                linkName={"/login"}
+              />
+              <Button
+                title={"Sign up"}
+                border={false}
+                color={false}
+                background={true}
+                linkName={"/signup"}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

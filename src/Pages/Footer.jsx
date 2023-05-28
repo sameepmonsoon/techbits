@@ -4,7 +4,7 @@ import SocialMedia from "../Components/SocialMedia/SocialMedia";
 import { footerDetails } from "../Details";
 const Footer = ({ footerText }) => {
   return (
-    <div className="font-sans min-h-[30rem] w-full bg-deep-purple flex flex-col justify-start items-center sm:items-start">
+    <div className="relative bottom-0 font-sans min-h-[30rem] w-full bg-deep-purple flex flex-col justify-start items-center sm:items-start">
       <div className="flex-1 flex sm:flex-row flex-col p-20 flex-wrap lg:flex-nowrap items-center sm:items-start">
         <div className="flex flex-col gap-2 sm:items-start items-center">
           <span className="flex justify-start items-center gap-2">

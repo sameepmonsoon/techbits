@@ -2,16 +2,23 @@ import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { CiBookmarkPlus } from "react-icons/ci";
+import {
+  CiBookmarkPlus,
+  BsFillBookmarkCheckFill,
+  ImSpinner5,
+} from "react-icons/all";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { AiOutlineComment } from "react-icons/ai";
 import image from "../assets/craig-mckay-jmURdhtm7Ng-unsplash.jpg";
 import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
+import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 const ReadFullBlogPage = () => {
   //loading state
   const [isLoading, setIsLoading] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [likeComment, setLikeComment] = useState([]);
   const { cardId } = useParams();
   const dispatch = useDispatch();
   const [currentBlog, setCurrentBlog] = useState([]);
@@ -26,22 +33,80 @@ const ReadFullBlogPage = () => {
   console.log("current user", userId);
 
   const [toFollowing, setToFollowing] = useState("Follow");
+  const [showPage, setShowPage] = useState(true);
   // api calls for like bookmark and commetn
   const handleClickFollow = () => {
     setIsLoading(true);
-    console.log(isLoading);
-    HttpCalls.post(`/blogPost/${cardId}/like`, { userId: userId })
+    HttpCalls.post(`/blogReact/like`, { userId, blogId: cardId })
       .then((res) => {
-        dispatch(fetchAllBlogs());
+        console.log(res.data.updatedlikeComment);
+        setLikeComment(res.data.updatedlikeComment); // Update the likeComment state
         setIsLoading(false);
-        setToFollowing("Following");
       })
       .catch((err) => {
         console.log(err);
       });
   };
+  const handleClickBookmark = () => {
+    setIsLoading(true);
+    HttpCalls.put(`/auth/bookmark`, { userId, blogId: cardId })
+      .then((res) => {
+        console.log(res.data.updatedUser);
+        const bookmarkFlag = res.data.updatedUser.bookmarked;
+        setIsBookmarked(bookmarkFlag);
+
+        HttpCalls.get(`/auth/getBookmark`, { blogId: cardId })
+          .then((res) => {
+            const isBookMarked = res.data.getAll[0].bookmarks.includes(cardId);
+            setIsBookmarked(isBookMarked);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    HttpCalls.post(`/blogReact/get`, { blogId: cardId })
+      .then((res) => {
+        console.log("inside api ", res.data);
+        setLikeComment(res.data.findAll);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    HttpCalls.get(`/auth/getBookmark`, { blogId: cardId })
+      .then((res) => {
+        console.log(
+          "inside api bookmark ",
+          res.data.getAll[0].bookmarks.includes(cardId)
+        );
+        const isBookMarked = res.data.getAll[0].bookmarks.includes(cardId);
+        setIsBookmarked(isBookMarked);
+        setTimeout(() => {
+          setShowPage(false);
+        }, 200);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []); // Add cardId as a dependency
+
+  console.log("isbookmarked", likeComment);
   return (
     <HomeLayout>
+      <LoadingOverlayComponent openCloseOverlay={showPage}>
+        <div className="fixed inset-0 bg-white text-purple flex flex-col justify-center items-center w-full text-6xl">
+          <div className="flex  gap-5 items-center justify-center ">
+            <span className="animate-pulse"> Loading . . .</span>
+            {/* <ImSpinner5 size={45} className="animate-spin " />   */}
+          </div>
+        </div>
+      </LoadingOverlayComponent>
       {currentPost.map((item, index) => (
         <div className="w-full flex flex-col justify-start items-center h-full gap-5 pt-10">
           {/* body container items starts here */}
@@ -83,7 +148,7 @@ const ReadFullBlogPage = () => {
                   size={25}
                   className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
                 />
-                <span>{item.likes?.length}</span>
+                <span>{likeComment?.likes?.length}</span>
               </div>
               <span className="flex justify-start gap-1">
                 <AiOutlineComment
@@ -92,12 +157,22 @@ const ReadFullBlogPage = () => {
                 />
               </span>
               <span className="flex justify-start gap-1">
-                <CiBookmarkPlus
-                  size={25}
-                  className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
-                />
+                {isBookmarked ? (
+                  <BsFillBookmarkCheckFill
+                    onClick={handleClickBookmark}
+                    size={21}
+                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                  />
+                ) : (
+                  <CiBookmarkPlus
+                    onClick={handleClickBookmark}
+                    size={25}
+                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                  />
+                )}
               </span>
             </div>
+            {/* photos and contents */}
             <div className=" justify-center flex  w-[80%] sm:w-[50%]">
               <img
                 src={item.selectedPhoto}
@@ -125,19 +200,36 @@ const ReadFullBlogPage = () => {
                   </div>
                 ))}
             </div>
-            <div className=" w-[80%] sm:w-[50%] h-14 flex justify-center items-center gap-10 border-b-[1px]">
-              <IoMdHeartEmpty
-                size={25}
-                className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
-              />
-              <AiOutlineComment
-                size={25}
-                className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
-              />
-              <CiBookmarkPlus
-                size={25}
-                className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
-              />
+            <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
+              <div className="flex justify-start gap-[1px]">
+                <IoMdHeartEmpty
+                  onClick={handleClickFollow}
+                  size={25}
+                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
+                />
+                <span>{likeComment?.likes?.length}</span>
+              </div>
+              <span className="flex justify-start gap-1">
+                <AiOutlineComment
+                  size={25}
+                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
+                />
+              </span>
+              <span className="flex justify-start gap-1">
+                {isBookmarked ? (
+                  <BsFillBookmarkCheckFill
+                    onClick={handleClickBookmark}
+                    size={21}
+                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                  />
+                ) : (
+                  <CiBookmarkPlus
+                    onClick={handleClickBookmark}
+                    size={25}
+                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                  />
+                )}
+              </span>
             </div>
           </div>
         </div>

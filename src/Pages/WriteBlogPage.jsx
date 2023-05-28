@@ -116,7 +116,7 @@ const WriteBlogPage = () => {
         ctx.drawImage(img, 0, 0, width, height);
 
         // Get the compressed image data as a data URL (base64 format)
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7); // Adjust the compression quality as needed (0.8 represents 80% quality)
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
 
         const requestData = {
           username: currentUser.username,
