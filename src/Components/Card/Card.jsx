@@ -3,6 +3,7 @@ import { HiOutlineDotsHorizontal, MdArrowOutward } from "react-icons/all";
 import { Link } from "react-router-dom";
 const Card = ({
   cardId,
+  writerId,
   tag,
   cardTitle,
   cardDescription,

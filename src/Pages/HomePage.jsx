@@ -41,6 +41,7 @@ const HomePage = () => {
                   <Card
                     key={index}
                     cardId={item._id}
+                    writerId={item.userId}
                     tag={
                       <div className="flex gap-2 overflow-hidden">
                         {item.categoryList

@@ -29,15 +29,17 @@ const ReadFullBlogPage = () => {
   useEffect(() => {
     setCurrentBlog(JSON.parse(localStorage.getItem("currentBlogPosts")));
   }, [isLoading]);
-  const userId = currentUser._id;
-  console.log("current user", userId);
+  const currentUserId = currentUser._id;
 
-  const [toFollowing, setToFollowing] = useState("Follow");
+  const creatorId = currentPost[0]?.userId;
+  console.log("current user", creatorId);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [showPage, setShowPage] = useState(true);
   // api calls for like bookmark and commetn
-  const handleClickFollow = () => {
+  console.log(creatorId, currentUserId);
+  const handleClickLike = () => {
     setIsLoading(true);
-    HttpCalls.post(`/blogReact/like`, { userId, blogId: cardId })
+    HttpCalls.post(`/blogReact/like`, { userId: currentUserId, blogId: cardId })
       .then((res) => {
         console.log(res.data.updatedlikeComment);
         setLikeComment(res.data.updatedlikeComment); // Update the likeComment state
@@ -49,7 +51,7 @@ const ReadFullBlogPage = () => {
   };
   const handleClickBookmark = () => {
     setIsLoading(true);
-    HttpCalls.put(`/auth/bookmark`, { userId, blogId: cardId })
+    HttpCalls.put(`/auth/bookmark`, { userId: currentUserId, blogId: cardId })
       .then((res) => {
         console.log(res.data.updatedUser);
         const bookmarkFlag = res.data.updatedUser.bookmarked;
@@ -83,7 +85,7 @@ const ReadFullBlogPage = () => {
       .then((res) => {
         console.log(
           "inside api bookmark ",
-          res.data.getAll[0].bookmarks.includes(cardId)
+          res.data.getAll.bookmarks.includes(cardId)
         );
         const isBookMarked = res.data.getAll[0].bookmarks.includes(cardId);
         setIsBookmarked(isBookMarked);
@@ -94,9 +96,39 @@ const ReadFullBlogPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []); // Add cardId as a dependency
+  }, []);
 
-  console.log("isbookmarked", likeComment);
+  useEffect(() => {
+    HttpCalls.put("/auth/follow", {
+      userId: creatorId,
+      followerId: currentUserId,
+    })
+      .then((res) => {
+        console.log("inside follow api", res.data.updatedFollowList);
+        setIsFollowing(
+          res.data.updatedFollowList.following?.includes(creatorId)
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [creatorId]);
+  console.log("Creator id ", creatorId);
+  const handleClickFollow = () => {
+    HttpCalls.put("/auth/follow", {
+      userId: creatorId,
+      followerId: currentUserId,
+    })
+      .then((res) => {
+        console.log("inside follow api", res.data.updatedFollowList);
+        setIsFollowing(
+          res.data.updatedFollowList.following?.includes(creatorId)
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <HomeLayout>
       <LoadingOverlayComponent openCloseOverlay={showPage}>
@@ -127,8 +159,10 @@ const ReadFullBlogPage = () => {
                   <span className="text-black hover:text-blue-purple text-[18px]">
                     {item.username}
                   </span>
-                  <span className="text-[12px]  text-white bg-green-700 border-[1px] border-green-400 hover:border-green-500 rounded-sm px-1 w-[3.8rem] max-w-none h-[1.3rem] items-center flex justify-center">
-                    {toFollowing}
+                  <span
+                    onClick={handleClickFollow}
+                    className="text-[12px]  text-white bg-green-700 border-[1px] border-green-400 hover:border-green-500 rounded-sm px-1 w-[3.8rem] max-w-none h-[1.3rem] items-center flex justify-center">
+                    {isFollowing ? "Following" : "follow"}
                   </span>
                 </div>
                 <span className="text-[14px] font-[500] text-black/60">
@@ -144,7 +178,7 @@ const ReadFullBlogPage = () => {
             <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
               <div className="flex justify-start gap-[1px]">
                 <IoMdHeartEmpty
-                  onClick={handleClickFollow}
+                  onClick={handleClickLike}
                   size={25}
                   className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
                 />
@@ -203,7 +237,7 @@ const ReadFullBlogPage = () => {
             <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
               <div className="flex justify-start gap-[1px]">
                 <IoMdHeartEmpty
-                  onClick={handleClickFollow}
+                  onClick={handleClickLike}
                   size={25}
                   className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
                 />

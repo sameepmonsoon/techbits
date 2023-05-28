@@ -127,29 +127,42 @@ exports.getAllBookmark = async (req, res) => {
     res.status(500).json({ error: "Bookmark failed" });
   }
 };
+
+//optimized by gpt
 exports.follow = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const follower = req.body.followerId;
-    const userFound = await User.findOne({ _id: userId });
+    const { userId, followerId } = req.body;
+    const [userFound, followedBy] = await Promise.all([
+      User.findById(userId),
+      User.findById(followerId),
+    ]);
+
     if (!userFound) {
-      res.status(200).json({ error: "User not found" });
-    }
-    const bookMarked = userFound.following?.findIndex(
-      (blog) => blog === userId
-    );
-    if (bookMarked !== -1) {
-      userFound.bookmarks.splice(bookMarked, 1);
-    } else {
-      userFound.bookmarks.push(userId);
+      return res.status(404).json({ error: "User not found" });
     }
 
-    userFound.save();
-    res.status(200).json({
-      message: "Success",
-    });
+    const isFollowing = followedBy.following?.includes(userId);
+    const isFollower = userFound.followers?.includes(followerId);
+
+    if (isFollowing) {
+      followedBy.following = followedBy.following.filter((id) => id !== userId);
+    } else {
+      followedBy.following.push(userId);
+    }
+
+    if (isFollower) {
+      userFound.followers = userFound.followers.filter(
+        (id) => id !== followerId
+      );
+    } else {
+      userFound.followers.push(followerId);
+    }
+    const updatedFollowList = await followedBy.save();
+    await userFound.save();
+
+    res.status(200).json({ updatedFollowList, message: "Success" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "bookmark failed" });
+    res.status(500).json({ error: "Failed to update following status" });
   }
 };
