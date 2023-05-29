@@ -6,22 +6,20 @@ import { CgOptions } from "react-icons/cg";
 import Modal from "../Components/Modal/Modal";
 import { AiFillSetting } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
-
 const BlogLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
   const [toggleModal, setToggleModal] = useState(true);
 
   return (
-    <div className="overflow-x-hidden h-screen w-full font-sans">
-      <div className="">
-        <div
-          className={`font-sans border-b-[1px] w-full z-[12] h-[5rem] flex justify-center items-center gap-10 px-4 0  bg-white backdrop-blur-sm  overflow-hidden`}>
+    <div className="h-screen w-full font-sans flex flex-col">
+      <div className="border-b-[1px] bg-white backdrop-blur-sm">
+        <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
             <Logo />
             <span className="text-deep-purple text-[16px]">Saved</span>
           </div>
-          <div className="flex justify-start items-center gap-4 ">
+          <div className="flex justify-start items-center gap-4">
             <Button
               icon={<CiUser size={20} />}
               title={currentUserDetails?.username}
@@ -42,12 +40,10 @@ const BlogLayout = ({ children, renderComponents }) => {
           </div>
         </div>
       </div>
-      <div className="flex justify-start items-center px-10 flex-wrap min-h-screen pt-[7rem]">
+      <div className="flex-grow overflow-y-auto px-10 pt-[7rem]">
         {children}
       </div>
-      <div className="flex justify-start items-center px-10 flex-wrap min-h-screen pt-20">
-        {renderComponents}
-      </div>
+      <div className="overflow-y-auto px-10 pt-20">{renderComponents}</div>
     </div>
   );
 };

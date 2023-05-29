@@ -319,11 +319,11 @@ const WriteBlogPage = () => {
                 theme="snow"
                 modules={{
                   toolbar: [
-                    [{ header: [1, 2,] }],
+                    [{ header: [1, 2] }],
                     ["bold", "italic", "underline", "strike"],
                     [{ list: "ordered" }, { list: "bullet" }],
                     ["link", "image"],
-                  ],  
+                  ],
                   clipboard: {
                     matchVisual: false,
                   },

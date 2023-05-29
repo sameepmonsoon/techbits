@@ -120,7 +120,7 @@ exports.bookmark = async (req, res) => {
 };
 exports.getAllBookmark = async (req, res) => {
   try {
-    const getAll = await User.find({}, "bookmarks");
+    const getAll = await User.findById(req.body.userId);
     res.status(200).json({ getAll, message: "success" });
   } catch (err) {
     console.log(err);
@@ -141,8 +141,8 @@ exports.follow = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const isFollowing = followedBy.following?.includes(userId);
-    const isFollower = userFound.followers?.includes(followerId);
+    const isFollowing = followedBy?.following?.includes(userId);
+    const isFollower = userFound?.followers?.includes(followerId);
 
     if (isFollowing) {
       followedBy.following = followedBy.following.filter((id) => id !== userId);

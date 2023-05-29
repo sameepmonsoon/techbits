@@ -32,7 +32,7 @@ const Navbar = ({ Links, fixed, border }) => {
           <Logo />
         </div>
         <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/50 text-[18px] font-[350]">
-          <div className="hidden sm:flex justify-start gap-5 items-center">
+          <div className="hidden sm:flex justify-start sm:gap-4 md:gap-5 items-center">
             {Links.map((item, index) => (
               <Link
                 key={index}

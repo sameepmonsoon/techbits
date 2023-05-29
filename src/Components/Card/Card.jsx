@@ -21,7 +21,7 @@ const Card = ({
           ? "w-[40rem] h-[30rem] flex-col"
           : row
           ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
-          : "w-[20rem] sm:w-[24rem] h-[28.2rem] flex-col"
+          : "w-[22rem] sm:w-[24rem] h-[28.2rem] flex-col"
       } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-2 flex justify-start items-start`}>
       <img
         src={cardImage}

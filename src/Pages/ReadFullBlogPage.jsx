@@ -29,20 +29,21 @@ const ReadFullBlogPage = () => {
   useEffect(() => {
     setCurrentBlog(JSON.parse(localStorage.getItem("currentBlogPosts")));
   }, [isLoading]);
-  const currentUserId = currentUser._id;
+  const currentUserId = currentUser?._id;
 
   const creatorId = currentPost[0]?.userId;
-  console.log("current user", creatorId);
   const [isFollowing, setIsFollowing] = useState(false);
   const [showPage, setShowPage] = useState(true);
   // api calls for like bookmark and commetn
-  console.log(creatorId, currentUserId);
   const handleClickLike = () => {
     setIsLoading(true);
-    HttpCalls.post(`/blogReact/like`, { userId: currentUserId, blogId: cardId })
+    HttpCalls.post(`/blogReact/like`, {
+      userId: currentUserId,
+      blogId: cardId,
+      creatorId,
+    })
       .then((res) => {
-        console.log(res.data.updatedlikeComment);
-        setLikeComment(res.data.updatedlikeComment); // Update the likeComment state
+        setLikeComment(res.data.updatedlikeComment);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -53,18 +54,19 @@ const ReadFullBlogPage = () => {
     setIsLoading(true);
     HttpCalls.put(`/auth/bookmark`, { userId: currentUserId, blogId: cardId })
       .then((res) => {
-        console.log(res.data.updatedUser);
-        const bookmarkFlag = res.data.updatedUser.bookmarked;
+        console.log("updated bookmark", res.data.updatedUser);
+        const bookmarkFlag = res?.data?.updatedUser?.bookmarks.includes(cardId);
         setIsBookmarked(bookmarkFlag);
 
-        HttpCalls.get(`/auth/getBookmark`, { blogId: cardId })
-          .then((res) => {
-            const isBookMarked = res.data.getAll[0].bookmarks.includes(cardId);
-            setIsBookmarked(isBookMarked);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // HttpCalls.post(`/auth/getBookmark`, { userId: currentUserId })
+        //   .then((res) => {
+        //     const isBookMarked =
+        //       res.data?.getAll[0]?.bookmarks.includes(cardId);
+        //     // setIsBookmarked(isBookMarked);
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
       })
       .catch((err) => {
         console.log(err);
@@ -75,44 +77,67 @@ const ReadFullBlogPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     HttpCalls.post(`/blogReact/get`, { blogId: cardId })
       .then((res) => {
-        console.log("inside api ", res.data);
-        setLikeComment(res.data.findAll);
+        console.log("inside api ", res?.data.findAll[0]);
+        setLikeComment(res.data.findAll[0]);
       })
       .catch((err) => {
         console.log(err);
       });
-    HttpCalls.get(`/auth/getBookmark`, { blogId: cardId })
-      .then((res) => {
-        console.log(
-          "inside api bookmark ",
-          res.data.getAll.bookmarks.includes(cardId)
-        );
-        const isBookMarked = res.data.getAll[0].bookmarks.includes(cardId);
-        setIsBookmarked(isBookMarked);
-        setTimeout(() => {
-          setShowPage(false);
-        }, 200);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+
+    if (currentUserId) {
+      HttpCalls.post(`/auth/getBookmark`, { userId: currentUserId })
+        .then((res) => {
+          console.log(
+            "inside api bookmark ",
+            res.data?.getAll?.bookmarks?.includes(cardId)
+          );
+          console.log("inside api bookmar kafdsf  ", res?.data);
+          const isBookMarked = res.data?.getAll?.bookmarks?.includes(cardId);
+          setIsBookmarked(isBookMarked);
+          setIsFollowing(res.data.getAll?.following.includes(creatorId));
+          setTimeout(() => {
+            setShowPage(false);
+          }, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      //   // Update the follow status
+      //   HttpCalls.put("/auth/follow", {
+      //     userId: creatorId,
+      //     followerId: currentUserId,
+      //   })
+      //     .then((res) => {
+      //       console.log("inside follow api", res.data.updatedFollowList);
+      //       setIsFollowing(
+      //         res.data.updatedFollowList.following?.includes(creatorId)
+      //       );
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     });
+      //
+    }
+  }, [cardId, creatorId, currentUserId]);
 
   useEffect(() => {
-    HttpCalls.put("/auth/follow", {
-      userId: creatorId,
-      followerId: currentUserId,
-    })
-      .then((res) => {
-        console.log("inside follow api", res.data.updatedFollowList);
-        setIsFollowing(
-          res.data.updatedFollowList.following?.includes(creatorId)
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [creatorId]);
+    if (currentUserId) {
+      //   HttpCalls.put("/auth/follow", {
+      //     userId: creatorId,
+      //     followerId: currentUserId,
+      //   })
+      //     .then((res) => {
+      //       console.log("inside follow api", res.data.updatedFollowList);
+      //       setIsFollowing(
+      //         res.data.updatedFollowList.following?.includes(creatorId)
+      //       );
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     });
+    }
+  }, [creatorId, currentUserId]);
   console.log("Creator id ", creatorId);
   const handleClickFollow = () => {
     HttpCalls.put("/auth/follow", {
@@ -140,7 +165,9 @@ const ReadFullBlogPage = () => {
         </div>
       </LoadingOverlayComponent>
       {currentPost.map((item, index) => (
-        <div className="w-full flex flex-col justify-start items-center h-full gap-5 pt-10">
+        <div
+          key={index}
+          className="w-full flex flex-col justify-start items-center h-full gap-5 pt-10">
           {/* body container items starts here */}
 
           <p className=" w-[80%] sm:w-[50%] flex justify-center text-[32px] capitalize font-[700]">

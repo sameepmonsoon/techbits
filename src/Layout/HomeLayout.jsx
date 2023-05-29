@@ -19,7 +19,7 @@ const HomeLayout = ({ children, renderComponents }) => {
   return (
     <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden">
       <Navbar Links={NavbarLinks} border={true} />
-      <div className="flex flex-col flex-grow">{children}</div>
+      <div className="flex flex-col flex-grow items-center">{children}</div>
       <div className="flex justify-start items-center px-10 flex-wrap">
         {renderComponents}
       </div>
