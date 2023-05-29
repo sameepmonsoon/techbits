@@ -50,7 +50,7 @@ const WriteBlogPage = () => {
   //   for the components inside form
   // to handle the text area height
   const [isFocused, setIsFocused] = useState(false);
-  const [openBlogCategory, setOpenBlogCategory] = useState(false);
+  const [openBlogCategory, setOpenBlogCategory] = useState(true);
   const handleChange = (event) => {
     setTextareaValue(event.target.value);
   };
@@ -130,13 +130,12 @@ const WriteBlogPage = () => {
         // Make the API call with the updated request data
         HttpCalls.post("/blogPost", requestData)
           .then((response) => {
-            console.log(response.data);
             dispatch(fetchAllBlogs());
             setDisableSubmission(false);
-            // setSelectedPhoto(null);
-            // setTextareaValue('');
-            // setEditorContent('');
-            // setCategoryListItem([{ id: '', item: '' }]);
+            setSelectedPhoto(null);
+            setTextareaValue("");
+            setEditorContent("");
+            setCategoryListItem([{ id: "", item: "" }]);
           })
           .catch((error) => {
             console.log(error);
@@ -154,23 +153,16 @@ const WriteBlogPage = () => {
   useEffect(() => {
     HttpCalls.get("/blogPost/getAll")
       .then((response) => {
-        console.log(response.data);
         setResult(response.data.getAllBlog);
-        // setSelectedPhoto(null);
-        // setTextareaValue("");
-        // setEditorContent("");
-        // setCategoryListItem([{ id: "", item: "" }]);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-  console.log(result);
   return (
     <BlogLayout renderComponents={""}>
-      <div className="min-h-screen w-full flex flex-col justify-start items-center scroll-smooth ">
         <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
-        <div className="gap-2 w-full sm:w-3/5 flex justify-center items-center flex-col h-auto max-h-full ">
+        <div className="gap-2 md:w-[50%]  flex justify-center items-center flex-col h-auto max-h-full ">
           <div className="relative w-full min-h-[2.5rem] max-h-none flex-wrap flex justify-start items-center border-b-[1px] gap-2 border-b-purple/30 p-2 ">
             <div className="absolute right-0 top-[-2rem]">
               <Button
@@ -184,7 +176,7 @@ const WriteBlogPage = () => {
               />
             </div>
             {/* category component */}
-            <div className="relative sm:absolute left-0 sm:left-[-4.8rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+            <div className="relative sm:absolute left-[8.8rem] sm:left-[10.8rem] top-[3.6rem] sm:top-[3.1rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
               <IoAdd
                 onClick={handleIconClick}
                 size={30}
@@ -203,7 +195,7 @@ const WriteBlogPage = () => {
                   <IoIosAdd size={22} />
                 </span>
                 {showDropdown && (
-                  <ul
+                  <div
                     className={` absolute top-11 left-0 bg-white gap-1 backdrop-blur-md rounded-md border-[1px] capitalize transition-opacity duration-700 border-purple/20 p-2 w-full flex flex-col justify-start items-start `}>
                     {blogCategories.map((item, index) => (
                       <li
@@ -211,11 +203,11 @@ const WriteBlogPage = () => {
                         onClick={() => {
                           handleCategoryItemClick(item.id, item.name);
                         }}
-                        className="border-b-[1px] w-full border-b-white hover:bg-gray-200/40 px-1 bg-transparent py-1 text-[14px] text-deep-purple/80 hover:text-deep-purple">
+                        className="border-b-[1px] list-none w-full border-b-white hover:bg-gray-200/40 px-1 bg-transparent py-1 text-[14px] text-deep-purple/80 hover:text-deep-purple">
                         {item.name}
                       </li>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </div>
             </div>
@@ -241,13 +233,13 @@ const WriteBlogPage = () => {
 
           {/* form */}
           <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start">
-            <div className="relative left-0 sm:absolute sm:left-[-5rem] bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
-              <IoAdd
+            <div className="relative left-0 bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+              <div
                 onClick={() => {
                   setOpenBlogCategory(!openBlogCategory);
                 }}
                 size={30}
-                className={`text-deep-purple/70 group-hover:text-deep-purple cursor-pointer transform transition duration-[400ms] ${
+                className={`text-deep-purple/70 group-hover:text-deep-purple cursor-pointer transform  ${
                   openBlogCategory && "rotate-45"
                 }`}
               />
@@ -278,7 +270,7 @@ const WriteBlogPage = () => {
                 onChange={handleChange}
                 onFocus={() => {
                   setShowAddCategories(false);
-                  setOpenBlogCategory(false);
+                  // setOpenBlogCategory(false);
                 }}
                 ref={textAreaRef}
                 className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
@@ -311,7 +303,6 @@ const WriteBlogPage = () => {
               className="w-full min-h-20 max-h-none"
               onClick={() => {
                 setShowAddCategories(false);
-                setOpenBlogCategory(false);
               }}>
               <ReactQuill
                 value={editorContent}
@@ -333,7 +324,6 @@ const WriteBlogPage = () => {
             </div>
           </form>
         </div>
-      </div>
     </BlogLayout>
   );
 };

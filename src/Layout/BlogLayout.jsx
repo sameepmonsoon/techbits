@@ -12,7 +12,7 @@ const BlogLayout = ({ children, renderComponents }) => {
   const [toggleModal, setToggleModal] = useState(true);
 
   return (
-    <div className="h-screen w-full font-sans flex flex-col">
+    <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden">
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
@@ -26,7 +26,7 @@ const BlogLayout = ({ children, renderComponents }) => {
               border={true}
               color={true}
               background={false}
-              linkName={"/writeBlog"}
+              linkName={currentUserDetails ? "/Profile" : "/"}
             />
             <span className="group cursor-pointer flex justify-center items-center rounded-full hover:bg-purple/10 p-1">
               <IoSettingsOutline
@@ -40,7 +40,7 @@ const BlogLayout = ({ children, renderComponents }) => {
           </div>
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto px-10 pt-[7rem]">
+      <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
         {children}
       </div>
       <div className="overflow-y-auto px-10 pt-20">{renderComponents}</div>

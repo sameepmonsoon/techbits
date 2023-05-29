@@ -12,10 +12,14 @@ const socialMediaLinks = {
 
 const blogCategories = [
   { name: "technology", id: "0" },
-  { name: "software", id: "1" },
-  { name: "web-development", id: "2" },
+  { name: "Data Science", id: "1" },
+  { name: "Software development", id: "2" },
   { name: "Artificial Intelligence", id: "3" },
-  { name: "Machine Learning", id: "4" },
+  { name: "Relationships", id: "4" },
+  { name: "Writing", id: "5" },
+  { name: "Life", id: "6" },
+  { name: "Mindfulness", id: "7" },
+  { name: "Leadership", id: "8" },
 ];
 
 const randomColors = [
