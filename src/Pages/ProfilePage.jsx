@@ -9,7 +9,6 @@ const HomePage = () => {
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
   const followersLength = currentUser?.followers?.length;
-  console.log(currentUser);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}

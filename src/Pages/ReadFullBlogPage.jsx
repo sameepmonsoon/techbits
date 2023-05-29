@@ -54,7 +54,6 @@ const ReadFullBlogPage = () => {
     setIsLoading(true);
     HttpCalls.put(`/auth/bookmark`, { userId: currentUserId, blogId: cardId })
       .then((res) => {
-        console.log("updated bookmark", res.data.updatedUser);
         const bookmarkFlag = res?.data?.updatedUser?.bookmarks.includes(cardId);
         setIsBookmarked(bookmarkFlag);
 
@@ -77,7 +76,6 @@ const ReadFullBlogPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     HttpCalls.post(`/blogReact/get`, { blogId: cardId })
       .then((res) => {
-        console.log("inside api ", res?.data.findAll[0]);
         setLikeComment(res.data.findAll[0]);
       })
       .catch((err) => {
@@ -87,11 +85,6 @@ const ReadFullBlogPage = () => {
     if (currentUserId) {
       HttpCalls.post(`/auth/getBookmark`, { userId: currentUserId })
         .then((res) => {
-          console.log(
-            "inside api bookmark ",
-            res.data?.getAll?.bookmarks?.includes(cardId)
-          );
-          console.log("inside api bookmar kafdsf  ", res?.data);
           const isBookMarked = res.data?.getAll?.bookmarks?.includes(cardId);
           setIsBookmarked(isBookMarked);
           setIsFollowing(res.data.getAll?.following.includes(creatorId));
@@ -138,14 +131,12 @@ const ReadFullBlogPage = () => {
       //     });
     }
   }, [creatorId, currentUserId]);
-  console.log("Creator id ", creatorId);
   const handleClickFollow = () => {
     HttpCalls.put("/auth/follow", {
       userId: creatorId,
       followerId: currentUserId,
     })
       .then((res) => {
-        console.log("inside follow api", res.data.updatedFollowList);
         setIsFollowing(
           res.data.updatedFollowList.following?.includes(creatorId)
         );

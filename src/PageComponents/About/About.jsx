@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { HttpCalls } from "../../utils/HttpCalls";
 
 const About = ({ userDetails }) => {
+  const [currentUser, setCurrentUser] = useState();
+  const [allBlogList, setAllBlogList] = useState([]);
+  const [currentUserBookmark, setCurrentUserBookmark] = useState([]);
+  useEffect(() => {
+    setCurrentUser(JSON.parse(localStorage?.getItem("user")));
+    setAllBlogList(JSON.parse(localStorage?.getItem("currentBlogPosts")));
+  }, []);
+  useEffect(() => {
+    HttpCalls.post("/auth/getBookmark", { userId: currentUser?._id }).then(
+      (res) => {
+        setCurrentUserBookmark(res.data?.getAll?.bookmarks);
+      }
+    );
+  }, [currentUser?._id]);
   return (
     <div className="w-full h-auto flex flex-col justify-start items-start p-5 gap-5 ">
       <div className="w-full flex justify-start items-center gap-5">
@@ -8,7 +23,7 @@ const About = ({ userDetails }) => {
           Email Address
         </span>
         <span className="flex justify-start items-center text-black/70">
-          {userDetails?.email}
+          {currentUser?.email}
         </span>
       </div>
       <div className="w-full flex justify-start items-center gap-5">
@@ -16,7 +31,7 @@ const About = ({ userDetails }) => {
           Profile Information
         </span>
         <span className="flex justify-start items-center text-black/70">
-          {userDetails?.username}
+          {currentUser?.username}
         </span>
       </div>
       <div className="w-full flex justify-start items-center gap-5">
@@ -24,7 +39,7 @@ const About = ({ userDetails }) => {
           Bookmarks
         </span>
         <span className="flex justify-start items-center text-black/70">
-          {userDetails?.bookmarks?.length}
+          {currentUser?.bookmarks?.length}
         </span>
       </div>
       <div className="w-full flex justify-start items-center gap-5">
@@ -32,7 +47,7 @@ const About = ({ userDetails }) => {
           Followers
         </span>
         <span className="flex justify-start items-center text-black/70">
-          {userDetails?.followers?.length}
+          {currentUser?.followers?.length}
         </span>
       </div>
       <div className="w-full flex justify-start items-center gap-5">
@@ -40,7 +55,7 @@ const About = ({ userDetails }) => {
           Following
         </span>
         <span className="flex justify-start items-center text-black/70">
-          {userDetails?.following.length}
+          {currentUser?.following.length}
         </span>
       </div>
     </div>
