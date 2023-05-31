@@ -14,6 +14,19 @@ const Card = ({
   row,
   autoHeight,
 }) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(cardDescription, "text/html");
+
+  let filteredText = "";
+  const paragraphs = doc.querySelectorAll("p");
+  const images = doc.querySelectorAll("img");
+
+  paragraphs.forEach((p) => {
+    filteredText += p.textContent + " ";
+  });
+
+  const imageSources = Array.from(images).map((img) => img.src);
+
   return (
     <div
       className={`font-sans ${
@@ -47,8 +60,8 @@ const Card = ({
             />
           </Link>
         </div>
-        <span className="text-black/80 text-[13px] max-h-[5rem] overflow-hidden">
-          {cardDescription}
+        <span className="text-black/80 text-[13px] overflow-hidden h-[4rem]">
+          {filteredText}
         </span>
         <div className="text-black/70 text-[13px] h-20 overflow-hidden flex justify-start items-center gap-3 w-full">
           <img
@@ -61,8 +74,7 @@ const Card = ({
               {cardUserName}
             </span>
             <span className="text-[14px]">
-              {" "}
-              {new Date(cardPostDate).toLocaleDateString("en-US", {
+              {new  Date(cardPostDate).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
                 year: "numeric",
