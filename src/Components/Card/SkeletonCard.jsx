@@ -17,17 +17,17 @@ const SkeletonCard = ({
     <div
       className={`font-sans ${
         autoHeight
-          ? "w-[40rem] h-[30rem] flex-col"
+          ? "w-[40rem] h-[30rem] flex-col animate-pulse"
           : row
-          ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
+          ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row animate-pulse"
           : "w-[20rem] sm:w-[24rem] h-[28.2rem] flex-col"
-      } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-2 flex justify-start items-start`}>
+      } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm p-4 gap-2 flex justify-start items-start animate-pulse`}>
       <div
         className={`${
           autoHeight
             ? "h-[50%] w-full"
             : row
-            ? "h-[60%] sm:h-full w-full sm:w-[50%] bg-red-900"
+            ? "h-[60%] sm:h-full w-full sm:min-w-[50%] bg-gray-200 animate-pulse"
             : "h-[60%]  w-full bg-gray-200 animate-pulse"
         }  object-cover`}></div>
       <div className="flex flex-col justify-start items-start overflow-hidden w-full gap-2 animate-pulse">

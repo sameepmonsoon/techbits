@@ -5,6 +5,7 @@ const About = ({ userDetails }) => {
   const [currentUser, setCurrentUser] = useState();
   const [allBlogList, setAllBlogList] = useState([]);
   const [currentUserBookmark, setCurrentUserBookmark] = useState([]);
+  const [usrBlogCount, setUserBlogCount] = useState(0);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage?.getItem("user")));
     setAllBlogList(JSON.parse(localStorage?.getItem("currentBlogPosts")));
@@ -15,7 +16,19 @@ const About = ({ userDetails }) => {
         setCurrentUserBookmark(res.data?.getAll?.bookmarks);
       }
     );
+    totalBLogByUser();
   }, [currentUser?._id]);
+
+  function totalBLogByUser() {
+    var count = 0;
+    allBlogList.map((item, index) => {
+      if (item.userId == currentUser._id) {
+        count++;
+      }
+      setUserBlogCount(count);
+    });
+  }
+
   return (
     <div className="w-full h-auto flex flex-col justify-start items-start p-5 gap-5 ">
       <div className="w-full flex justify-start items-center gap-5">
@@ -56,6 +69,14 @@ const About = ({ userDetails }) => {
         </span>
         <span className="flex justify-start items-center text-black/70">
           {currentUser?.following.length}
+        </span>
+      </div>
+      <div className="w-full flex justify-start items-center gap-5">
+        <span className="flex justify-start items-center text-black w-[20%]">
+          Blog Post
+        </span>
+        <span className="flex justify-start items-center text-black/70">
+          {usrBlogCount}
         </span>
       </div>
     </div>
