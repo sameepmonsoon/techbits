@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { HttpCalls } from "../../utils/HttpCalls";
+import UpdateProfile from "../../Pages/UpdateProfile";
 
 const About = ({ userDetails }) => {
   const [currentUser, setCurrentUser] = useState();
@@ -79,6 +80,7 @@ const About = ({ userDetails }) => {
           {usrBlogCount}
         </span>
       </div>
+      <UpdateProfile />
     </div>
   );
 };
