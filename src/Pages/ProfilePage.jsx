@@ -69,7 +69,7 @@ const HomePage = () => {
           </Link>
         </div>
       </div>
-      <div className="min-w-[50%] flex items-start justify-center h-screen">
+      <div className="min-w-[50%] flex items-start justify-center h-auto">
         <Outlet />
       </div>
     </HomeLayout>
