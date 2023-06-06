@@ -16,7 +16,5 @@ router.put("/bookmark", bookmark);
 router.post("/getBookmark", getAllBookmark);
 router.put("/follow", follow);
 router.put("/updateProfile", updateProfile);
-// router.put("/update", update);
-// router.post("/reset-password", resetPassword);
 
 module.exports = router;

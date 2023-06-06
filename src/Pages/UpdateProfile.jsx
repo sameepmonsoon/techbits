@@ -57,7 +57,7 @@ const UpdateProfile = () => {
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values, action) => {
       const fileReader = new FileReader();
-      HttpCalls.put("/");
+      HttpCalls.put("/auth/updateProfile");
       fileReader.readAsDataURL(selectedPhoto);
     },
     validationSchema: schema,
