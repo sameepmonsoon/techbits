@@ -15,6 +15,8 @@ import { HttpCalls } from "../utils/HttpCalls";
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const [toggleModal, setToggleModal] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -27,22 +29,6 @@ const UpdateProfile = () => {
       setShowSignUpPage(true);
     }, 500);
   }, []);
-
-  let schema = yup.object().shape({
-    username: yup
-      .string()
-      .test(
-        "no-special-characters",
-        "Username must not contain special characters",
-        (value) => /^[a-zA-Z0-9_]+$/.test(value)
-      )
-      .required("Username is required."),
-
-    email: yup
-      .string()
-      .email("Invalid email address.")
-      .required("Email is required."),
-  });
 
   const onSubmit = async (values, event) => {
     setIsLoading(true);
@@ -59,17 +45,23 @@ const UpdateProfile = () => {
         profilePicture,
       };
       console.log(updatedData);
-      const response = await HttpCalls.put("/auth/updateProfile", updatedData)
-        .then((res) => {
-          localStorage.setItem("user", JSON.stringify(res.data.result));
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
+      if (profilePicture != null) {
+        const response = await HttpCalls.put("/auth/updateProfile", updatedData)
+          .then((res) => {
+            localStorage.setItem("user", JSON.stringify(res.data.result));
+            setIsLoading(false);
+            setMessage(res.data.result.message);
+          })
+          .catch((err) => {
+            console.log(err.response.data.error);
+            setIsLoading(false);
+          });
 
-      console.log(response);
+        console.log(response);
+      } else {
+        setIsLoading(false);
+        setError("Please upload your picture.");
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
     }
@@ -207,7 +199,10 @@ const UpdateProfile = () => {
                     />
                   </>
                 )}
-              </label>
+              </label>{" "}
+              <span className="w-full flex justify-center items-center text-[16px] capitalize text-red-700">
+                {selectedPhoto === null ? <>Please upload a picture.</> : <></>}
+              </span>
               <label
                 htmlFor="username"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
@@ -227,7 +222,6 @@ const UpdateProfile = () => {
                   </span>
                 )}
               </label>
-
               <Button
                 onClick={onSubmit}
                 title={

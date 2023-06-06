@@ -9,7 +9,7 @@ exports.updateProfile = async (req, res) => {
     const fileData = Buffer.from(req.body.profilePicture, "base64");
     console.log(req.body.userId);
     // Check if the user already exists
-    const existingUser = await User.findByIdAndUpdate(req.body.userId);
+    const existingUser = await User.findById(req.body.userId);
 
     if (!existingUser) {
       return res.status(404).json({ error: "User not found." });
@@ -19,10 +19,7 @@ exports.updateProfile = async (req, res) => {
       username: req.body.username,
     });
 
-    if (
-      existingUserName &&
-      existingUserName._id.toString() !== existingUser._id.toString()
-    ) {
+    if (req.body.username === existingUser.username) {
       return res.status(400).json({
         error: "Username is already taken. Please choose a different username.",
       });
