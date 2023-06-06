@@ -211,13 +211,13 @@ const WriteBlogPage = () => {
                 )}
               </div>
             </div>
-            <div className=" flex justify-start items-center gap-1 flex-wrap">
+            <div className=" flex justify-start items-center gap-1 flex-wrap w-full">
               {categoryListItem
                 .filter((item) => item.id !== "")
                 .map((item, index) => (
                   <div
                     key={item.id}
-                    className="w-auto max-w-[10rem] bg-purple/0 text-deep-purple hover:border-purple/60 border-purple/30 text-[14px] p-[2px] gap-1 flex justify-start items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                    className="w-auto max-w-[12rem] bg-purple/0 text-deep-purple hover:border-purple/60 border-purple/30 text-[14px] p-[2px] gap-1 flex justify-start items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
                     <span> {item.item}</span>
                     <span className="text-deep-purple/80">
                       <RxCross2
