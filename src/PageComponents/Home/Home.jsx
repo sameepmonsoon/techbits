@@ -20,6 +20,7 @@ const Home = (userDetails) => {
           cardTitle={item.titleContent}
           cardId={item._id}
           cardDescription={item.editorContent}
+          cardUserImage={currentUser?.profilePicture}
         />
       ))}
     </div>

@@ -64,11 +64,11 @@ const Card = ({
           {filteredText}
         </span>
         <div className="text-black/70 text-[13px] h-20 overflow-hidden flex justify-start items-center gap-3 w-full">
-          <img
+          {/* <img
             src={cardUserImage}
             alt=""
-            className="min-h-[3rem] w-[3rem] rounded-md"
-          />
+            className="min-h-[3rem] w-[3rem] rounded-md object-cover"
+          /> */}
           <div className="flex flex-col justify-center items-start h-full">
             <span className="text-[16px] text-black font-[500] capitalize ">
               {cardUserName}

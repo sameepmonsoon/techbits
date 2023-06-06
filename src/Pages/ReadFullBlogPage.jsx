@@ -151,7 +151,6 @@ const ReadFullBlogPage = () => {
         <div className="fixed inset-0 bg-white text-purple flex flex-col justify-center items-center w-full text-6xl">
           <div className="flex  gap-5 items-center justify-center ">
             <span className="animate-pulse"> Loading . . .</span>
-            {/* <ImSpinner5 size={45} className="animate-spin " />   */}
           </div>
         </div>
       </LoadingOverlayComponent>
@@ -167,11 +166,11 @@ const ReadFullBlogPage = () => {
 
           <div className="flex flex-col w-full justify-center items-center gap-5">
             <div className="text-xl capitalize flex flex-row justify-start cursor-pointer border-b-[1px]  w-[80%] sm:w-[50%] gap-2 ">
-              <img
+              {/* <img
                 src={image}
                 alt=""
                 className="h-[3rem] w-[3rem] object-contain rounded-full"
-              />
+              /> */}
               <div className="flex flex-col">
                 <div className="flex flex-row justify-start items-center gap-1">
                   <span className="text-black hover:text-blue-purple text-[18px]">

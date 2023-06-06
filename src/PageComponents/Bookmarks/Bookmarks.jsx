@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import { Link } from "react-router-dom";
 import { HttpCalls } from "../../utils/HttpCalls";
 import Card from "../../Components/Card/Card";
+import avatarUser from "../../assets/user.svg";
 import SkeletonCard from "../../Components/Card/SkeletonCard";
 const Bookmarks = () => {
   const [currentUser, setCurrentUser] = useState();
@@ -53,6 +52,7 @@ const Bookmarks = () => {
             cardTitle={item.titleContent}
             cardId={item._id}
             cardDescription={item.editorContent}
+            cardUserImage={avatarUser}
           />
         );
       })}
