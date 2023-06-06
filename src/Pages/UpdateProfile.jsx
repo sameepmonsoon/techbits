@@ -11,6 +11,7 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
 import { HttpCalls } from "../utils/HttpCalls";
+import { toast, Slide } from "react-toastify";
 
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
@@ -50,17 +51,89 @@ const UpdateProfile = () => {
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
             setIsLoading(false);
-            setMessage(res.data.result.message);
+            setMessage(res.data.message);
+            console.log(res.data.message);
+            const toastId = "alert";
+            const existingToast = toast.isActive(toastId);
+
+            if (existingToast) {
+            } else {
+              toast.error(`${res.data.message}`, {
+                toastId: toastId,
+                className: "toast-center",
+                position: "bottom-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                closeButton: false,
+                icon: false,
+                style: {
+                  background: "green",
+                  color: "white",
+                  width: "235px",
+                },
+              });
+            }
           })
           .catch((err) => {
             console.log(err.response.data.error);
             setIsLoading(false);
+            const toastId = "alert";
+            const existingToast = toast.isActive(toastId);
+
+            if (existingToast) {
+            } else {
+              toast.error(`${err.response.data.error}`, {
+                toastId: toastId,
+                className: "toast-center",
+                position: "bottom-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                closeButton: false,
+                icon: false,
+                style: {
+                  background: "#da6161",
+                  color: "white",
+                  width: "500px",
+                },
+              });
+            }
           });
 
         console.log(response);
       } else {
-        setIsLoading(false);
-        setError("Please upload your picture.");
+        const toastId = "alert";
+        const existingToast = toast.isActive(toastId);
+
+        if (existingToast) {
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+          toast.error(`${"Please upload your picture."}`, {
+            toastId: toastId,
+            className: "toast-center",
+            position: "bottom-center",
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            closeButton: false,
+            icon: false,
+            style: { background: "#da6161", color: "white", width: "225px" },
+          });
+        }
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -200,9 +273,6 @@ const UpdateProfile = () => {
                   </>
                 )}
               </label>{" "}
-              <span className="w-full flex justify-center items-center text-[16px] capitalize text-red-700">
-                {selectedPhoto === null ? <>Please upload a picture.</> : <></>}
-              </span>
               <label
                 htmlFor="username"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">

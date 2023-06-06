@@ -12,6 +12,7 @@ import Home from "./PageComponents/Home/Home";
 import Bookmarks from "./PageComponents/Bookmarks/Bookmarks";
 import About from "./PageComponents/About/About";
 import UpdateProfile from "./Pages/UpdateProfile";
+
 function App() {
   const [currentUser, setCurrentUser] = useState();
   const [allBlogList, setAllBlogList] = useState([]);
