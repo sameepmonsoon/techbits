@@ -12,6 +12,7 @@ import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
+import { HttpCalls } from "../utils/HttpCalls";
 const UpdateProfile = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [showSignUpPage, setShowSignUpPage] = useState(false);
@@ -55,7 +56,9 @@ const UpdateProfile = () => {
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values, action) => {
-      // dispatch(signUp(values));
+      const fileReader = new FileReader();
+      HttpCalls.put("/");
+      fileReader.readAsDataURL(selectedPhoto);
     },
     validationSchema: schema,
   });
