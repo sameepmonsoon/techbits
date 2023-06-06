@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import signUpImage from "../assets/undraw_server_push_re_303w.svg";
+import signUpImage from "../assets/update.svg";
+import userImage from "../assets/user.svg";
 import Button from "../Components/Button/Button";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -40,22 +41,7 @@ const UpdateProfile = () => {
         (value) => /^[a-zA-Z0-9_]+$/.test(value)
       )
       .required("User name is required."),
-    password: yup
-      .string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/,
-        "At least one uppercase letter,number, and  special character required."
-      )
-      .test(
-        "not-same-as-username",
-        "Password must not match the username",
-        function (value) {
-          const { username } = this.parent;
-          return value !== username;
-        }
-      )
-      .min(6, "At least 6 characters required.")
-      .required("Password is required."),
+
     email: yup
       .string()
       .email()
@@ -69,11 +55,15 @@ const UpdateProfile = () => {
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values, action) => {
-      dispatch(signUp(values));
+      // dispatch(signUp(values));
     },
     validationSchema: schema,
   });
-
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const handlePhotoChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedPhoto(file);
+  };
   return (
     <HomeLayout>
       {!showSignUpPage ? (
@@ -104,8 +94,41 @@ const UpdateProfile = () => {
               action=""
               onSubmit={formik.handleSubmit}
               className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
-              <label htmlFor="image">
-                <img src={image} alt="" className="h-10 bg-red-900" />
+              <label
+                htmlFor="image"
+                className="w-full flex items-center justify-center">
+                {selectedPhoto ? (
+                  <>
+                    <input
+                      type="file"
+                      name="image"
+                      id="image"
+                      hidden
+                      onChange={handlePhotoChange}
+                    />{" "}
+                    <img
+                      src={URL.createObjectURL(selectedPhoto)}
+                      alt=""
+                      id="image"
+                      className="h-40 w-40 object-cover cursor-pointer rounded-full"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={image ? image : userImage}
+                      alt=""
+                      className="h-400 w-40 object-contain cursor-pointer"
+                    />
+                    <input
+                      type="file"
+                      name="image"
+                      id="image"
+                      hidden
+                      onChange={handlePhotoChange}
+                    />
+                  </>
+                )}
               </label>
               <label
                 htmlFor="username"
