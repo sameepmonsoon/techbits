@@ -13,26 +13,26 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
 import { HttpCalls } from "../utils/HttpCalls";
+
 const UpdateProfile = () => {
-  const [viewPassword, setViewPassword] = useState(false);
   const [showSignUpPage, setShowSignUpPage] = useState(false);
-  // for modal open and close
+
   const [toggleModal, setToggleModal] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
   const email = currentUser?.email;
   const image = currentUser?.selectedPhoto;
-  // functions
+  const [userName, setUserName] = useState(username);
   useEffect(() => {
     dispatch(clearState());
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
   }, []);
-  //  redux store dispatch
+
   const dispatch = useDispatch();
   const { error, isLoading, success } = useSelector((state) => state.auth);
-  // yup validation
+
   let schema = yup.object().shape({
     username: yup
       .string()
@@ -41,36 +41,70 @@ const UpdateProfile = () => {
         "Username must not contain special characters",
         (value) => /^[a-zA-Z0-9_]+$/.test(value)
       )
-      .required("User name is required."),
+      .required("Username is required."),
 
     email: yup
       .string()
-      .email()
-      .matches(
-        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}$/i,
-        "Invalid email address."
-      )
+      .email("Invalid email address.")
       .required("Email is required."),
   });
-  // formik form validation
+
   const formik = useFormik({
-    initialValues: { username: "", password: "", email: "" },
-    onSubmit: (values, action) => {
-      const fileReader = new FileReader();
-      HttpCalls.put("/auth/updateProfile");
-      fileReader.readAsDataURL(selectedPhoto);
+    initialValues: { username, email },
+    onSubmit: async (values) => {
+      try {
+        let profilePicture = null;
+
+        if (selectedPhoto) {
+          profilePicture = await convertToBase64(selectedPhoto);
+        }
+
+        const updatedData = {
+          userId: currentUser._id,
+          username: values.username,
+          email: values.email,
+          profilePicture,
+        };
+
+        const response = await HttpCalls.put(
+          "/auth/updateProfile",
+          updatedData
+        );
+
+        // Handle the response from the backend here
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
     },
     validationSchema: schema,
   });
+
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     setSelectedPhoto(file);
   };
+  const handleUserNameChange = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <HomeLayout>
       {!showSignUpPage ? (
-        // Show spinner while loading
         <div className="flex justify-center items-center h-screen">
           <PageLoadingSpinner allowBackground={true} />
         </div>
@@ -140,37 +174,15 @@ const UpdateProfile = () => {
                   type="text"
                   name="username"
                   id="username"
-                  value={username}
+                  value={userName}
                   placeholder={"User name"}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  onChange={handleUserNameChange}
                   maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
                 {formik.errors.username && formik.touched.username && (
                   <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
                     {formik.errors.username}
-                  </span>
-                )}
-              </label>
-              <label
-                htmlFor="email"
-                className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={email}
-                  onBlur={formik.handleBlur}
-                  placeholder={"Email"}
-                  onChange={formik.handleChange}
-                  maxLength={30}
-                  className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
-                />
-                {formik.touched.email && formik.errors.email && (
-                  <span
-                    className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
-                    {formik.errors.email}
                   </span>
                 )}
               </label>
