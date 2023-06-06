@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { HttpCalls } from "../../utils/HttpCalls";
 import UpdateProfile from "../../Pages/UpdateProfile";
+import { Link } from "react-router-dom";
 
 const About = ({ userDetails }) => {
   const [currentUser, setCurrentUser] = useState();
@@ -32,6 +33,11 @@ const About = ({ userDetails }) => {
 
   return (
     <div className="w-full h-auto flex flex-col justify-start items-start p-5 gap-5 ">
+      <Link
+        to="/update"
+        className="w-40 flex  items-center justify-center  border-gray-300 cursor-pointer border-[1px] rounded-md h-10 bg-gray-100 text-black">
+        Update Profile
+      </Link>
       <div className="w-full flex justify-start items-center gap-5">
         <span className="flex justify-start items-center text-black min-w-[20%]">
           Email Address
@@ -80,7 +86,6 @@ const About = ({ userDetails }) => {
           {usrBlogCount}
         </span>
       </div>
-      <UpdateProfile />
     </div>
   );
 };

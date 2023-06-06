@@ -11,6 +11,7 @@ import ReadFullBlogPage from "./Pages/ReadFullBlogPage";
 import Home from "./PageComponents/Home/Home";
 import Bookmarks from "./PageComponents/Bookmarks/Bookmarks";
 import About from "./PageComponents/About/About";
+import UpdateProfile from "./Pages/UpdateProfile";
 function App() {
   const [currentUser, setCurrentUser] = useState();
   const [allBlogList, setAllBlogList] = useState([]);
@@ -41,6 +42,7 @@ function App() {
     { path: "/forgetPassword", element: <ForgetPasswordPage /> },
     { path: "/writeBlog", element: <WriteBlogPage /> },
     { path: "/read/:cardId", element: <ReadFullBlogPage /> },
+    { path: "/update", element: <UpdateProfile /> },
   ]);
   return <RouterProvider router={router} />;
 }
