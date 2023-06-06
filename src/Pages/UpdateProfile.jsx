@@ -11,10 +11,13 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
 import { HttpCalls } from "../utils/HttpCalls";
+import { toast, Slide } from "react-toastify";
 
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const [toggleModal, setToggleModal] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -27,22 +30,6 @@ const UpdateProfile = () => {
       setShowSignUpPage(true);
     }, 500);
   }, []);
-
-  let schema = yup.object().shape({
-    username: yup
-      .string()
-      .test(
-        "no-special-characters",
-        "Username must not contain special characters",
-        (value) => /^[a-zA-Z0-9_]+$/.test(value)
-      )
-      .required("Username is required."),
-
-    email: yup
-      .string()
-      .email("Invalid email address.")
-      .required("Email is required."),
-  });
 
   const onSubmit = async (values, event) => {
     setIsLoading(true);
@@ -59,17 +46,95 @@ const UpdateProfile = () => {
         profilePicture,
       };
       console.log(updatedData);
-      const response = await HttpCalls.put("/auth/updateProfile", updatedData)
-        .then((res) => {
-          localStorage.setItem("user", JSON.stringify(res.data.result));
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
+      if (profilePicture != null) {
+        const response = await HttpCalls.put("/auth/updateProfile", updatedData)
+          .then((res) => {
+            localStorage.setItem("user", JSON.stringify(res.data.result));
+            setIsLoading(false);
+            setMessage(res.data.message);
+            console.log(res.data.message);
+            const toastId = "alert";
+            const existingToast = toast.isActive(toastId);
 
-      console.log(response);
+            if (existingToast) {
+            } else {
+              toast.error(`${res.data.message}`, {
+                toastId: toastId,
+                className: "toast-center",
+                position: "bottom-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                closeButton: false,
+                icon: false,
+                style: {
+                  background: "green",
+                  color: "white",
+                  width: "235px",
+                },
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err.response.data.error);
+            setIsLoading(false);
+            const toastId = "alert";
+            const existingToast = toast.isActive(toastId);
+
+            if (existingToast) {
+            } else {
+              toast.error(`${err.response.data.error}`, {
+                toastId: toastId,
+                className: "toast-center",
+                position: "bottom-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                closeButton: false,
+                icon: false,
+                style: {
+                  background: "#da6161",
+                  color: "white",
+                  width: "500px",
+                },
+              });
+            }
+          });
+
+        console.log(response);
+      } else {
+        const toastId = "alert";
+        const existingToast = toast.isActive(toastId);
+
+        if (existingToast) {
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+          toast.error(`${"Please upload your picture."}`, {
+            toastId: toastId,
+            className: "toast-center",
+            position: "bottom-center",
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            closeButton: false,
+            icon: false,
+            style: { background: "#da6161", color: "white", width: "225px" },
+          });
+        }
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
     }
@@ -207,7 +272,7 @@ const UpdateProfile = () => {
                     />
                   </>
                 )}
-              </label>
+              </label>{" "}
               <label
                 htmlFor="username"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
@@ -227,7 +292,6 @@ const UpdateProfile = () => {
                   </span>
                 )}
               </label>
-
               <Button
                 onClick={onSubmit}
                 title={

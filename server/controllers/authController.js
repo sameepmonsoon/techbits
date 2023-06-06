@@ -7,9 +7,9 @@ const jwt = require("jsonwebtoken");
 exports.updateProfile = async (req, res) => {
   try {
     const fileData = Buffer.from(req.body.profilePicture, "base64");
-    console.log(req.body.userId);
+
     // Check if the user already exists
-    const existingUser = await User.findByIdAndUpdate(req.body.userId);
+    const existingUser = await User.findById(req.body.userId);
 
     if (!existingUser) {
       return res.status(404).json({ error: "User not found." });
@@ -19,10 +19,7 @@ exports.updateProfile = async (req, res) => {
       username: req.body.username,
     });
 
-    if (
-      existingUserName &&
-      existingUserName._id.toString() !== existingUser._id.toString()
-    ) {
+    if (req.body.username === existingUser.username) {
       return res.status(400).json({
         error: "Username is already taken. Please choose a different username.",
       });
@@ -41,7 +38,7 @@ exports.updateProfile = async (req, res) => {
     const result = await User.findOne({ _id: req.body.userId });
     res.status(200).json({ result, message: "Profile updated successfully." });
   } catch (err) {
-    console.error("Error updating profile:", err);
+ 
     res.status(500).json({ error: "Internal server error." });
   }
 };
@@ -168,7 +165,7 @@ exports.getAllBookmark = async (req, res) => {
     const getAll = await User.findById(req.body.userId);
     res.status(200).json({ getAll, message: "success" });
   } catch (err) {
-    console.log(err);
+  
     res.status(500).json({ error: "Bookmark failed" });
   }
 };
@@ -207,7 +204,7 @@ exports.follow = async (req, res) => {
 
     res.status(200).json({ updatedFollowList, message: "Success" });
   } catch (err) {
-    console.log(err);
+ 
     res.status(500).json({ error: "Failed to update following status" });
   }
 };
