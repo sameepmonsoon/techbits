@@ -8,6 +8,7 @@ const HomePage = () => {
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
+  const profilePicture = currentUser?.profilePicture;
   const followersLength = currentUser?.followers?.length;
   return (
     <HomeLayout renderComponents={""}>
@@ -16,7 +17,7 @@ const HomePage = () => {
         {/* profile detail */}
         <div className="flex sm:flex-row flex-col w-full items-center sm:items-end justify-start p-5 gap-5 ">
           <img
-            src={image}
+            src={profilePicture ? profilePicture : image}
             className="h-[8rem] w-[8rem] rounded-full object-cover "
           />
           <div className="flex justify-start text-5xl font-[500] h-20 sm:items-start items-end gap-5 ">
