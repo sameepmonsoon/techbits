@@ -2,6 +2,29 @@ const User = require("../models/auth.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+exports.updateProfile = async (req, res) => {
+  try {
+    const fileData = Buffer.from(req.body.profilePicture, "base64");
+    // Check if the user already exists
+    const existingUserId = await User.findOne({
+      userId: req.body.userId,
+    });
+    const existingUserName = await User.findOne({
+      username: req.body.userId,
+    });
+    const existingUserEmail = await User.findOne({ email: req.body.email });
+
+    if (existingUserName) {
+      return res.status(400).json({
+        error: "Username is already taken. Please choose a different username.",
+      });
+    } else if (existingUserEmail) {
+      return res
+        .status(400)
+        .json({ error: "The email address you provided is already in use." });
+    }
+  } catch (err) {}
+};
 exports.signup = async (req, res, next) => {
   try {
     // Check if the user already exists
