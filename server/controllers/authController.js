@@ -1,7 +1,7 @@
 const User = require("../models/auth.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+// to update the profile
 exports.updateProfile = async (req, res) => {
   try {
     const fileData = Buffer.from(req.body.profilePicture, "base64");
@@ -25,6 +25,8 @@ exports.updateProfile = async (req, res) => {
     }
   } catch (err) {}
 };
+
+// for signup
 exports.signup = async (req, res, next) => {
   try {
     // Check if the user already exists
