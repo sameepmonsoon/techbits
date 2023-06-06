@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
-import Logo from "../Components/Logo/Logo";
-import signUpImage from "../assets/signup-4.svg";
+import signUpImage from "../assets/undraw_server_push_re_303w.svg";
 import Button from "../Components/Button/Button";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import GoogleLogin from "react-google-login";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
 const UpdateProfile = () => {
   const [viewPassword, setViewPassword] = useState(false);
-  const [togglePassword, setTogglePassword] = useState("password");
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   // for modal open and close
   const [toggleModal, setToggleModal] = useState(false);
-  const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
   const email = currentUser?.email;
@@ -79,24 +73,7 @@ const UpdateProfile = () => {
     },
     validationSchema: schema,
   });
-  const handleToggle = () => {
-    setViewPassword((prevViewPassword) => !prevViewPassword);
-  };
-  // to toggle password
-  useEffect(() => {
-    setTogglePassword(viewPassword ? "text" : "password");
-  }, [viewPassword]);
 
-  console.log(success);
-  // to show modal on error change
-  useEffect(() => {
-    if ((error !== "") | (success !== "")) {
-      setToggleModal(true);
-    }
-  }, [error, success]);
-  const responseGoogle = (response) => {
-    console.log(response);
-  };
   return (
     <HomeLayout>
       {!showSignUpPage ? (
@@ -128,7 +105,7 @@ const UpdateProfile = () => {
               onSubmit={formik.handleSubmit}
               className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
               <label htmlFor="image">
-                <img src={image} alt="" className="h-10 bg-red-900"/>
+                <img src={image} alt="" className="h-10 bg-red-900" />
               </label>
               <label
                 htmlFor="username"
