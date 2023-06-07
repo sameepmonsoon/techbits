@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd } from "react-icons/all";
 import { blogCategories, randomColors } from "../Details";
-import { RxCross2 } from "react-icons/rx";
+import { RxCross2 } from "react-icons/all";
 import { BsImage, BsUpload } from "react-icons/bs";
 import { BiText } from "react-icons/bi";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosAdd } from "react-icons/all";
 import Button from "../Components/Button/Button";
 import { HttpCalls } from "../utils/HttpCalls";
 import { useDispatch } from "react-redux";
@@ -91,73 +91,63 @@ const WriteBlogPage = () => {
   //this part is  refactored using chatgpt
   const handleSubmit = (event) => {
     event.preventDefault();
-    setDisableSubmission(true);
-    setSelectedPhoto(null);
-    setTextareaValue("");
-    setEditorContent("");
-    setCategoryListItem([{ id: "", item: "" }]);
+    // setDisableSubmission(true);
     if (textareaValue != "" && selectedPhoto != null) {
-      HttpCalls.post("/blogPost", requestData)
-        .then((response) => {
-          dispatch(fetchAllBlogs());
-          setDisableSubmission(false);
-          setSelectedPhoto(null);
-          setTextareaValue("");
-          setEditorContent("");
-          setCategoryListItem([{ id: "", item: "" }]);
-          const toastId = "alert";
-          const existingToast = toast.isActive(toastId);
-          if (existingToast) {
-          } else {
-            toast.error(`${"Published"}`, {
-              toastId: toastId,
-              className: "toast-center",
-              position: "bottom-center",
-              autoClose: 4000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              closeButton: false,
-              icon: false,
-              style: {
-                background: "#da6161",
-                color: "white",
-                width: "500px",
-              },
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          const toastId = "alert";
-          const existingToast = toast.isActive(toastId);
+      const fileReader = new FileReader();
+      fileReader.onload = function () {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 800; // Maximum width of the compressed image
+          const MAX_HEIGHT = 800; // Maximum height of the compressed image
+          let width = img.width;
+          let height = img.height;
 
-          if (existingToast) {
-          } else {
-            toast.error(`${err.response.data.error}`, {
-              toastId: toastId,
-              className: "toast-center",
-              position: "bottom-center",
-              autoClose: 4000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              closeButton: false,
-              icon: false,
-              style: {
-                background: "#da6161",
-                color: "white",
-                width: "500px",
-              },
-            });
+          // Calculate new dimensions if needed
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
           }
-        });
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+
+          // Set the canvas dimensions and draw the compressed image
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Get the compressed image data as a data URL (base64 format)
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
+
+          const requestData = {
+            username: currentUser.username,
+            userId: currentUser._id,
+            categoryList: categoryListItem,
+            titleContent: textareaValue,
+            selectedPhoto: compressedDataUrl,
+            editorContent: editorContent,
+          };
+
+          console.log(requestData);
+          HttpCalls.post("/blogPost", requestData)
+            .then((response) => {
+              dispatch(fetchAllBlogs());
+              setDisableSubmission(false);
+              setSelectedPhoto(null);
+              setTextareaValue("");
+              setEditorContent("");
+              setCategoryListItem([{ id: "", item: "" }]);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          fileReader.readAsDataURL(selectedPhoto);
+          img.src = fileReader.result; // Set the image source to trigger the onload event
+        };
+      };
     } else if (selectedPhoto == null) {
       setDisableSubmission(false);
       const toastId = "alert";
@@ -215,49 +205,6 @@ const WriteBlogPage = () => {
     }
   };
 
-  const fileReader = new FileReader();
-  fileReader.onload = function () {
-    const img = new Image();
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      const MAX_WIDTH = 800; // Maximum width of the compressed image
-      const MAX_HEIGHT = 800; // Maximum height of the compressed image
-      let width = img.width;
-      let height = img.height;
-
-      // Calculate new dimensions if needed
-      if (width > MAX_WIDTH) {
-        height *= MAX_WIDTH / width;
-        width = MAX_WIDTH;
-      }
-      if (height > MAX_HEIGHT) {
-        width *= MAX_HEIGHT / height;
-        height = MAX_HEIGHT;
-      }
-
-      // Set the canvas dimensions and draw the compressed image
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-
-      // Get the compressed image data as a data URL (base64 format)
-      const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
-
-      const requestData = {
-        username: currentUser.username,
-        userId: currentUser._id,
-        categoryList: categoryListItem,
-        titleContent: textareaValue,
-        selectedPhoto: compressedDataUrl,
-        editorContent: editorContent,
-      };
-
-      fileReader.readAsDataURL(selectedPhoto);
-      img.src = fileReader.result; // Set the image source to trigger the onload event
-    };
-  };
-
   const [result, setResult] = useState([]);
 
   useEffect(() => {
@@ -269,8 +216,6 @@ const WriteBlogPage = () => {
         console.log(error);
       });
   }, []);
-
-  console.log("data from context", isHovering);
 
   return (
     <BlogLayout renderComponents={""}>
