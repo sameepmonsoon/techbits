@@ -21,6 +21,7 @@ const BlogLayout = ({ children, renderComponents }) => {
           </div>
           <div className="flex justify-start items-center gap-4">
             <Button
+              image={currentUserDetails?.profilePicture}
               icon={<CiUser size={20} />}
               title={currentUserDetails?.username}
               border={true}
