@@ -12,13 +12,15 @@ const Home = (userDetails) => {
   );
   return (
     <div className="w-full md:min-w-[50%] h-auto flex flex-col justify-center items-center p-5 gap-8 ">
-      {userBlogPost.map((item) => (
+      {userBlogPost.map((item, index) => (
         <Card
+          key={index}
           cardImage={item.selectedPhoto}
           row={true}
           cardPostDate={item.createdAt}
           cardTitle={item.titleContent}
           cardId={item._id}
+          cardUserName={item.username}
           cardDescription={item.editorContent}
           cardUserImage={currentUser?.profilePicture}
         />

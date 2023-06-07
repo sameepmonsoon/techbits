@@ -119,6 +119,7 @@ const Navbar = ({ Links, fixed, border }) => {
                 linkName={"/writeBlog"}
               />
               <Button
+                image={currentLoggedUser?.profilePicture}
                 icon={<CiUser size={25} />}
                 title={currentLoggedUser?.username}
                 border={false}

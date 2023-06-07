@@ -53,6 +53,7 @@ const Bookmarks = () => {
             cardId={item._id}
             cardDescription={item.editorContent}
             cardUserImage={avatarUser}
+            cardUserName={item.username}
           />
         );
       })}
