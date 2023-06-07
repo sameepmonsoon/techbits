@@ -3,34 +3,35 @@ import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useLocation } from "react-router-dom";
 export const BlogContext = createContext({
   isHovering: false,
   handleHovering: () => {},
 });
+
 const BlogLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
+  const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
   const [toggleModal, setToggleModal] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
+  const [isHovering, setIsHovering] = useState(true);
   const handleMouseEnter = (event) => {
-    setTimeout(() => {
-      setIsHovering(event);
-    }, 100);
+    setIsHovering(event);
   };
   const handleMouseLeave = (event) => {
     setTimeout(() => {
       setIsHovering(event);
-    }, 600);
+    }, 1000);
   };
 
-  const handleHovering = (event) => {
-    setIsHovering(event);
-    console.log("mutator events", event);
-  };
-
-  useEffect(() => {}, [isHovering]);
+  useEffect(() => {
+    setIsHovering(false);
+  }, [location.pathname]);
   return (
-    <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden">
+    <div
+      className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
+      // onClick={() => handleMouseLeave(false)}
+      >
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
@@ -45,17 +46,19 @@ const BlogLayout = ({ children, renderComponents }) => {
               border={true}
               color={true}
               background={false}
-              linkName={currentUserDetails ? "/Profile" : "/"}
+              // linkName={currentUserDetails ? "/Profile" : "/"}
             />
-            <span className="group cursor-pointer flex justify-center items-center rounded-full hover:bg-purple/10 p-1">
+            <span
+              className={`group cursor-pointer z-20 flex justify-center items-center rounded-full hover:bg-purple/10 p-1 ${
+                isHovering && "bg-purple/10"
+              } `}>
               <IoSettingsOutline
                 size={23}
-                className="text-purple cursor-pointer group-hover:text-deep-purple/70"
+                className={`text-purple cursor-pointer group-hover:text-deep-purple/70 `}
                 onClick={() => {
-                  setToggleModal((prev) => !prev);
+                  setIsHovering(prev=>!prev);
                 }}
                 onMouseEnter={() => handleMouseEnter(true)}
-                onMouseLeave={() => handleMouseLeave(false)}
               />
             </span>
           </div>

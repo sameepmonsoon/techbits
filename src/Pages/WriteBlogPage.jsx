@@ -15,6 +15,7 @@ import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
+import { Link } from "react-router-dom";
 const WriteBlogPage = () => {
   const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
@@ -168,7 +169,7 @@ const WriteBlogPage = () => {
         toast.error(`${"Please Choose a cover image for your blog."}`, {
           toastId: toastId,
           className: "toast-center",
-          position: "bottom-center",
+          position: "center",
           autoClose: 4000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -280,8 +281,20 @@ const WriteBlogPage = () => {
               <div
                 onMouseEnter={() => handleMouseEnter(true)}
                 onMouseLeave={() => handleMouseLeave(false)}
-                className="absolute top-[3.3rem] cursor-pointer  border-[1px] bg-white border-gray-200 right-[0.5rem] h-40 w-40 rounded-md p-2 text-[14px] text-black/80">
-                <span>Save as Draft</span>
+                className="absolute z-10 top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
+                <Link
+                  to="/"
+                  className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                  Home
+                </Link>{" "}
+                <Link
+                  to="/profile"
+                  className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                  View Profile
+                </Link>
+                <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                  Save as Draft
+                </div>
               </div>
             )}
             <div className="relative w-full min-h-[2.5rem] max-h-none flex-wrap flex justify-start items-center border-b-[1px] gap-2 border-b-purple/30 p-2 ">
