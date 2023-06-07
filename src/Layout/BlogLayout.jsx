@@ -19,9 +19,7 @@ const BlogLayout = ({ children, renderComponents }) => {
     setIsHovering(event);
   };
   const handleMouseLeave = (event) => {
-    setTimeout(() => {
-      setIsHovering(event);
-    }, 1000);
+    setIsHovering(event);
   };
 
   useEffect(() => {
@@ -31,7 +29,7 @@ const BlogLayout = ({ children, renderComponents }) => {
     <div
       className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
       // onClick={() => handleMouseLeave(false)}
-      >
+    >
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
@@ -56,7 +54,7 @@ const BlogLayout = ({ children, renderComponents }) => {
                 size={23}
                 className={`text-purple cursor-pointer group-hover:text-deep-purple/70 `}
                 onClick={() => {
-                  setIsHovering(prev=>!prev);
+                  setIsHovering((prev) => !prev);
                 }}
                 onMouseEnter={() => handleMouseEnter(true)}
               />
