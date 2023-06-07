@@ -1,16 +1,34 @@
-import React, { useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
-import { CgOptions } from "react-icons/cg";
-import Modal from "../Components/Modal/Modal";
-import { AiFillSetting } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
+export const BlogContext = createContext({
+  isHovering: false,
+  handleHovering: () => {},
+});
 const BlogLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
   const [toggleModal, setToggleModal] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const handleMouseEnter = (event) => {
+    setTimeout(() => {
+      setIsHovering(event);
+    }, 100);
+  };
+  const handleMouseLeave = (event) => {
+    setTimeout(() => {
+      setIsHovering(event);
+    }, 600);
+  };
 
+  const handleHovering = (event) => {
+    setIsHovering(event);
+    console.log("mutator events", event);
+  };
+
+  useEffect(() => {}, [isHovering]);
   return (
     <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden">
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
@@ -36,14 +54,19 @@ const BlogLayout = ({ children, renderComponents }) => {
                 onClick={() => {
                   setToggleModal((prev) => !prev);
                 }}
+                onMouseEnter={() => handleMouseEnter(true)}
+                onMouseLeave={() => handleMouseLeave(false)}
               />
             </span>
           </div>
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
-        {children}
-      </div>
+      <BlogContext.Provider
+        value={{ isHovering, handleMouseEnter, handleMouseLeave }}>
+        <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
+          {children}
+        </div>
+      </BlogContext.Provider>
       <div className="overflow-y-auto px-10 pt-20">{renderComponents}</div>
     </div>
   );
