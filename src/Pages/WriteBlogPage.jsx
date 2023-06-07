@@ -73,7 +73,6 @@ const WriteBlogPage = () => {
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const textAreaRef = useRef(null);
-  const textAreaRef2 = useRef(null);
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     setSelectedPhoto(file);
@@ -87,7 +86,9 @@ const WriteBlogPage = () => {
       textAreaRef.current.focus();
     }
   }, [isFocused]);
-
+  const handleSaveAsDraft = () => {
+    alert("Draft");
+  };
   //this part is  refactored using chatgpt
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -270,7 +271,9 @@ const WriteBlogPage = () => {
         console.log(error);
       });
   }, []);
+
   console.log("data from context", isHovering);
+
   return (
     <BlogLayout renderComponents={""}>
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
@@ -286,19 +289,24 @@ const WriteBlogPage = () => {
                   to="/"
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
                   Home
-                </Link>{" "}
+                </Link>
                 <Link
                   to="/profile"
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
                   View Profile
                 </Link>
-                <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                <div
+                  className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
+                  onClick={handleSaveAsDraft}>
                   Save as Draft
+                </div>
+                <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                  View Drafts
                 </div>
               </div>
             )}
             <div className="relative w-full min-h-[2.5rem] max-h-none flex-wrap flex justify-start items-center border-b-[1px] gap-2 border-b-purple/30 p-2 ">
-              <div className="absolute right-0 top-[-2rem]">
+              <div className="absolute right-0 top-[-2.5rem]">
                 <Button
                   icon={<BsUpload size={16} />}
                   title={"Publish"}
@@ -310,7 +318,7 @@ const WriteBlogPage = () => {
                 />
               </div>
               {/* category component */}
-              <div className="relative sm:absolute left-[8.8rem] sm:left-[10.8rem] top-[3.6rem] sm:top-[3.1rem] bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+              <div className="relative sm:absolute left-[-4rem]  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <IoAdd
                   onClick={handleIconClick}
                   size={30}
