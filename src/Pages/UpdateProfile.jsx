@@ -3,8 +3,6 @@ import signUpImage from "../assets/update.svg";
 import userImage from "../assets/user.svg";
 import Button from "../Components/Button/Button";
 import { useFormik } from "formik";
-import * as yup from "yup";
-import { signUp, clearState } from "../Store/authSlice";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
@@ -16,13 +14,10 @@ import { toast, Slide } from "react-toastify";
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-
   const [toggleModal, setToggleModal] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
-  const email = currentUser?.email;
   const image = currentUser?.selectedPhoto;
   const [userName, setUserName] = useState(username);
   useEffect(() => {
@@ -39,7 +34,6 @@ const UpdateProfile = () => {
       if (selectedPhoto) {
         profilePicture = await compressAndConvertToBase64(selectedPhoto);
       }
-
       const updatedData = {
         userId: currentUser._id,
         username: userName,
@@ -55,8 +49,11 @@ const UpdateProfile = () => {
             console.log(res.data.message);
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);
-
             if (existingToast) {
+              toast.update(toastId, {
+                render: `${res.data.message}`,
+                autoClose: 4000,
+              });
             } else {
               toast.error(`${res.data.message}`, {
                 toastId: toastId,
@@ -84,8 +81,11 @@ const UpdateProfile = () => {
             setIsLoading(false);
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);
-
             if (existingToast) {
+                toast.update(toastId, {
+                  render: `${err.response.data.error}`,
+                  autoClose: 4000,
+                });
             } else {
               toast.error(`${err.response.data.error}`, {
                 toastId: toastId,
@@ -202,8 +202,6 @@ const UpdateProfile = () => {
       reader.readAsDataURL(file);
     });
   };
-
-  //
   return (
     <HomeLayout>
       {!showSignUpPage ? (
