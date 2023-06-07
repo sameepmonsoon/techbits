@@ -50,7 +50,6 @@ const WriteBlogPage = () => {
       prevList.filter((item) => item.id !== id)
     );
   };
-
   //   for the components inside form
   // to handle the text area height
   const [isFocused, setIsFocused] = useState(false);
@@ -108,7 +107,6 @@ const WriteBlogPage = () => {
           setCategoryListItem([{ id: "", item: "" }]);
           const toastId = "alert";
           const existingToast = toast.isActive(toastId);
-
           if (existingToast) {
           } else {
             toast.error(`${"Published"}`, {
