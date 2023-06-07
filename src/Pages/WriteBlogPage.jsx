@@ -89,10 +89,12 @@ const WriteBlogPage = () => {
     alert("Draft");
   };
   //this part is  refactored using chatgpt
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, apiEndPoints) => {
     event.preventDefault();
     // setDisableSubmission(true);
     if (textareaValue != "" && selectedPhoto != null) {
+      console.log("inside fjkadfjksd");
+
       const fileReader = new FileReader();
       fileReader.onload = function () {
         const img = new Image();
@@ -131,8 +133,8 @@ const WriteBlogPage = () => {
             editorContent: editorContent,
           };
 
-          console.log(requestData);
-          HttpCalls.post("/blogPost", requestData)
+          console.log("request data ", requestData);
+          HttpCalls.post(apiEndPoints, requestData)
             .then((response) => {
               dispatch(fetchAllBlogs());
               setDisableSubmission(false);
@@ -144,10 +146,10 @@ const WriteBlogPage = () => {
             .catch((error) => {
               console.log(error);
             });
-          fileReader.readAsDataURL(selectedPhoto);
-          img.src = fileReader.result; // Set the image source to trigger the onload event
         };
+        img.src = fileReader.result; // Set the image source to trigger the onload event
       };
+      fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
       setDisableSubmission(false);
       const toastId = "alert";
@@ -240,7 +242,7 @@ const WriteBlogPage = () => {
                 </Link>
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
-                  onClick={handleSaveAsDraft}>
+                  onClick={(event) => handleSubmit(event, "/createDraft")}>
                   Save as Draft
                 </div>
                 <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
@@ -257,7 +259,7 @@ const WriteBlogPage = () => {
                   color={true}
                   background={false}
                   linkName={"/writeBlog"}
-                  onClick={handleSubmit}
+                  onClick={(event) => handleSubmit(event, "/blogPost")}
                 />
               </div>
               {/* category component */}
