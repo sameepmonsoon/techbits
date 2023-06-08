@@ -57,7 +57,7 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
                 onClick={() => {
                   setIsHovering((prev) => !prev);
                 }}
-                onMouseEnter={() => handleMouseEnter(true)}
+                // onMouseEnter={() => handleMouseEnter(true)}
               />
             </span>
           </div>

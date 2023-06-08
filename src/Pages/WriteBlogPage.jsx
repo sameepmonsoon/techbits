@@ -261,7 +261,6 @@ const WriteBlogPage = () => {
 
     HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
       .then((res) => {
-        console.log(res.data.getAllBlogDraft);
         setDraftData(res.data.getAllBlogDraft);
       })
       .catch((err) => {
@@ -275,6 +274,7 @@ const WriteBlogPage = () => {
       .filter((item) => item._id === draftId)
       .map((item, index) => {
         setSelectedDraftPhoto(item.selectedPhoto);
+        setSelectedPhoto(item.selectedPhoto);
         setTextareaValue(item.titleContent);
         setEditorContent(item.editorContent);
         setCategoryListItem(item.categoryList);
@@ -286,7 +286,6 @@ const WriteBlogPage = () => {
     setShowDraftModal((prev) => !prev);
   };
 
-  console.log(draftData);
   return (
     <BlogLayout renderComponents={""} getIsSaved={isSaved}>
       {showDraftModal && (
@@ -326,8 +325,8 @@ const WriteBlogPage = () => {
           <div className="gap-2 md:w-[50%]  flex justify-center items-center flex-col h-auto max-h-full ">
             {isHovering && (
               <div
-                onMouseEnter={() => handleMouseEnter(true)}
-                onMouseLeave={() => handleMouseLeave(false)}
+                // onMouseEnter={() => handleMouseEnter(true)}
+                // onMouseLeave={() => handleMouseLeave(false)}
                 className="absolute z-[100] top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
                 <Link
                   to="/"
@@ -453,7 +452,7 @@ const WriteBlogPage = () => {
                 </div>
               </div>
               {isFocused ||
-                (textareaValue && (
+                (textareaValue != null && (
                   <textarea
                     placeholder="Enter your blog title"
                     id="myTextarea"
