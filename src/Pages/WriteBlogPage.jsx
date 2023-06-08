@@ -32,6 +32,8 @@ const WriteBlogPage = () => {
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
   const [showDraftModal, setShowDraftModal] = useState(false);
+  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
+
   const handleIconClick = () => {
     setShowAddCategories(!showAddCategories);
     setShowDropdown(false);
@@ -237,7 +239,7 @@ const WriteBlogPage = () => {
     const toRenderDraft = draftData
       .filter((item) => item._id === draftId)
       .map((item, index) => {
-        setSelectedPhoto(item.selectedPhoto);
+        setSelectedDraftPhoto(item.selectedPhoto);
         setTextareaValue(item.titleContent);
         setEditorContent(item.editorContent);
         setCategoryListItem(item.categoryList);
@@ -252,29 +254,37 @@ const WriteBlogPage = () => {
   console.log(draftData);
   return (
     <BlogLayout renderComponents={""}>
-      <div
-        className={`transition-h duration-100 top-[7rem] ease-in-out absolute bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[35%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
-          showDraftModal ? "opacity-100  h-[80%] " : "opacity-0 h-0 "
-        } rounded-lg flex flex-col gap-2`}>
-        <p className="w-full text-[18px] border-b-2 p-1 text-black">
-          Draft List
-        </p>
-        <img
-          src={draftImage}
-          alt=""
-          className="h-[50%]  w-full p-1 object-conhtain"
-        />
-        <div className="h-auto w-full overflow-hidden">
-          {draftData.map((item, index) => (
-            <p
-              key={index}
-              onClick={() => renderSavedDraft(item._id)}
-              className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
-              <span>{index + 1}.</span> {item.titleContent}
+      {showDraftModal && (
+        <div
+          className="w-full absolute h-[200vh] flex items-start justify-center bg-white/5 backdrop-blur-sm z-20 top-0"
+          onClick={() => {
+            setShowDraftModal(false);
+          }}>
+          <div
+            className={`transition-h duration-100 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+              showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
+            } rounded-lg flex flex-col gap-2`}>
+            <p className="w-full text-[18px] border-b-2 p-1 text-black">
+              Draft List
             </p>
-          ))}
+            <img
+              src={draftImage}
+              alt=""
+              className="h-[50%]  w-full p-1 object-conhtain"
+            />
+            <div className="h-auto w-full overflow-hidden">
+              {draftData.map((item, index) => (
+                <p
+                  key={index}
+                  onClick={() => renderSavedDraft(item._id)}
+                  className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                  <span>{index + 1}.</span> {item.titleContent}
+                </p>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
       <BlogContext.Consumer>
         {({ isHovering, handleMouseEnter, handleMouseLeave }) => (
@@ -378,7 +388,7 @@ const WriteBlogPage = () => {
               </div>
             </div>
             {/* form */}
-            <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start">
+            <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start ">
               <div className="relative left-0 bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <div
                   onClick={() => {
@@ -406,27 +416,32 @@ const WriteBlogPage = () => {
                   </span>
                 </div>
               </div>
-              {isFocused && (
-                <textarea
-                  placeholder="Enter your blog title"
-                  id="myTextarea"
-                  name=""
-                  maxLength={300}
-                  value={textareaValue}
-                  onChange={handleChange}
-                  onFocus={() => {
-                    setShowAddCategories(false);
-                    // setOpenBlogCategory(false);
-                  }}
-                  ref={textAreaRef}
-                  className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
-              )}
-              {selectedPhoto ? (
+              {isFocused ||
+                (textareaValue && (
+                  <textarea
+                    placeholder="Enter your blog title"
+                    id="myTextarea"
+                    name=""
+                    maxLength={300}
+                    value={textareaValue}
+                    onChange={handleChange}
+                    onFocus={() => {
+                      setShowAddCategories(false);
+                      // setOpenBlogCategory(false);
+                    }}
+                    ref={textAreaRef}
+                    className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
+                ))}
+              {selectedPhoto || selectedDraftPhoto ? (
                 <div className="flex justify-start items-start gap-2">
-                  <img
-                    src={URL.createObjectURL(selectedPhoto)}
-                    alt="Selected Photo"
-                  />{" "}
+                  {selectedDraftPhoto ? (
+                    <img src={selectedDraftPhoto} alt="Selected Photo" />
+                  ) : (
+                    <img
+                      src={URL.createObjectURL(selectedPhoto)}
+                      alt="Selected Photo"
+                    />
+                  )}
                   <span className="text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60">
                     <RxCross2
                       size={20}

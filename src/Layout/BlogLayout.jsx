@@ -9,7 +9,7 @@ export const BlogContext = createContext({
   handleHovering: () => {},
 });
 
-const BlogLayout = ({ children, renderComponents }) => {
+const BlogLayout = ({ children, renderComponents, ...rest }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
@@ -64,7 +64,9 @@ const BlogLayout = ({ children, renderComponents }) => {
       </div>
       <BlogContext.Provider
         value={{ isHovering, handleMouseEnter, handleMouseLeave }}>
-        <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
+        <div
+          className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]"
+        >
           {children}
         </div>
       </BlogContext.Provider>
