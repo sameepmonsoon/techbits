@@ -279,7 +279,6 @@ const WriteBlogPage = () => {
         setEditorContent(item.editorContent);
         setCategoryListItem(item.categoryList);
       });
-    console.log("item to render", toRenderDraft);
   };
 
   const handleViewDraft = () => {

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 import { IoSettingsOutline } from "react-icons/io5";
 import image from "../assets/noah-silliman-gzhyKEo_cbU-unsplash.jpg";
 import { IoIosLogOut } from "react-icons/io";
 const HomePage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
@@ -16,6 +17,10 @@ const HomePage = () => {
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
     setOpenSetting((prev) => !prev);
+  };
+  const handleLogout = () => {
+    navigate("/");
+    localStorage.removeItem("user");
   };
   return (
     <HomeLayout renderComponents={""}>
@@ -29,7 +34,7 @@ const HomePage = () => {
           } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 absolute left-[50rem] top-[12rem] rounded-lg transition-opacity duration-200`}>
           <>
             <Link
-              to="/update"
+              onClick={handleLogout}
               className="w-[6.5rem] flex items-center gap-2 justify-center  border-gray-300 cursor-pointer border-[1px] rounded-lg h-10 bg-red-600 hover:bg-red-700 text-white">
               <IoIosLogOut size={25} /> Logout
             </Link>
