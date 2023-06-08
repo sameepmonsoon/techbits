@@ -9,7 +9,7 @@ export const BlogContext = createContext({
   handleHovering: () => {},
 });
 
-const BlogLayout = ({ children, renderComponents }) => {
+const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
@@ -25,6 +25,7 @@ const BlogLayout = ({ children, renderComponents }) => {
   useEffect(() => {
     setIsHovering(false);
   }, [location.pathname]);
+
   return (
     <div
       className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
@@ -34,7 +35,7 @@ const BlogLayout = ({ children, renderComponents }) => {
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
             <Logo />
-            <span className="text-deep-purple text-[16px]">Saved</span>
+            <span className="text-deep-purple text-[16px]">{getIsSaved}</span>
           </div>
           <div className="flex justify-start items-center gap-4">
             <Button
@@ -56,7 +57,7 @@ const BlogLayout = ({ children, renderComponents }) => {
                 onClick={() => {
                   setIsHovering((prev) => !prev);
                 }}
-                onMouseEnter={() => handleMouseEnter(true)}
+                // onMouseEnter={() => handleMouseEnter(true)}
               />
             </span>
           </div>

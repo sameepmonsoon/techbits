@@ -16,6 +16,7 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
 import { Link } from "react-router-dom";
+import draftImage from "../assets/draft-2.svg";
 const WriteBlogPage = () => {
   const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
@@ -27,6 +28,14 @@ const WriteBlogPage = () => {
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
+
+  // state for draft modals
+  const [draftData, setDraftData] = useState([]);
+  const [isSaved, setSetIsSaved] = useState("");
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
+  // if current blog is extracted from a draf
+  const [currentDraftId, setcurrentDraftId] = useState(null);
   const handleIconClick = () => {
     setShowAddCategories(!showAddCategories);
     setShowDropdown(false);
@@ -89,10 +98,15 @@ const WriteBlogPage = () => {
     alert("Draft");
   };
   //this part is  refactored using chatgpt
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, apiEndPoints) => {
     event.preventDefault();
     // setDisableSubmission(true);
-    if (textareaValue != "" && selectedPhoto != null) {
+    if (
+      (textareaValue != "" && selectedPhoto != null) ||
+      (textareaValue != "" && selectedDraftPhoto != null)
+    ) {
+      console.log("inside fjkadfjksd");
+
       const fileReader = new FileReader();
       fileReader.onload = function () {
         const img = new Image();
@@ -127,12 +141,15 @@ const WriteBlogPage = () => {
             userId: currentUser._id,
             categoryList: categoryListItem,
             titleContent: textareaValue,
-            selectedPhoto: compressedDataUrl,
+            selectedPhoto: selectedDraftPhoto
+              ? selectedDraftPhoto
+              : compressedDataUrl,
             editorContent: editorContent,
+            id: currentDraftId,
           };
 
-          console.log(requestData);
-          HttpCalls.post("/blogPost", requestData)
+          console.log("request data ", requestData);
+          HttpCalls.post(apiEndPoints, requestData)
             .then((response) => {
               dispatch(fetchAllBlogs());
               setDisableSubmission(false);
@@ -144,10 +161,36 @@ const WriteBlogPage = () => {
             .catch((error) => {
               console.log(error);
             });
-          fileReader.readAsDataURL(selectedPhoto);
-          img.src = fileReader.result; // Set the image source to trigger the onload event
         };
+
+        const requestData = {
+          username: currentUser.username,
+          userId: currentUser._id,
+          categoryList: categoryListItem,
+          titleContent: textareaValue,
+          selectedPhoto: selectedDraftPhoto
+            ? selectedDraftPhoto
+            : compressedDataUrl,
+          editorContent: editorContent,
+          id: currentDraftId,
+        };
+
+        console.log("request data ", requestData);
+        HttpCalls.post(apiEndPoints, requestData)
+          .then((response) => {
+            dispatch(fetchAllBlogs());
+            setDisableSubmission(false);
+            setSelectedPhoto(null);
+            setTextareaValue("");
+            setEditorContent("");
+            setCategoryListItem([{ id: "", item: "" }]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        img.src = fileReader.result; // Set the image source to trigger the onload event
       };
+      if (selectedPhoto) fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
       setDisableSubmission(false);
       const toastId = "alert";
@@ -215,19 +258,75 @@ const WriteBlogPage = () => {
       .catch((error) => {
         console.log(error);
       });
+
+    HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+      .then((res) => {
+        setDraftData(res.data.getAllBlogDraft);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
+  const renderSavedDraft = (draftId) => {
+    setcurrentDraftId(draftId);
+    const toRenderDraft = draftData
+      .filter((item) => item._id === draftId)
+      .map((item, index) => {
+        setSelectedDraftPhoto(item.selectedPhoto);
+        setSelectedPhoto(item.selectedPhoto);
+        setTextareaValue(item.titleContent);
+        setEditorContent(item.editorContent);
+        setCategoryListItem(item.categoryList);
+      });
+  };
+
+  const handleViewDraft = () => {
+    setShowDraftModal((prev) => !prev);
+  };
+
   return (
-    <BlogLayout renderComponents={""}>
+    <BlogLayout renderComponents={""} getIsSaved={isSaved}>
+      {showDraftModal && (
+        <div
+          className="w-full absolute h-[200vh] flex items-start justify-center bg-white/5 backdrop-blur-sm z-20 top-0"
+          onClick={() => {
+            setShowDraftModal(false);
+          }}>
+          <div
+            className={`transition-h duration-100 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+              showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
+            } rounded-lg flex flex-col gap-2`}>
+            <p className="w-full text-[18px] border-b-2 p-1 text-black">
+              Draft List
+            </p>
+            <img
+              src={draftImage}
+              alt=""
+              className="h-[50%]  w-full p-1 object-conhtain"
+            />
+            <div className="h-auto w-full overflow-hidden">
+              {draftData.map((item, index) => (
+                <p
+                  key={index}
+                  onClick={() => renderSavedDraft(item._id)}
+                  className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                  <span>{index + 1}.</span> {item.titleContent}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
       <BlogContext.Consumer>
         {({ isHovering, handleMouseEnter, handleMouseLeave }) => (
           <div className="gap-2 md:w-[50%]  flex justify-center items-center flex-col h-auto max-h-full ">
             {isHovering && (
               <div
-                onMouseEnter={() => handleMouseEnter(true)}
-                onMouseLeave={() => handleMouseLeave(false)}
-                className="absolute z-10 top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
+                // onMouseEnter={() => handleMouseEnter(true)}
+                // onMouseLeave={() => handleMouseLeave(false)}
+                className="absolute z-[100] top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
                 <Link
                   to="/"
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
@@ -240,10 +339,17 @@ const WriteBlogPage = () => {
                 </Link>
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
-                  onClick={handleSaveAsDraft}>
+                  onClick={(event) => {
+                    handleSubmit(event, "/blogPost/createDraft");
+                    setSetIsSaved("Saved");
+                  }}>
                   Save as Draft
                 </div>
-                <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                <div
+                  className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
+                  onClick={() => {
+                    handleViewDraft();
+                  }}>
                   View Drafts
                 </div>
               </div>
@@ -257,7 +363,7 @@ const WriteBlogPage = () => {
                   color={true}
                   background={false}
                   linkName={"/writeBlog"}
-                  onClick={handleSubmit}
+                  onClick={(event) => handleSubmit(event, "/blogPost")}
                 />
               </div>
               {/* category component */}
@@ -316,7 +422,7 @@ const WriteBlogPage = () => {
               </div>
             </div>
             {/* form */}
-            <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start">
+            <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start ">
               <div className="relative left-0 bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <div
                   onClick={() => {
@@ -344,38 +450,56 @@ const WriteBlogPage = () => {
                   </span>
                 </div>
               </div>
-              {isFocused && (
-                <textarea
-                  placeholder="Enter your blog title"
-                  id="myTextarea"
-                  name=""
-                  maxLength={300}
-                  value={textareaValue}
-                  onChange={handleChange}
-                  onFocus={() => {
-                    setShowAddCategories(false);
-                    // setOpenBlogCategory(false);
-                  }}
-                  ref={textAreaRef}
-                  className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
-              )}
-              {selectedPhoto ? (
+              {isFocused ||
+                (textareaValue != null && (
+                  <textarea
+                    placeholder="Enter your blog title"
+                    id="myTextarea"
+                    name=""
+                    maxLength={300}
+                    value={textareaValue}
+                    onChange={handleChange}
+                    onFocus={() => {
+                      setShowAddCategories(false);
+                      // setOpenBlogCategory(false);
+                    }}
+                    ref={textAreaRef}
+                    className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
+                ))}
+              {selectedPhoto || selectedDraftPhoto ? (
                 <div className="flex justify-start items-start gap-2">
-                  <img
-                    src={URL.createObjectURL(selectedPhoto)}
-                    alt="Selected Photo"
-                  />{" "}
+                  {selectedDraftPhoto ? (
+                    <>
+                      <img src={selectedDraftPhoto} alt="Selected Photo" />
+                      <input
+                        hidden
+                        type="file"
+                        id="photo"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                      />
+                    </>
+                  ) : (
+                    <img
+                      src={URL.createObjectURL(selectedPhoto)}
+                      alt="Selected Photo"
+                    />
+                  )}
                   <span className="text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60">
                     <RxCross2
                       size={20}
                       className="hover:text-deep-purple cursor-pointer"
-                      onClick={() => setSelectedPhoto("")}
+                      onClick={() => {
+                        setSelectedPhoto("");
+                        setSelectedDraftPhoto("");
+                      }}
                     />
                   </span>
                 </div>
               ) : (
                 <input
                   hidden
+                  value={selectedDraftPhoto}
                   type="file"
                   id="photo"
                   accept="image/*"
