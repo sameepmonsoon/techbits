@@ -16,6 +16,7 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
 import { Link } from "react-router-dom";
+import draftImage from "../assets/draft-2.svg";
 const WriteBlogPage = () => {
   const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
@@ -27,6 +28,10 @@ const WriteBlogPage = () => {
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
+
+  // state for draft modals
+  const [draftData, setDraftData] = useState([]);
+  const [showDraftModal, setShowDraftModal] = useState(false);
   const handleIconClick = () => {
     setShowAddCategories(!showAddCategories);
     setShowDropdown(false);
@@ -217,19 +222,59 @@ const WriteBlogPage = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
 
-  const getUserDrafts = () => {
     HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
       .then((res) => {
-        console.log(res);
+        console.log(res.data.getAllBlogDraft);
+        setDraftData(res.data.getAllBlogDraft);
       })
       .catch((err) => {
         console.log(err);
       });
+  }, []);
+
+  const renderSavedDraft = (draftId) => {
+    const toRenderDraft = draftData
+      .filter((item) => item._id === draftId)
+      .map((item, index) => {
+        setSelectedPhoto(item.selectedPhoto);
+        setTextareaValue(item.titleContent);
+        setEditorContent(item.editorContent);
+        setCategoryListItem(item.categoryList);
+      });
+    console.log("item to render", toRenderDraft);
   };
+
+  const handleViewDraft = () => {
+    setShowDraftModal((prev) => !prev);
+  };
+
+  console.log(draftData);
   return (
     <BlogLayout renderComponents={""}>
+      <div
+        className={`transition-h duration-100 top-[7rem] ease-in-out absolute bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[35%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+          showDraftModal ? "opacity-100  h-[80%] " : "opacity-0 h-0 "
+        } rounded-lg flex flex-col gap-2`}>
+        <p className="w-full text-[18px] border-b-2 p-1 text-black">
+          Draft List
+        </p>
+        <img
+          src={draftImage}
+          alt=""
+          className="h-[50%]  w-full p-1 object-conhtain"
+        />
+        <div className="h-auto w-full overflow-hidden">
+          {draftData.map((item, index) => (
+            <p
+              key={index}
+              onClick={() => renderSavedDraft(item._id)}
+              className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+              <span>{index + 1}.</span> {item.titleContent}
+            </p>
+          ))}
+        </div>
+      </div>
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
       <BlogContext.Consumer>
         {({ isHovering, handleMouseEnter, handleMouseLeave }) => (
@@ -238,7 +283,7 @@ const WriteBlogPage = () => {
               <div
                 onMouseEnter={() => handleMouseEnter(true)}
                 onMouseLeave={() => handleMouseLeave(false)}
-                className="absolute z-10 top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
+                className="absolute z-[100] top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
                 <Link
                   to="/"
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
@@ -258,7 +303,9 @@ const WriteBlogPage = () => {
                 </div>
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
-                  onClick={getUserDrafts}>
+                  onClick={() => {
+                    handleViewDraft();
+                  }}>
                   View Drafts
                 </div>
               </div>
