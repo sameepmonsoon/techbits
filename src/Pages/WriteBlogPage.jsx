@@ -31,9 +31,11 @@ const WriteBlogPage = () => {
 
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
+  const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
-
+  // if current blog is extracted from a draf
+  const [currentDraftId, setcurrentDraftId] = useState(null);
   const handleIconClick = () => {
     setShowAddCategories(!showAddCategories);
     setShowDropdown(false);
@@ -99,7 +101,10 @@ const WriteBlogPage = () => {
   const handleSubmit = (event, apiEndPoints) => {
     event.preventDefault();
     // setDisableSubmission(true);
-    if (textareaValue != "" && selectedPhoto != null) {
+    if (
+      (textareaValue != "" && selectedPhoto != null) ||
+      (textareaValue != "" && selectedDraftPhoto != null)
+    ) {
       console.log("inside fjkadfjksd");
 
       const fileReader = new FileReader();
@@ -136,8 +141,11 @@ const WriteBlogPage = () => {
             userId: currentUser._id,
             categoryList: categoryListItem,
             titleContent: textareaValue,
-            selectedPhoto: compressedDataUrl,
+            selectedPhoto: selectedDraftPhoto
+              ? selectedDraftPhoto
+              : compressedDataUrl,
             editorContent: editorContent,
+            id: currentDraftId,
           };
 
           console.log("request data ", requestData);
@@ -154,9 +162,35 @@ const WriteBlogPage = () => {
               console.log(error);
             });
         };
+
+        const requestData = {
+          username: currentUser.username,
+          userId: currentUser._id,
+          categoryList: categoryListItem,
+          titleContent: textareaValue,
+          selectedPhoto: selectedDraftPhoto
+            ? selectedDraftPhoto
+            : compressedDataUrl,
+          editorContent: editorContent,
+          id: currentDraftId,
+        };
+
+        console.log("request data ", requestData);
+        HttpCalls.post(apiEndPoints, requestData)
+          .then((response) => {
+            dispatch(fetchAllBlogs());
+            setDisableSubmission(false);
+            setSelectedPhoto(null);
+            setTextareaValue("");
+            setEditorContent("");
+            setCategoryListItem([{ id: "", item: "" }]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         img.src = fileReader.result; // Set the image source to trigger the onload event
       };
-      fileReader.readAsDataURL(selectedPhoto);
+      if (selectedPhoto) fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
       setDisableSubmission(false);
       const toastId = "alert";
@@ -236,6 +270,7 @@ const WriteBlogPage = () => {
   }, []);
 
   const renderSavedDraft = (draftId) => {
+    setcurrentDraftId(draftId);
     const toRenderDraft = draftData
       .filter((item) => item._id === draftId)
       .map((item, index) => {
@@ -253,7 +288,7 @@ const WriteBlogPage = () => {
 
   console.log(draftData);
   return (
-    <BlogLayout renderComponents={""}>
+    <BlogLayout renderComponents={""} getIsSaved={isSaved}>
       {showDraftModal && (
         <div
           className="w-full absolute h-[200vh] flex items-start justify-center bg-white/5 backdrop-blur-sm z-20 top-0"
@@ -306,9 +341,10 @@ const WriteBlogPage = () => {
                 </Link>
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
-                  onClick={(event) =>
-                    handleSubmit(event, "/blogPost/createDraft")
-                  }>
+                  onClick={(event) => {
+                    handleSubmit(event, "/blogPost/createDraft");
+                    setSetIsSaved("Saved");
+                  }}>
                   Save as Draft
                 </div>
                 <div
@@ -435,7 +471,16 @@ const WriteBlogPage = () => {
               {selectedPhoto || selectedDraftPhoto ? (
                 <div className="flex justify-start items-start gap-2">
                   {selectedDraftPhoto ? (
-                    <img src={selectedDraftPhoto} alt="Selected Photo" />
+                    <>
+                      <img src={selectedDraftPhoto} alt="Selected Photo" />
+                      <input
+                        hidden
+                        type="file"
+                        id="photo"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                      />
+                    </>
                   ) : (
                     <img
                       src={URL.createObjectURL(selectedPhoto)}
@@ -446,13 +491,17 @@ const WriteBlogPage = () => {
                     <RxCross2
                       size={20}
                       className="hover:text-deep-purple cursor-pointer"
-                      onClick={() => setSelectedPhoto("")}
+                      onClick={() => {
+                        setSelectedPhoto("");
+                        setSelectedDraftPhoto("");
+                      }}
                     />
                   </span>
                 </div>
               ) : (
                 <input
                   hidden
+                  value={selectedDraftPhoto}
                   type="file"
                   id="photo"
                   accept="image/*"

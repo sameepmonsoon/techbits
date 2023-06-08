@@ -87,24 +87,29 @@ exports.likeDislikeBlog = async (req, res) => {
 exports.createBlogDraft = async (req, res, next) => {
   try {
     console.log("inside create draft");
-    const getAllBlogDraft = await Draft.find({ _id: req.body.userId });
+    const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
     if (getAllBlogDraft.length > 2) {
       res.status(500).json({ error: "Can't save more than 2 drafts." });
     } else {
       const fileData = Buffer.from(req.body.selectedPhoto, "base64");
-      const newBlogDraft = new Draft({
-        username: req.body.username,
-        userId: req.body.userId,
-        categoryList: req.body.categoryList,
-        titleContent: req.body.titleContent,
-        selectedPhoto: req.body.selectedPhoto,
-        editorContent: req.body.editorContent,
-      });
+      if (req.body.id) {
+        const previousDraf = await Draft.find({ _id: id });
+        console.log(previousDraf);
+      } else {
+        const newBlogDraft = new Draft({
+          username: req.body.username,
+          userId: req.body.userId,
+          categoryList: req.body.categoryList,
+          titleContent: req.body.titleContent,
+          selectedPhoto: req.body.selectedPhoto,
+          editorContent: req.body.editorContent,
+        });
 
-      const savedBlogDraft = await newBlogDraft.save();
-      res
-        .status(200)
-        .json({ savedBlogDraft, message: "Draft saved Successfully." });
+        const savedBlogDraft = await newBlogDraft.save();
+        res
+          .status(200)
+          .json({ savedBlogDraft, message: "Draft saved Successfully." });
+      }
     }
   } catch (err) {
     console.log(err);

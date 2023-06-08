@@ -9,7 +9,7 @@ export const BlogContext = createContext({
   handleHovering: () => {},
 });
 
-const BlogLayout = ({ children, renderComponents, ...rest }) => {
+const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   const NavbarLinks = [{ title: "Publish", link: "/" }];
   const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
@@ -25,6 +25,7 @@ const BlogLayout = ({ children, renderComponents, ...rest }) => {
   useEffect(() => {
     setIsHovering(false);
   }, [location.pathname]);
+
   return (
     <div
       className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
@@ -34,7 +35,7 @@ const BlogLayout = ({ children, renderComponents, ...rest }) => {
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
             <Logo />
-            <span className="text-deep-purple text-[16px]">Saved</span>
+            <span className="text-deep-purple text-[16px]">{getIsSaved}</span>
           </div>
           <div className="flex justify-start items-center gap-4">
             <Button
@@ -64,9 +65,7 @@ const BlogLayout = ({ children, renderComponents, ...rest }) => {
       </div>
       <BlogContext.Provider
         value={{ isHovering, handleMouseEnter, handleMouseLeave }}>
-        <div
-          className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]"
-        >
+        <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
           {children}
         </div>
       </BlogContext.Provider>
