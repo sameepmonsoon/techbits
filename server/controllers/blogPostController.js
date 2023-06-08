@@ -86,6 +86,7 @@ exports.likeDislikeBlog = async (req, res) => {
 // for draft
 exports.createBlogDraft = async (req, res, next) => {
   try {
+    console.log("inside create draft");
     const getAllBlogDraft = await Draft.find({ _id: req.body.userId });
     if (getAllBlogDraft.length > 2) {
       res.status(500).json({ error: "Can't save more than 2 drafts." });
@@ -110,10 +111,11 @@ exports.createBlogDraft = async (req, res, next) => {
     res.status(500).json({ error: "Failed to save as draft." });
   }
 };
+
 exports.getBlogDraft = async (req, res) => {
   try {
-    const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
-    console.log(getAllBlogDraft);
+    console.log(req.params.id);
+    const getAllBlogDraft = await Draft.find({ userId: req.params.id });
     res.status(200).json({
       getAllBlogDraft,
       message: "Success",

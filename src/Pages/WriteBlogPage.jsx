@@ -219,6 +219,15 @@ const WriteBlogPage = () => {
       });
   }, []);
 
+  const getUserDrafts = () => {
+    HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <BlogLayout renderComponents={""}>
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
@@ -242,10 +251,14 @@ const WriteBlogPage = () => {
                 </Link>
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
-                  onClick={(event) => handleSubmit(event, "/createDraft")}>
+                  onClick={(event) =>
+                    handleSubmit(event, "/blogPost/createDraft")
+                  }>
                   Save as Draft
                 </div>
-                <div className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
+                <div
+                  className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
+                  onClick={getUserDrafts}>
                   View Drafts
                 </div>
               </div>
