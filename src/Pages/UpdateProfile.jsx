@@ -39,7 +39,6 @@ const UpdateProfile = () => {
         username: userName,
         profilePicture,
       };
-      console.log(updatedData);
       if (profilePicture != null) {
         const response = await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
@@ -55,24 +54,16 @@ const UpdateProfile = () => {
                 autoClose: 4000,
               });
             } else {
-              toast.error(`${res.data.message}`, {
+              toast.success(res.data.message, {
                 toastId: toastId,
-                className: "toast-center",
-                position: "bottom-center",
-                autoClose: 4000,
+                position: "top-center",
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "colored",
-                closeButton: false,
-                icon: false,
-                style: {
-                  background: "green",
-                  color: "white",
-                  width: "235px",
-                },
+                theme: "light",
               });
             }
           })
@@ -82,28 +73,23 @@ const UpdateProfile = () => {
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);
             if (existingToast) {
-                toast.update(toastId, {
-                  render: `${err.response.data.error}`,
-                  autoClose: 4000,
-                });
+              toast.update(toastId, {
+                render: `${err.response.data.error}`,
+                autoClose: 4000,
+              });
             } else {
               toast.error(`${err.response.data.error}`, {
                 toastId: toastId,
-                className: "toast-center",
-                position: "bottom-center",
-                autoClose: 4000,
+                position: "top-center",
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "colored",
-                closeButton: false,
-                icon: false,
+                theme: "light",
                 style: {
-                  background: "#da6161",
-                  color: "white",
-                  width: "500px",
+                  width: "300px",
                 },
               });
             }
@@ -118,20 +104,16 @@ const UpdateProfile = () => {
           setIsLoading(false);
         } else {
           setIsLoading(false);
-          toast.error(`${"Please upload your picture."}`, {
+          toast.error("Please upload your picture.", {
             toastId: toastId,
-            className: "toast-center",
-            position: "bottom-center",
-            autoClose: 4000,
+            position: "top-center",
+            autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "colored",
-            closeButton: false,
-            icon: false,
-            style: { background: "#da6161", color: "white", width: "225px" },
+            theme: "light",
           });
         }
       }

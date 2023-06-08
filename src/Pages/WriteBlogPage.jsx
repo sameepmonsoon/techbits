@@ -105,8 +105,6 @@ const WriteBlogPage = () => {
       (textareaValue != "" && selectedPhoto != null) ||
       (textareaValue != "" && selectedDraftPhoto != null)
     ) {
-      console.log("inside fjkadfjksd");
-
       const fileReader = new FileReader();
       fileReader.onload = function () {
         const img = new Image();
@@ -148,7 +146,6 @@ const WriteBlogPage = () => {
             id: currentDraftId,
           };
 
-          console.log("request data ", requestData);
           HttpCalls.post(apiEndPoints, requestData)
             .then((response) => {
               dispatch(fetchAllBlogs());
@@ -168,9 +165,8 @@ const WriteBlogPage = () => {
           userId: currentUser._id,
           categoryList: categoryListItem,
           titleContent: textareaValue,
-          selectedPhoto: selectedDraftPhoto
-            ? selectedDraftPhoto
-            : compressedDataUrl,
+          selectedPhoto:
+            selectedDraftPhoto != "" ? selectedDraftPhoto : compressedDataUrl,
           editorContent: editorContent,
           id: currentDraftId,
         };
@@ -179,46 +175,60 @@ const WriteBlogPage = () => {
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
-            setDisableSubmission(false);
-            setSelectedPhoto(null);
-            setTextareaValue("");
-            setEditorContent("");
-            setCategoryListItem([{ id: "", item: "" }]);
+            toast.success(`${"Blog Published successfully."}`, {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            setTimeout(() => {
+              setDisableSubmission(false);
+              setSelectedPhoto(null);
+              setTextareaValue("");
+              setEditorContent("");
+              setCategoryListItem([{ id: "", item: "" }]);
+            }, 1000);
           })
           .catch((error) => {
             console.log(error);
+            toast.error(`${error.response.data.error}`, {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
           });
         img.src = fileReader.result; // Set the image source to trigger the onload event
       };
       if (selectedPhoto) fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
-      setDisableSubmission(false);
+      console.log("errr121");
+
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
 
-      if (existingToast) {
-      } else {
-        toast.error(`${"Please Choose a cover image for your blog."}`, {
-          toastId: toastId,
-          className: "toast-center",
-          position: "center",
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          closeButton: false,
-          icon: false,
-          style: {
-            background: "#da6161",
-            color: "white",
-            width: "350px",
-          },
-        });
-      }
-    } else {
+      setDisableSubmission(false);
+      toast.error(`${"Please Choose a cover image for your blog."}`, {
+        toastId: toastId,
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else if (textareaValue === "") {
+      console.log("errr");
       setDisableSubmission(false);
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
@@ -227,22 +237,34 @@ const WriteBlogPage = () => {
       } else {
         toast.error(`${"Blog Title can't be empty."}`, {
           toastId: toastId,
-          className: "toast-center",
-          position: "bottom-center",
-          autoClose: 4000,
+          position: "top-center",
+          autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "colored",
-          closeButton: false,
-          icon: false,
-          style: {
-            background: "#da6161",
-            color: "white",
-            width: "230px",
-          },
+          theme: "light",
+        });
+      }
+    } else {
+      console.log("errr");
+      setDisableSubmission(false);
+      const toastId = "alert";
+      const existingToast = toast.isActive(toastId);
+
+      if (existingToast) {
+      } else {
+        toast.error(`${"Blog Body can't be empty."}`, {
+          toastId: toastId,
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
         });
       }
     }

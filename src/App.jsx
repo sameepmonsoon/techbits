@@ -12,7 +12,7 @@ import Home from "./PageComponents/Home/Home";
 import Bookmarks from "./PageComponents/Bookmarks/Bookmarks";
 import About from "./PageComponents/About/About";
 import UpdateProfile from "./Pages/UpdateProfile";
-import { ToastContainer, toast } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   const [currentUser, setCurrentUser] = useState();
@@ -46,11 +46,7 @@ function App() {
     { path: "/read/:cardId", element: <ReadFullBlogPage /> },
     { path: "/update", element: <UpdateProfile /> },
   ]);
-  return (
-    <RouterProvider router={router}>
-      <ToastContainer />
-    </RouterProvider>
-  );
+  return <RouterProvider router={router}></RouterProvider>;
 }
 
 export default App;
