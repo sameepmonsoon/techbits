@@ -45,6 +45,7 @@ const LoginPage = () => {
   const formik = useFormik({
     initialValues: { password: "", email: "" },
     onSubmit: (values, action) => {
+      console.log(values);
       dispatch(login(values));
     },
     validationSchema: schema,
@@ -94,6 +95,7 @@ const LoginPage = () => {
             openCloseModal={(error && toggleModal) || (success && toggleModal)}
             modalMessage={success ? success : error}
             top={true}
+            navigate={"/"}
           />
           <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <div className="h-20 w-full flex justify-center items-center gap-4 ">

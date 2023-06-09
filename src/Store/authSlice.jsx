@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HttpCalls } from "../utils/HttpCalls";
+import { useDispatch } from "react-redux";
 
+const dispatch = useDispatch();
 const initialState = {
   isLoading: false,
   error: "",
@@ -15,7 +17,7 @@ export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
     console.log("response ", result.data);
-    login({});
+
     return result.data;
   } catch (error) {
     return { error: error.response.data.error };
@@ -59,6 +61,7 @@ const authSlice = createSlice({
           console.log(state.error);
         } else {
           localStorage.setItem("localToken", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload));
           state.token = action.payload.token;
           state.success = action.payload.message;
           state.error = "";

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { RxCross2, } from "react-icons/all";
+import { RxCross2 } from "react-icons/all";
+import { useNavigate } from "react-router-dom";
 const Modal = ({
+  navigate,
   autoHeight,
   info,
   error,
@@ -12,8 +14,15 @@ const Modal = ({
   middle,
   bottom,
 }) => {
+  const navigatePath = useNavigate();
   const handleToggle = () => {
     toggleModal((prev) => !prev);
+
+    if (navigate) {
+      setTimeout(() => {
+        navigatePath(navigate);
+      }, 400);
+    }
   };
   const [focusModal, setFocusModal] = useState(false);
 
