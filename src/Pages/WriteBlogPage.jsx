@@ -111,68 +111,101 @@ const WriteBlogPage = () => {
       (textareaValue != "" && selectedPhoto != null) ||
       (textareaValue != "" && selectedDraftPhoto != null)
     ) {
-      const fileReader = new FileReader();
-      fileReader.onload = function () {
-        const img = new Image();
-        img.onload = function () {
-          const canvas = document.createElement("canvas");
-          const MAX_WIDTH = 800; // Maximum width of the compressed image
-          const MAX_HEIGHT = 800; // Maximum height of the compressed image
-          let width = img.width;
-          let height = img.height;
+      // when its normal publishing
+      if (selectedPhoto) {
+        const fileReader = new FileReader();
+        fileReader.onload = function () {
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 800; // Maximum width of the compressed image
+            const MAX_HEIGHT = 800; // Maximum height of the compressed image
+            let width = img.width;
+            let height = img.height;
 
-          // Calculate new dimensions if needed
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
+            // Calculate new dimensions if needed
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
 
-          // Set the canvas dimensions and draw the compressed image
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
+            // Set the canvas dimensions and draw the compressed image
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
 
-          // Get the compressed image data as a data URL (base64 format)
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
+            // Get the compressed image data as a data URL (base64 format)
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
 
-          const requestData = {
-            username: currentUser.username,
-            userId: currentUser._id,
-            categoryList: categoryListItem,
-            titleContent: textareaValue,
-            selectedPhoto: selectedDraftPhoto
-              ? selectedDraftPhoto
-              : compressedDataUrl,
-            editorContent: editorContent,
-            id: currentDraftId,
+            const requestData = {
+              username: currentUser.username,
+              userId: currentUser._id,
+              categoryList: categoryListItem,
+              titleContent: textareaValue,
+              selectedPhoto:
+                selectedDraftPhoto != null
+                  ? selectedDraftPhoto
+                  : compressedDataUrl,
+              editorContent: editorContent,
+              id: currentDraftId,
+            };
+
+            HttpCalls.post(apiEndPoints, requestData)
+              .then((response) => {
+                dispatch(fetchAllBlogs());
+                toast.success(`${"Blog Published successfully."}`, {
+                  position: "top-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                setTimeout(() => {
+                  setDisableSubmission(false);
+                  setSelectedPhoto(null);
+                  setSelectedDraftPhoto(null);
+                  setTextareaValue("");
+                  setEditorContent("");
+                  setCategoryListItem([{ id: "", item: "" }]);
+                }, 1000);
+              })
+              .catch((error) => {
+                console.log(error);
+                toast.error(`${error.response.data.error}`, {
+                  position: "top-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+              });
           };
 
-          HttpCalls.post(apiEndPoints, requestData)
-            .then((response) => {
-              dispatch(fetchAllBlogs());
-              setDisableSubmission(false);
-              setSelectedPhoto(null);
-              setTextareaValue("");
-              setEditorContent("");
-              setCategoryListItem([{ id: "", item: "" }]);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+          img.src = fileReader.result; // Set the image source to trigger the onload event
         };
+      }
 
+      // to call api when publishing the file after getting it from a draft
+      // image is already base64 ---and low quality
+      if (selectedDraftPhoto) {
         const requestData = {
           username: currentUser.username,
           userId: currentUser._id,
           categoryList: categoryListItem,
           titleContent: textareaValue,
           selectedPhoto:
-            selectedDraftPhoto != "" ? selectedDraftPhoto : compressedDataUrl,
+            selectedDraftPhoto != null ? selectedDraftPhoto : compressedDataUrl,
           editorContent: editorContent,
           id: currentDraftId,
         };
@@ -211,9 +244,8 @@ const WriteBlogPage = () => {
               theme: "light",
             });
           });
-        img.src = fileReader.result; // Set the image source to trigger the onload event
-      };
-      if (selectedPhoto) fileReader.readAsDataURL(selectedPhoto);
+      }
+      if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
       console.log("errr121");
 
@@ -254,9 +286,20 @@ const WriteBlogPage = () => {
       }
     } else if (categoryListItem == "") {
       setDisableSubmission(false);
-
       toast.error(`${"Category list is empty"}`, {
-        toastId: toastId,
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      console.log("failed to do so");
+      setDisableSubmission(false);
+      toast.error(`${"Please enter something."}`, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -295,7 +338,6 @@ const WriteBlogPage = () => {
       .filter((item) => item._id === draftId)
       .map((item, index) => {
         setSelectedDraftPhoto(item.selectedPhoto);
-        setSelectedPhoto(item.selectedPhoto);
         setTextareaValue(item.titleContent);
         setEditorContent(item.editorContent);
         setCategoryListItem(item.categoryList);
@@ -315,7 +357,7 @@ const WriteBlogPage = () => {
             setShowDraftModal(false);
           }}>
           <div
-            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
             <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
@@ -401,7 +443,7 @@ const WriteBlogPage = () => {
                 />
               </div>
               {/* category component */}
-              <div className="relative sm:absolute sm:left-[-4rem]  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+              <div className="relative  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <IoAdd
                   onClick={handleIconClick}
                   size={30}

@@ -24,7 +24,6 @@ exports.createBlogPost = async (req, res, next) => {
 exports.getAllBlogPosts = async (req, res) => {
   try {
     const getAllBlog = await Blog.find();
-    console.log(getAllBlog);
     res.status(200).json({
       getAllBlog,
       message: "Success",
@@ -51,7 +50,6 @@ exports.likeDislikeBlog = async (req, res) => {
   try {
     const blogId = req.params.id;
     const userId = req.body.userId;
-    console.log(blogId, userId);
 
     const likeBlog = await Blog.findById(blogId);
 
@@ -86,7 +84,6 @@ exports.likeDislikeBlog = async (req, res) => {
 // for draft
 exports.createBlogDraft = async (req, res, next) => {
   try {
-    console.log("inside create draft");
     const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
     if (getAllBlogDraft.length > 2) {
       res.status(500).json({ error: "Can't save more than 2 drafts." });
@@ -119,7 +116,6 @@ exports.createBlogDraft = async (req, res, next) => {
 
 exports.getBlogDraft = async (req, res) => {
   try {
-    console.log(req.params.id);
     const getAllBlogDraft = await Draft.find({ userId: req.params.id });
     res.status(200).json({
       getAllBlogDraft,
@@ -128,5 +124,26 @@ exports.getBlogDraft = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Failed to fetch drafts." });
+  }
+};
+
+exports.deleteBlogPost = async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    console.log(blogId);
+    const isPresent = Blog.findOne({ _id: blogId });
+    if (isPresent) {
+      Blog.deleteOne({ _id: blogId });
+      res.status(200).json({
+        message: "Deleted",
+        flag: true,
+      });
+    } else {
+      console.log(err);
+      res.status(500).json({ error: "Failed to fetch delete." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Failed to delete." });
   }
 };

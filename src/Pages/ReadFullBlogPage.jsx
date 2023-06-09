@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   CiBookmarkPlus,
   BsFillBookmarkCheckFill,
-  ImSpinner5,
+  MdDeleteOutline,
+  FiEdit3,
+  MdEditNote,
+  IoSettingsOutline,
 } from "react-icons/all";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { AiOutlineComment } from "react-icons/ai";
-import image from "../assets/craig-mckay-jmURdhtm7Ng-unsplash.jpg";
+import { AiOutlineComment, AiOutlineDelete } from "react-icons/ai";
 import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
-import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 const ReadFullBlogPage = () => {
   //loading state
@@ -22,6 +23,11 @@ const ReadFullBlogPage = () => {
   const { cardId } = useParams();
   const dispatch = useDispatch();
   const [currentBlog, setCurrentBlog] = useState([]);
+
+  // flag for the blog posted by the currentuse
+  const [currentUserBlog, setCurrentUserBlog] = useState(false);
+  const [showSetting, setShowSetting] = useState(false);
+
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const currentPost = currentBlog
     .filter((item) => item._id === cardId)
@@ -112,6 +118,11 @@ const ReadFullBlogPage = () => {
       //     });
       //
     }
+
+    currentBlog.map((item) => {
+      if (item._id == cardId && item.userId == currentUserId)
+        setCurrentUserBlog(true);
+    });
   }, [cardId, creatorId, currentUserId]);
 
   useEffect(() => {
@@ -119,7 +130,6 @@ const ReadFullBlogPage = () => {
       navigate("/");
     }
   }, []);
-;
   const handleClickFollow = () => {
     HttpCalls.put("/auth/follow", {
       userId: creatorId,
@@ -129,6 +139,18 @@ const ReadFullBlogPage = () => {
         setIsFollowing(
           res.data.updatedFollowList.following?.includes(creatorId)
         );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // delete your blog
+
+  const handleDeleteBLog = () => {
+    HttpCalls.deleteData(`/blogPost/deleteBlog/${cardId}`)
+      .then((res) => {
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -165,11 +187,15 @@ const ReadFullBlogPage = () => {
                   <span className="text-black hover:text-blue-purple text-[18px]">
                     {item.username}
                   </span>
-                  <span
-                    onClick={handleClickFollow}
-                    className="text-[12px]  text-white bg-green-700 border-[1px] border-green-400 hover:border-green-500 rounded-sm px-1 w-[3.8rem] max-w-none h-[1.3rem] items-center flex justify-center">
-                    {isFollowing ? "Following" : "follow"}
-                  </span>
+                  {currentUserBlog ? (
+                    <></>
+                  ) : (
+                    <span
+                      onClick={handleClickFollow}
+                      className="text-[12px]  text-white bg-green-700 border-[1px] border-green-400 hover:border-green-500 rounded-sm px-1 w-[3.8rem] max-w-none h-[1.3rem] items-center flex justify-center">
+                      {isFollowing ? "Following" : "follow"}
+                    </span>
+                  )}
                 </div>
                 <span className="text-[14px] font-[500] text-black/60">
                   {new Date(item.createdAt).toLocaleDateString("en-US", {
@@ -181,36 +207,63 @@ const ReadFullBlogPage = () => {
               </div>
             </div>
             {/* article reactions and bookmark */}
-            <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
-              <div className="flex justify-start gap-[1px]">
+            <div className=" w-[80%] sm:w-[50%] h-[3rem] flex justify-center items-center gap-3 border-b-[1px]">
+              <div className="flex justify-center items-center gap-[1px] group h-10">
                 <IoMdHeartEmpty
                   onClick={handleClickLike}
-                  size={25}
-                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
+                  size={28}
+                  className="text-deep-purple/70 hover:text-pink-600 cursor-pointer hover:bg-pink-100 rounded-full p-[3px]"
                 />
-                <span>{likeComment?.likes?.length}</span>
+                <span className="group-hover:text-pink-500 group">
+                  {likeComment?.likes?.length}
+                </span>
               </div>
               <span className="flex justify-start gap-1">
                 <AiOutlineComment
-                  size={25}
-                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
+                  size={29}
+                  className="text-deep-purple/70 hover:text-blue-500 cursor-pointer hover:bg-blue-100 rounded-full p-[3px]"
                 />
               </span>
               <span className="flex justify-start gap-1">
                 {isBookmarked ? (
                   <BsFillBookmarkCheckFill
                     onClick={handleClickBookmark}
-                    size={21}
-                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                    size={25}
+                    className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
                   />
                 ) : (
                   <CiBookmarkPlus
                     onClick={handleClickBookmark}
-                    size={25}
-                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
+                    size={29}
+                    className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
                   />
                 )}
               </span>
+              {/* to delete or edit the blog  */}
+              {currentUserBlog && (
+                <div className="w-auto h-auto relative flex justify-center items-center">
+                  <div
+                    className="h-auto hover:bg-gray-200/60 rounded-full p-1 cursor-pointer"
+                    onClick={() => setShowSetting((prev) => !prev)}>
+                    <IoSettingsOutline size={23} />
+                  </div>
+                  {showSetting && (
+                    <>
+                      <div className="flex gap-1 absolute left-10 bg-white border-[1px] shadow-sm h-10 w-20 justify-center items-center rounded-md">
+                        <MdEditNote
+                          size={28}
+                          className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
+                        />
+                        <MdDeleteOutline
+                          size={25}
+                          className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
+                          onClick={handleDeleteBLog}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             {/* photos and contents */}
             <div className=" justify-center flex  w-[80%] sm:w-[50%]">
@@ -229,7 +282,7 @@ const ReadFullBlogPage = () => {
                 style={{ fontSize: "18px" }}
               />
             </div>
-            <div className="flex-col flex sm:flex-row gap-2 justify-center items-center w-full h-20">
+            <div className="flex-col flex sm:flex-row gap-2 justify-center items-center w-[50%] sm:w-full h-auto sm:h-20 flex-wrap">
               {item.categoryList
                 .filter((category) => category.id != "")
                 .map((category, categoryIndex) => (
