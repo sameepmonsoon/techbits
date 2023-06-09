@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { IoAdd } from "react-icons/all";
+import { IoAdd, RxCross1 } from "react-icons/all";
 import { blogCategories, randomColors } from "../Details";
 import { RxCross2 } from "react-icons/all";
 import { BsImage, BsUpload } from "react-icons/bs";
@@ -177,7 +177,6 @@ const WriteBlogPage = () => {
           id: currentDraftId,
         };
 
-        console.log("request data ", requestData);
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
@@ -254,7 +253,6 @@ const WriteBlogPage = () => {
         });
       }
     } else if (categoryListItem == "") {
-      console.log("errr");
       setDisableSubmission(false);
 
       toast.error(`${"Category list is empty"}`, {
@@ -317,11 +315,18 @@ const WriteBlogPage = () => {
             setShowDraftModal(false);
           }}>
           <div
-            className={`transition-h duration-100 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
-            <p className="w-full text-[18px] border-b-2 p-1 text-black">
+            <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
               Draft List
+              <RxCross1
+                size={25}
+                className="cursor-pointer hover:text-gray-500"
+                onClick={() => {
+                  setShowDraftModal(false);
+                }}
+              />
             </p>
             <img
               src={draftImage}
