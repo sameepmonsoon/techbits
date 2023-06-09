@@ -140,7 +140,8 @@ const SignUpPage = () => {
             toggleModal={setToggleModal}
             openCloseModal={(error && toggleModal) || (success && toggleModal)}
             modalMessage={success ? success : error}
-            bottom={true}
+            top={true}
+            navigate={"/"}
           />
           <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <div className="h-20 w-full flex justify-center items-center gap-4 ">

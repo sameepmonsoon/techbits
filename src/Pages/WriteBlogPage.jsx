@@ -328,16 +328,22 @@ const WriteBlogPage = () => {
               alt=""
               className="h-[50%]  w-full p-1 object-conhtain"
             />
-            <div className="h-auto w-full overflow-hidden">
-              {draftData.map((item, index) => (
-                <p
-                  key={index}
-                  onClick={() => renderSavedDraft(item._id)}
-                  className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
-                  <span>{index + 1}.</span> {item.titleContent}
-                </p>
-              ))}
-            </div>
+            {draftData ? (
+              <div className="h-auto w-full overflow-hidden">
+                {draftData.map((item, index) => (
+                  <p
+                    key={index}
+                    onClick={() => renderSavedDraft(item._id)}
+                    className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    <span>{index + 1}.</span> {item.titleContent}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <div className="h-auto w-full overflow-hidden">
+                You can save your draft heres
+              </div>
+            )}
           </div>
         </div>
       )}

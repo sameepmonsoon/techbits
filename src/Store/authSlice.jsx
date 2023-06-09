@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HttpCalls } from "../utils/HttpCalls";
 import { useDispatch } from "react-redux";
 
-const dispatch = useDispatch();
 const initialState = {
   isLoading: false,
   error: "",
@@ -17,7 +16,7 @@ export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
     console.log("response ", result.data);
-
+ 
     return result.data;
   } catch (error) {
     return { error: error.response.data.error };
