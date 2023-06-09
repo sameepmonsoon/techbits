@@ -85,13 +85,13 @@ exports.likeDislikeBlog = async (req, res) => {
 exports.createBlogDraft = async (req, res, next) => {
   try {
     const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
+    const checkSameDraft = await Draft.find({ _id: req.body?.id });
     if (getAllBlogDraft.length > 2) {
       res.status(500).json({ error: "Can't save more than 2 drafts." });
     } else {
       const fileData = Buffer.from(req.body.selectedPhoto, "base64");
-      if (req.body.id) {
-        const previousDraf = await Draft.find({ _id: id });
-        console.log(previousDraf);
+      if (checkSameDraft) {
+        await Draft.findOneAndUpdate({ _id: req.body?.id });
       } else {
         const newBlogDraft = new Draft({
           username: req.body.username,
@@ -127,6 +127,9 @@ exports.getBlogDraft = async (req, res) => {
   }
 };
 
+// delete
+
+// delete post
 exports.deleteBlogPost = async (req, res) => {
   try {
     const blogId = req.params.id;
@@ -136,6 +139,33 @@ exports.deleteBlogPost = async (req, res) => {
     if (isPresent != null) {
       await Blog.deleteOne({ _id: blogId });
       const allBlogsAfterDelete = await Blog.find();
+      res.status(200).json({
+        message: "Deleted",
+        allBlogsAfterDelete,
+        flag: true,
+      });
+    } else {
+      console.log(err);
+      res.status(500).json({ error: "Blog not found." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Failed to delete." });
+  }
+};
+
+// delete draft
+
+exports.deleteBlogDraft = async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const userId = req.body.userId;
+    console.log(blogId);
+    console.log(blogId);
+    const isPresent = Draft.findOne({ _id: blogId });
+    if (isPresent != null) {
+      await Draft.deleteOne({ _id: blogId });
+      const allBlogsAfterDelete = await Draft.find({ userId });
       res.status(200).json({
         message: "Deleted",
         allBlogsAfterDelete,

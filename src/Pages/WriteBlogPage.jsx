@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { IoAdd, RxCross1 } from "react-icons/all";
+import { IoAdd, MdDeleteOutline, RxCross1 } from "react-icons/all";
 import { blogCategories, randomColors } from "../Details";
 import { RxCross2 } from "react-icons/all";
 import { BsImage, BsUpload } from "react-icons/bs";
@@ -30,17 +30,13 @@ const WriteBlogPage = () => {
   ]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (currentUser == null) {
-      navigate("/");
-    }
-  }, []);
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
-  // if current blog is extracted from a draf
+  // if current blog is extracted from a draft
+  // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);
   const handleIconClick = () => {
     setShowAddCategories(!showAddCategories);
@@ -76,6 +72,11 @@ const WriteBlogPage = () => {
     adjustTextareaHeight();
   }, [textareaValue]);
 
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+  }, []);
   const adjustTextareaHeight = () => {
     if (isFocused) {
       const textarea = document.getElementById("myTextarea");
@@ -104,7 +105,7 @@ const WriteBlogPage = () => {
     alert("Draft");
   };
   //this part is  refactored using chatgpt
-  const handleSubmit = (event, apiEndPoints) => {
+  const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
     // setDisableSubmission(true);
     if (
@@ -147,18 +148,14 @@ const WriteBlogPage = () => {
               userId: currentUser._id,
               categoryList: categoryListItem,
               titleContent: textareaValue,
-              selectedPhoto:
-                selectedDraftPhoto != null
-                  ? selectedDraftPhoto
-                  : compressedDataUrl,
+              selectedPhoto: compressedDataUrl,
               editorContent: editorContent,
-              id: currentDraftId,
             };
 
             HttpCalls.post(apiEndPoints, requestData)
               .then((response) => {
                 dispatch(fetchAllBlogs());
-                toast.success(`${"Blog Published successfully."}`, {
+                toast.success(`${message}`, {
                   position: "top-center",
                   autoClose: 5000,
                   hideProgressBar: false,
@@ -348,14 +345,26 @@ const WriteBlogPage = () => {
     setShowDraftModal((prev) => !prev);
   };
 
+  // to delete draft
+  const handleDeleteDraft = (blogId) => {
+    HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <BlogLayout renderComponents={""} getIsSaved={isSaved}>
       {showDraftModal && (
         <div
           className="w-full absolute h-[200vh] flex items-start justify-center bg-white/5 backdrop-blur-sm z-20 top-0"
-          onClick={() => {
-            setShowDraftModal(false);
-          }}>
+          // onClick={() => {
+          //   setShowDraftModal(false);
+          // }}
+        >
           <div
             className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
@@ -376,13 +385,24 @@ const WriteBlogPage = () => {
               className="h-[50%]  w-full p-1 object-conhtain"
             />
             {draftData ? (
-              <div className="h-auto w-full overflow-hidden">
+              <div className="h-auto w-full overflow-hidden flex flex-col gap-3">
                 {draftData.map((item, index) => (
                   <p
                     key={index}
-                    onClick={() => renderSavedDraft(item._id)}
-                    className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    onClick={() => {
+                      renderSavedDraft(item._id);
+                    }}
+                    className="overflow-hidden w-full gap-2 h-10 text-[16px] md:text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
                     <span>{index + 1}.</span> {item.titleContent}
+                    <div className="flex-1 relative right-0 flex justify-end items-center">
+                      <span className="group h-auto bg-gray-100 border-[1px] border-gray-300 hover:bg-red-100 rounded-md p-1">
+                        <MdDeleteOutline
+                          size={25}
+                          className="hover:cursor-pointer group-hover:text-red-600 "
+                          onClick={() => handleDeleteDraft(item._id)}
+                        />
+                      </span>
+                    </div>
                   </p>
                 ))}
               </div>
@@ -416,7 +436,11 @@ const WriteBlogPage = () => {
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
                   onClick={(event) => {
-                    handleSubmit(event, "/blogPost/createDraft");
+                    handleSubmit(
+                      event,
+                      "/blogPost/createDraft",
+                      "Blog Saved as draft."
+                    );
                     setSetIsSaved("Saved");
                   }}>
                   Save as Draft
@@ -439,7 +463,13 @@ const WriteBlogPage = () => {
                   color={true}
                   background={false}
                   linkName={"/writeBlog"}
-                  onClick={(event) => handleSubmit(event, "/blogPost")}
+                  onClick={(event) =>
+                    handleSubmit(
+                      event,
+                      "/blogPost",
+                      "Blog published successfully."
+                    )
+                  }
                 />
               </div>
               {/* category component */}

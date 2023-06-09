@@ -7,6 +7,7 @@ const {
   createBlogDraft,
   getBlogDraft,
   deleteBlogPost,
+  deleteBlogDraft,
 } = require("../controllers/blogPostController.js");
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.get("/getAll", getAllBlogPosts);
 router.get("/timeline/:id", getUserPosts);
 router.post("/:id/like", likeDislikeBlog);
 router.delete("/deleteBlog/:id", deleteBlogPost);
+router.delete("/deleteBlogDraft/:id", deleteBlogDraft);
 
 module.exports = router;
