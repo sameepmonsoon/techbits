@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 import { IoSettingsOutline } from "react-icons/io5";
 import image from "../assets/noah-silliman-gzhyKEo_cbU-unsplash.jpg";
 import { IoIosLogOut } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logout } from "../Store/authSlice";
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,16 +14,21 @@ const HomePage = () => {
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
   const followersLength = currentUser?.followers?.length;
-
+  const dispatch = useDispatch();
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
     setOpenSetting((prev) => !prev);
   };
   const handleLogout = () => {
-    navigate("/");
-    localStorage.removeItem("user");
+    dispatch(logout());
   };
+
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+  }, []);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}
@@ -31,7 +38,7 @@ const HomePage = () => {
         <div
           className={`w-auto h-auto max-h-[20rem] ${
             openSetting ? "opacity-100 " : "opacity-0 "
-          } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 absolute left-[50rem] top-[12rem] rounded-lg transition-opacity duration-200`}>
+          } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 relative z-20 left-[8rem] top-[25rem] sm:top-[15.5rem] sm:left-[18rem] md:left-[24rem] md:top-[12rem] rounded-lg transition-opacity duration-200`}>
           <>
             <Link
               onClick={handleLogout}

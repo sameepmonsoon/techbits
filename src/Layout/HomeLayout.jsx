@@ -17,10 +17,12 @@ const HomeLayout = ({ children, renderComponents }) => {
     localStorage.removeItem("user");
   }, expirationTime);
   return (
-    <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden">
+    <div className="max-h-auto w-full font-sans flex flex-col overflow-x-hidden overflow-y-auto">
       <Navbar Links={NavbarLinks} border={true} />
-      <div className="flex flex-col flex-grow items-center">{children}</div>
-      <div className="flex justify-start items-center px-10 flex-wrap">
+      <div className="flex flex-col flex-grow items-center flex-wrap ">
+        {children}
+      </div>
+      <div className="flex justify-start items-center px-10 flex-wrap h-auto ">
         {renderComponents}
       </div>
       <Footer />

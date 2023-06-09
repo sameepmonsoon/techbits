@@ -3,7 +3,7 @@ import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 export const BlogContext = createContext({
   isHovering: false,
   handleHovering: () => {},
@@ -21,10 +21,15 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   const handleMouseLeave = (event) => {
     setIsHovering(event);
   };
-
+  const navigate = useNavigate();
   useEffect(() => {
     setIsHovering(false);
   }, [location.pathname]);
+  useEffect(() => {
+    if (currentUserDetails == null) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div

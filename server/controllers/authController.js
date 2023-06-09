@@ -38,7 +38,6 @@ exports.updateProfile = async (req, res) => {
     const result = await User.findOne({ _id: req.body.userId });
     res.status(200).json({ result, message: "Profile updated successfully." });
   } catch (err) {
- 
     res.status(500).json({ error: "Internal server error." });
   }
 };
@@ -70,16 +69,20 @@ exports.signup = async (req, res, next) => {
     const token = jwt.sign({ id: newUser._id }, process.env.JWT);
 
     const { password, ...othersData } = newUser._doc;
+
+    const user = await User.findById(newUser._id);
+    const loginToken = jwt.sign({ id: user?._id }, process.env.JWT);
+    const { password: loginPassword, ...loginOthersData } = user._doc;
     res
-      .cookie("access_token", token, {
+      .cookie("access_token", loginToken, {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         httpOnly: true,
         sameSite: "strict",
       })
       .status(200)
       .json({
-        token: token,
-        ...othersData,
+        token: loginToken,
+        ...loginOthersData,
         message: "Welcome to the TechBits.",
       });
   } catch (err) {
@@ -165,7 +168,6 @@ exports.getAllBookmark = async (req, res) => {
     const getAll = await User.findById(req.body.userId);
     res.status(200).json({ getAll, message: "success" });
   } catch (err) {
-  
     res.status(500).json({ error: "Bookmark failed" });
   }
 };
@@ -204,7 +206,6 @@ exports.follow = async (req, res) => {
 
     res.status(200).json({ updatedFollowList, message: "Success" });
   } catch (err) {
- 
     res.status(500).json({ error: "Failed to update following status" });
   }
 };

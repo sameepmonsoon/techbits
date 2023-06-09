@@ -37,7 +37,6 @@ const blogPostSlice = createSlice({
           state.token = action.payload.token;
           state.currentBlogPosts = action.payload?.getAllBlog;
           state.isAuthenticated = true;
-          console.log(state.currentBlogPosts);
           state.success = action.payload.message;
         }
       })

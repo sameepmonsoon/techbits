@@ -6,6 +6,7 @@ const initialState = {
   error: "",
   token: "",
   success: "",
+  showToast: false,
   currentUserDetail: [],
   isAuthenticated: false,
 };
@@ -13,8 +14,7 @@ const initialState = {
 export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
-    console.log("response ", result.data);
-    login({})
+
     return result.data;
   } catch (error) {
     return { error: error.response.data.error };
@@ -24,7 +24,6 @@ export const signUp = createAsyncThunk("signup", async (body) => {
 export const login = createAsyncThunk("login", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signin", body);
-    console.log("response ", result);
     return result.data;
   } catch (error) {
     console.log(error);
@@ -55,9 +54,9 @@ const authSlice = createSlice({
         state.isLoading = false;
         if (action.payload && action.payload.error) {
           state.error = action.payload.error;
-          console.log(state.error);
         } else {
           localStorage.setItem("localToken", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload));
           state.token = action.payload.token;
           state.success = action.payload.message;
           state.error = "";
@@ -82,8 +81,8 @@ const authSlice = createSlice({
           state.token = action.payload.token;
           state.currentUserDetail = action.payload;
           state.isAuthenticated = true;
-          console.log(state.currentUserDetail);
           state.success = action.payload.message;
+          state.showToast = true;
         }
       })
       .addCase(login.pending, (state, action) => {
@@ -101,5 +100,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearState } = authSlice.actions;
+export const { clearState, logout } = authSlice.actions;
 export default authSlice.reducer;

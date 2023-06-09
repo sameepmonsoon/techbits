@@ -58,11 +58,13 @@ const Bookmarks = () => {
         );
       })}
     </div>
-  ) : (
+  ) : bookmarkeItem.length < 0 ? (
     <div className="w-full md:min-w-[50%] flex flex-col justify-start items-center p-5 gap-8 h-full pt-20">
       <SkeletonCard row={true} />
       <SkeletonCard row={true} />
     </div>
+  ) : (
+    <></>
   );
 };
 

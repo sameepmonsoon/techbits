@@ -27,7 +27,7 @@ const HomePage = () => {
     <HomeLayout
       renderComponents={
         <>
-          <div className="font-sans flex flex-col justify-center items-center w-full">
+          <div className="font-sans flex flex-col justify-center items-center w-full ">
             <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
             <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
               {isLoading ? (
@@ -37,34 +37,37 @@ const HomePage = () => {
                   <SkeletonCard />
                 </>
               ) : (
-                currentBlogPosts.map((item, index) => (
-                  <Card
-                    key={index}
-                    cardId={item._id}
-                    writerId={item.userId}
-                    tag={
-                      <div className="flex gap-2 overflow-hidden">
-                        {item.categoryList
-                          .filter(
-                            (category, index) => category.id !== "" && index < 3
-                          )
-                          .map((category, categoryIndex) => (
-                            <div
-                              key={categoryIndex}
-                              className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[14px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                              <span> {category.item}</span>
-                            </div>
-                          ))}
-                      </div>
-                    }
-                    cardTitle={item.titleContent}
-                    cardDescription={""}
-                    cardUserName={item.username}
-                    cardImage={item.selectedPhoto}
-                    cardPostDate={item.createdAt}
-                    cardUserImage={image}
-                  />
-                ))
+                currentBlogPosts
+                  .filter((item, index) => index < 6)
+                  .map((item, index) => (
+                    <Card
+                      key={index}
+                      cardId={item._id}
+                      writerId={item.userId}
+                      tag={
+                        <div className="flex gap-2 overflow-hidden">
+                          {item.categoryList
+                            .filter(
+                              (category, index) =>
+                                category.id !== "" && index < 3
+                            )
+                            .map((category, categoryIndex) => (
+                              <div
+                                key={categoryIndex}
+                                className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[14px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                <span> {category.item}</span>
+                              </div>
+                            ))}
+                        </div>
+                      }
+                      cardTitle={item.titleContent}
+                      cardDescription={""}
+                      cardUserName={item.username}
+                      cardImage={item.selectedPhoto}
+                      cardPostDate={item.createdAt}
+                      cardUserImage={image}
+                    />
+                  ))
               )}
             </div>
           </div>

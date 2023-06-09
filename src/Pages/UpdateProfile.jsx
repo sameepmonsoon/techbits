@@ -22,6 +22,9 @@ const UpdateProfile = () => {
   const [userName, setUserName] = useState(username);
   useEffect(() => {
     setTimeout(() => {
+      if (currentUser == null) {
+        navigate("/");
+      }
       setShowSignUpPage(true);
     }, 500);
   }, []);
@@ -45,7 +48,6 @@ const UpdateProfile = () => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
             setIsLoading(false);
             setMessage(res.data.message);
-            console.log(res.data.message);
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);
             if (existingToast) {
@@ -94,8 +96,6 @@ const UpdateProfile = () => {
               });
             }
           });
-
-        console.log(response);
       } else {
         const toastId = "alert";
         const existingToast = toast.isActive(toastId);
@@ -238,7 +238,7 @@ const UpdateProfile = () => {
                       src={
                         currentUser?.profilePicture
                           ? currentUser?.profilePicture
-                          : image
+                          : userImage
                       }
                       alt=""
                       className="h-40 w-40 object-cover cursor-pointer rounded-full"

@@ -30,7 +30,7 @@ function deleteData(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.get(BASEURL + url, {
+  return axios.delete(BASEURL + url, {
     headers: { Authorization: `Bearer ${token}` },
   });
 }

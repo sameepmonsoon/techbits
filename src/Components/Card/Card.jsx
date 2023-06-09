@@ -47,11 +47,11 @@ const Card = ({
             : "h-[60%]  w-full"
         }  object-cover`}
       />
-      <div className="flex flex-col justify-start items-start overflow-hidden w-full">
+      <div className="flex flex-col justify-start items-start overflow-hidden w-full gap-1">
         <div className="text-deep-purple capitalize text-[16px] flex gap-1 justify-start items-center ">
           {tag} <span>{tag != "" && ""}</span>
         </div>
-        <div className="text-black capitalize text-[18px] w-full flex justify-between items-center">
+        <div className="text-black capitalize w-full flex justify-between items-start h-[4.5rem] py -2 text-[17px] font-800">
           <span>{cardTitle}</span>
           <Link to={`/read/${cardId}`}>
             <MdArrowOutward
@@ -74,7 +74,7 @@ const Card = ({
               {cardUserName}
             </span>
             <span className="text-[14px]">
-              {new  Date(cardPostDate).toLocaleDateString("en-US", {
+              {new Date(cardPostDate).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
                 year: "numeric",

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { IoAdd } from "react-icons/all";
+import { IoAdd, RxCross1 } from "react-icons/all";
 import { blogCategories, randomColors } from "../Details";
 import { RxCross2 } from "react-icons/all";
 import { BsImage, BsUpload } from "react-icons/bs";
@@ -15,7 +15,7 @@ import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import draftImage from "../assets/draft-2.svg";
 const WriteBlogPage = () => {
   const { isHovering } = useContext(BlogContext);
@@ -28,7 +28,13 @@ const WriteBlogPage = () => {
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+  }, []);
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
@@ -105,73 +111,105 @@ const WriteBlogPage = () => {
       (textareaValue != "" && selectedPhoto != null) ||
       (textareaValue != "" && selectedDraftPhoto != null)
     ) {
-      const fileReader = new FileReader();
-      fileReader.onload = function () {
-        const img = new Image();
-        img.onload = function () {
-          const canvas = document.createElement("canvas");
-          const MAX_WIDTH = 800; // Maximum width of the compressed image
-          const MAX_HEIGHT = 800; // Maximum height of the compressed image
-          let width = img.width;
-          let height = img.height;
+      // when its normal publishing
+      if (selectedPhoto) {
+        const fileReader = new FileReader();
+        fileReader.onload = function () {
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 800; // Maximum width of the compressed image
+            const MAX_HEIGHT = 800; // Maximum height of the compressed image
+            let width = img.width;
+            let height = img.height;
 
-          // Calculate new dimensions if needed
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
+            // Calculate new dimensions if needed
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
 
-          // Set the canvas dimensions and draw the compressed image
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
+            // Set the canvas dimensions and draw the compressed image
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
 
-          // Get the compressed image data as a data URL (base64 format)
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
+            // Get the compressed image data as a data URL (base64 format)
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3); // Adjust the compression quality as needed (0.8 represents 80% quality)
 
-          const requestData = {
-            username: currentUser.username,
-            userId: currentUser._id,
-            categoryList: categoryListItem,
-            titleContent: textareaValue,
-            selectedPhoto: selectedDraftPhoto
-              ? selectedDraftPhoto
-              : compressedDataUrl,
-            editorContent: editorContent,
-            id: currentDraftId,
+            const requestData = {
+              username: currentUser.username,
+              userId: currentUser._id,
+              categoryList: categoryListItem,
+              titleContent: textareaValue,
+              selectedPhoto:
+                selectedDraftPhoto != null
+                  ? selectedDraftPhoto
+                  : compressedDataUrl,
+              editorContent: editorContent,
+              id: currentDraftId,
+            };
+
+            HttpCalls.post(apiEndPoints, requestData)
+              .then((response) => {
+                dispatch(fetchAllBlogs());
+                toast.success(`${"Blog Published successfully."}`, {
+                  position: "top-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                setTimeout(() => {
+                  setDisableSubmission(false);
+                  setSelectedPhoto(null);
+                  setSelectedDraftPhoto(null);
+                  setTextareaValue("");
+                  setEditorContent("");
+                  setCategoryListItem([{ id: "", item: "" }]);
+                }, 1000);
+              })
+              .catch((error) => {
+                console.log(error);
+                toast.error(`${error.response.data.error}`, {
+                  position: "top-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+              });
           };
 
-          HttpCalls.post(apiEndPoints, requestData)
-            .then((response) => {
-              dispatch(fetchAllBlogs());
-              setDisableSubmission(false);
-              setSelectedPhoto(null);
-              setTextareaValue("");
-              setEditorContent("");
-              setCategoryListItem([{ id: "", item: "" }]);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+          img.src = fileReader.result; // Set the image source to trigger the onload event
         };
+        if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
+      }
 
+      // to call api when publishing the file after getting it from a draft
+      // image is already base64 ---and low quality
+      if (selectedDraftPhoto != null) {
         const requestData = {
           username: currentUser.username,
           userId: currentUser._id,
           categoryList: categoryListItem,
           titleContent: textareaValue,
-          selectedPhoto:
-            selectedDraftPhoto != "" ? selectedDraftPhoto : compressedDataUrl,
+          selectedPhoto: selectedDraftPhoto,
           editorContent: editorContent,
           id: currentDraftId,
         };
 
-        console.log("request data ", requestData);
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
@@ -188,6 +226,7 @@ const WriteBlogPage = () => {
             setTimeout(() => {
               setDisableSubmission(false);
               setSelectedPhoto(null);
+              selectedDraftPhoto(null);
               setTextareaValue("");
               setEditorContent("");
               setCategoryListItem([{ id: "", item: "" }]);
@@ -206,9 +245,7 @@ const WriteBlogPage = () => {
               theme: "light",
             });
           });
-        img.src = fileReader.result; // Set the image source to trigger the onload event
-      };
-      if (selectedPhoto) fileReader.readAsDataURL(selectedPhoto);
+      }
     } else if (selectedPhoto == null) {
       console.log("errr121");
 
@@ -247,26 +284,31 @@ const WriteBlogPage = () => {
           theme: "light",
         });
       }
-    } else {
-      console.log("errr");
+    } else if (categoryListItem == "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-
-      if (existingToast) {
-      } else {
-        toast.error(`${"Blog Body can't be empty."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toast.error(`${"Category list is empty"}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      console.log("failed to do so");
+      setDisableSubmission(false);
+      toast.error(`${"Please enter something."}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -296,7 +338,6 @@ const WriteBlogPage = () => {
       .filter((item) => item._id === draftId)
       .map((item, index) => {
         setSelectedDraftPhoto(item.selectedPhoto);
-        setSelectedPhoto(item.selectedPhoto);
         setTextareaValue(item.titleContent);
         setEditorContent(item.editorContent);
         setCategoryListItem(item.categoryList);
@@ -316,27 +357,40 @@ const WriteBlogPage = () => {
             setShowDraftModal(false);
           }}>
           <div
-            className={`transition-h duration-100 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-5 sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
-            <p className="w-full text-[18px] border-b-2 p-1 text-black">
+            <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
               Draft List
+              <RxCross1
+                size={25}
+                className="cursor-pointer hover:text-gray-500"
+                onClick={() => {
+                  setShowDraftModal(false);
+                }}
+              />
             </p>
             <img
               src={draftImage}
               alt=""
               className="h-[50%]  w-full p-1 object-conhtain"
             />
-            <div className="h-auto w-full overflow-hidden">
-              {draftData.map((item, index) => (
-                <p
-                  key={index}
-                  onClick={() => renderSavedDraft(item._id)}
-                  className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
-                  <span>{index + 1}.</span> {item.titleContent}
-                </p>
-              ))}
-            </div>
+            {draftData ? (
+              <div className="h-auto w-full overflow-hidden">
+                {draftData.map((item, index) => (
+                  <p
+                    key={index}
+                    onClick={() => renderSavedDraft(item._id)}
+                    className="overflow-hidden w-full gap-2 h-10 text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    <span>{index + 1}.</span> {item.titleContent}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <div className="h-auto w-full overflow-hidden">
+                You can save your draft heres
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -389,7 +443,7 @@ const WriteBlogPage = () => {
                 />
               </div>
               {/* category component */}
-              <div className="relative sm:absolute left-[-4rem]  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+              <div className="relative  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <IoAdd
                   onClick={handleIconClick}
                   size={30}
