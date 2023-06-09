@@ -194,18 +194,18 @@ const WriteBlogPage = () => {
 
           img.src = fileReader.result; // Set the image source to trigger the onload event
         };
+        if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
       }
 
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
-      if (selectedDraftPhoto) {
+      if (selectedDraftPhoto != null) {
         const requestData = {
           username: currentUser.username,
           userId: currentUser._id,
           categoryList: categoryListItem,
           titleContent: textareaValue,
-          selectedPhoto:
-            selectedDraftPhoto != null ? selectedDraftPhoto : compressedDataUrl,
+          selectedPhoto: selectedDraftPhoto,
           editorContent: editorContent,
           id: currentDraftId,
         };
@@ -226,6 +226,7 @@ const WriteBlogPage = () => {
             setTimeout(() => {
               setDisableSubmission(false);
               setSelectedPhoto(null);
+              selectedDraftPhoto(null);
               setTextareaValue("");
               setEditorContent("");
               setCategoryListItem([{ id: "", item: "" }]);
@@ -245,7 +246,6 @@ const WriteBlogPage = () => {
             });
           });
       }
-      if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
     } else if (selectedPhoto == null) {
       console.log("errr121");
 

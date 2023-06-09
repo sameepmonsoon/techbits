@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   CiBookmarkPlus,
@@ -15,7 +15,9 @@ import { AiOutlineComment, AiOutlineDelete } from "react-icons/ai";
 import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
+import { toast } from "react-hot-toast";
 const ReadFullBlogPage = () => {
+  const navigate = useNavigate();
   //loading state
   const [isLoading, setIsLoading] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -28,6 +30,8 @@ const ReadFullBlogPage = () => {
   const [currentUserBlog, setCurrentUserBlog] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
 
+  // state to check if the blog is present or not
+  const [blogIsPresent, setBlogIsPresent] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const currentPost = currentBlog
     .filter((item) => item._id === cardId)
@@ -123,8 +127,15 @@ const ReadFullBlogPage = () => {
       if (item._id == cardId && item.userId == currentUserId)
         setCurrentUserBlog(true);
     });
+
+    currentBlog.map((item) => {
+      if (item.titleContent == "") {
+        navigate("/");
+      }
+    });
   }, [cardId, creatorId, currentUserId]);
 
+  useEffect(() => {}, [blogIsPresent]);
   useEffect(() => {
     if (currentUser == null) {
       navigate("/");
@@ -154,7 +165,19 @@ const ReadFullBlogPage = () => {
           "currentBlogPosts",
           JSON.stringify(res?.data?.allBlogsAfterDelete)
         );
-        navigate("/");
+        toast.success(`Blog Deleted Successfully.`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 500);
       })
       .catch((err) => {
         console.log(err);

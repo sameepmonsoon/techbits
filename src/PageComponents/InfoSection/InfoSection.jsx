@@ -3,9 +3,9 @@ import { AiFillStar } from "react-icons/ai";
 import Button from "../../Components/Button/Button";
 const InfoSection = ({ infoText, infoImage }) => {
   return (
-    <div className="font-sans flex flex-col gap-5 sm:gap-0 sm:flex-row w-full px-5 h-screen py-20 overflow-hidden">
+    <div className="font-sans flex flex-col gap-5 sm:gap-0 sm:flex-row w-full px-5 h-auto py-20 overflow-hidden">
       <div className="flex flex-col justify-start items-start flex-1 gap-4">
-        <span className=" text-[48px] font-[600] w-[90%]">{infoText}</span>
+        <span className="text-[32px] sm:text-[48px] font-[600] w-[90%]">{infoText}</span>
         <span className=" text-[24px] text-gray-400 w-full">
           Start your 30-day free trial today.
         </span>
