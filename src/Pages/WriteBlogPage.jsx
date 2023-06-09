@@ -210,7 +210,7 @@ const WriteBlogPage = () => {
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
-            toast.success(`${"Blog Published successfully."}`, {
+            toast.success(`${response.data.message}`, {
               position: "top-center",
               autoClose: 5000,
               hideProgressBar: false,
@@ -220,6 +220,14 @@ const WriteBlogPage = () => {
               progress: undefined,
               theme: "light",
             });
+
+            HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+              .then((res) => {
+                setDraftData(res.data.getAllBlogDraft);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             setTimeout(() => {
               setDisableSubmission(false);
               setSelectedPhoto(null);
@@ -387,7 +395,7 @@ const WriteBlogPage = () => {
             {draftData ? (
               <div className="h-auto w-full overflow-hidden flex flex-col gap-3">
                 {draftData.map((item, index) => (
-                  <p
+                  <div
                     key={index}
                     onClick={() => {
                       renderSavedDraft(item._id);
@@ -403,7 +411,7 @@ const WriteBlogPage = () => {
                         />
                       </span>
                     </div>
-                  </p>
+                  </div>
                 ))}
               </div>
             ) : (

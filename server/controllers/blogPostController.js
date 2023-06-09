@@ -91,7 +91,23 @@ exports.createBlogDraft = async (req, res, next) => {
     } else {
       const fileData = Buffer.from(req.body.selectedPhoto, "base64");
       if (checkSameDraft) {
-        await Draft.findOneAndUpdate({ _id: req.body?.id });
+        const updatedDraft = await Draft.findOneAndUpdate(
+          { _id: req.body?.id },
+          {
+            $set: {
+              username: req.body.username,
+              userId: req.body.userId,
+              categoryList: req.body.categoryList,
+              titleContent: req.body.titleContent,
+              selectedPhoto: req.body.selectedPhoto,
+              editorContent: req.body.editorContent,
+            },
+          },
+          { new: true }
+        );
+        res
+          .status(200)
+          .json({ updatedDraft, message: "Draft updated Successfully." });
       } else {
         const newBlogDraft = new Draft({
           username: req.body.username,
