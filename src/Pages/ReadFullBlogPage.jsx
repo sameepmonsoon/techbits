@@ -115,22 +115,11 @@ const ReadFullBlogPage = () => {
   }, [cardId, creatorId, currentUserId]);
 
   useEffect(() => {
-    if (currentUserId) {
-      //   HttpCalls.put("/auth/follow", {
-      //     userId: creatorId,
-      //     followerId: currentUserId,
-      //   })
-      //     .then((res) => {
-      //       console.log("inside follow api", res.data.updatedFollowList);
-      //       setIsFollowing(
-      //         res.data.updatedFollowList.following?.includes(creatorId)
-      //       );
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
+    if (currentUser == null) {
+      navigate("/");
     }
-  }, [creatorId, currentUserId]);
+  }, []);
+;
   const handleClickFollow = () => {
     HttpCalls.put("/auth/follow", {
       userId: creatorId,

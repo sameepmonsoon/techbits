@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RxCross2, TiTick, TiTickOutline } from "react-icons/all";
+import { RxCross2, } from "react-icons/all";
 const Modal = ({
   autoHeight,
   info,

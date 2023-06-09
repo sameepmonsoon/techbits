@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 import { IoSettingsOutline } from "react-icons/io5";
 import image from "../assets/noah-silliman-gzhyKEo_cbU-unsplash.jpg";
 import { IoIosLogOut } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logout } from "../Store/authSlice";
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,16 +14,21 @@ const HomePage = () => {
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
   const followersLength = currentUser?.followers?.length;
-
+  const dispatch = useDispatch();
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
     setOpenSetting((prev) => !prev);
   };
   const handleLogout = () => {
-    navigate("/");
-    localStorage.removeItem("user");
+    dispatch(logout());
   };
+
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+  }, []);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}

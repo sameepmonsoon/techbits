@@ -15,7 +15,7 @@ import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import draftImage from "../assets/draft-2.svg";
 const WriteBlogPage = () => {
   const { isHovering } = useContext(BlogContext);
@@ -28,7 +28,13 @@ const WriteBlogPage = () => {
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+  }, []);
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
@@ -247,26 +253,21 @@ const WriteBlogPage = () => {
           theme: "light",
         });
       }
-    } else {
+    } else if (categoryListItem == "") {
       console.log("errr");
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
 
-      if (existingToast) {
-      } else {
-        toast.error(`${"Blog Body can't be empty."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toast.error(`${"Category list is empty"}`, {
+        toastId: toastId,
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -389,7 +390,7 @@ const WriteBlogPage = () => {
                 />
               </div>
               {/* category component */}
-              <div className="relative sm:absolute left-[-4rem]  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
+              <div className="relative sm:absolute sm:left-[-4rem]  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <IoAdd
                   onClick={handleIconClick}
                   size={30}

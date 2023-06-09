@@ -6,6 +6,7 @@ const initialState = {
   error: "",
   token: "",
   success: "",
+  showToast: false,
   currentUserDetail: [],
   isAuthenticated: false,
 };
@@ -14,7 +15,7 @@ export const signUp = createAsyncThunk("signup", async (body) => {
   try {
     const result = await HttpCalls.post("/auth/signup", body);
     console.log("response ", result.data);
-    login({})
+    login({});
     return result.data;
   } catch (error) {
     return { error: error.response.data.error };
@@ -84,6 +85,7 @@ const authSlice = createSlice({
           state.isAuthenticated = true;
           console.log(state.currentUserDetail);
           state.success = action.payload.message;
+          state.showToast = true;
         }
       })
       .addCase(login.pending, (state, action) => {
@@ -101,5 +103,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearState } = authSlice.actions;
+export const { clearState, logout } = authSlice.actions;
 export default authSlice.reducer;

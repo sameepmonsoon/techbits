@@ -22,6 +22,9 @@ const UpdateProfile = () => {
   const [userName, setUserName] = useState(username);
   useEffect(() => {
     setTimeout(() => {
+      if (currentUser == null) {
+        navigate("/");
+      }
       setShowSignUpPage(true);
     }, 500);
   }, []);
