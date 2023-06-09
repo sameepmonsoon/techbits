@@ -150,7 +150,11 @@ const ReadFullBlogPage = () => {
   const handleDeleteBLog = () => {
     HttpCalls.deleteData(`/blogPost/deleteBlog/${cardId}`)
       .then((res) => {
-        console.log(res);
+        localStorage.setItem(
+          "currentBlogPosts",
+          JSON.stringify(res?.data?.allBlogsAfterDelete)
+        );
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);

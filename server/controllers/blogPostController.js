@@ -131,16 +131,19 @@ exports.deleteBlogPost = async (req, res) => {
   try {
     const blogId = req.params.id;
     console.log(blogId);
+    console.log(blogId);
     const isPresent = Blog.findOne({ _id: blogId });
-    if (isPresent) {
-      Blog.deleteOne({ _id: blogId });
+    if (isPresent != null) {
+      await Blog.deleteOne({ _id: blogId });
+      const allBlogsAfterDelete = await Blog.find();
       res.status(200).json({
         message: "Deleted",
+        allBlogsAfterDelete,
         flag: true,
       });
     } else {
       console.log(err);
-      res.status(500).json({ error: "Failed to fetch delete." });
+      res.status(500).json({ error: "Blog not found." });
     }
   } catch (err) {
     console.log(err);
