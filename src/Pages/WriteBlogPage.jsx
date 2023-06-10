@@ -34,7 +34,7 @@ const WriteBlogPage = () => {
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
-  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
+  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState("");
   // if current blog is extracted from a draft
   // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);
@@ -110,7 +110,7 @@ const WriteBlogPage = () => {
     setDisableSubmission(true);
     if (
       (textareaValue != "" && selectedPhoto != null) ||
-      (textareaValue != "" && selectedDraftPhoto != null)
+      (textareaValue != "" && selectedDraftPhoto != "")
     ) {
       // when its normal publishing
       if (selectedPhoto) {
@@ -167,12 +167,12 @@ const WriteBlogPage = () => {
                   theme: "light",
                 });
                 setTimeout(() => {
-                  // setDisableSubmission(false);
-                  // setSelectedPhoto(null);
-                  // setSelectedDraftPhoto(null);
-                  // setTextareaValue("");
-                  // setEditorContent("");
-                  // setCategoryListItem([{ id: "", item: "" }]);
+                  setDisableSubmission(false);
+                  setSelectedPhoto(null);
+                  setSelectedDraftPhoto("");
+                  setTextareaValue("");
+                  setEditorContent("");
+                  setCategoryListItem([{ id: "", item: "" }]);
                 }, 1000);
               })
               .catch((error) => {
@@ -197,7 +197,7 @@ const WriteBlogPage = () => {
 
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
-      if (selectedDraftPhoto != null) {
+      if (selectedDraftPhoto != "") {
         const requestData = {
           username: currentUser.username,
           userId: currentUser._id,
@@ -232,7 +232,7 @@ const WriteBlogPage = () => {
             setTimeout(() => {
               setDisableSubmission(false);
               setSelectedPhoto(null);
-              selectedDraftPhoto(null);
+              selectedDraftPhoto("");
               setTextareaValue("");
               setEditorContent("");
               setCategoryListItem([{ id: "", item: "" }]);
