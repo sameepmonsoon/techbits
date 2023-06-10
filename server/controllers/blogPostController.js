@@ -86,11 +86,12 @@ exports.createBlogDraft = async (req, res, next) => {
   try {
     const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
     const checkSameDraft = await Draft.find({ _id: req.body?.id });
-    if (getAllBlogDraft.length > 2) {
-      res.status(500).json({ error: "Can't save more than 2 drafts." });
+    console.log(checkSameDraft);
+    if (getAllBlogDraft.length > 4) {
+      res.status(500).json({ error: "Can't save more than 5 drafts." });
     } else {
       const fileData = Buffer.from(req.body.selectedPhoto, "base64");
-      if (checkSameDraft) {
+      if (checkSameDraft.length > 0) {
         const updatedDraft = await Draft.findOneAndUpdate(
           { _id: req.body?.id },
           {
@@ -105,6 +106,8 @@ exports.createBlogDraft = async (req, res, next) => {
           },
           { new: true }
         );
+
+        console.log(updatedDraft);
         res
           .status(200)
           .json({ updatedDraft, message: "Draft updated Successfully." });
@@ -117,7 +120,7 @@ exports.createBlogDraft = async (req, res, next) => {
           selectedPhoto: req.body.selectedPhoto,
           editorContent: req.body.editorContent,
         });
-
+        console.log("indide server", newBlogDraft);
         const savedBlogDraft = await newBlogDraft.save();
         res
           .status(200)

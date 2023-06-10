@@ -107,7 +107,7 @@ const WriteBlogPage = () => {
   //this part is  refactored using chatgpt
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
-    // setDisableSubmission(true);
+    setDisableSubmission(true);
     if (
       (textareaValue != "" && selectedPhoto != null) ||
       (textareaValue != "" && selectedDraftPhoto != null)
@@ -150,6 +150,7 @@ const WriteBlogPage = () => {
               titleContent: textareaValue,
               selectedPhoto: compressedDataUrl,
               editorContent: editorContent,
+              id: currentDraftId,
             };
 
             HttpCalls.post(apiEndPoints, requestData)
@@ -166,12 +167,12 @@ const WriteBlogPage = () => {
                   theme: "light",
                 });
                 setTimeout(() => {
-                  setDisableSubmission(false);
-                  setSelectedPhoto(null);
-                  setSelectedDraftPhoto(null);
-                  setTextareaValue("");
-                  setEditorContent("");
-                  setCategoryListItem([{ id: "", item: "" }]);
+                  // setDisableSubmission(false);
+                  // setSelectedPhoto(null);
+                  // setSelectedDraftPhoto(null);
+                  // setTextareaValue("");
+                  // setEditorContent("");
+                  // setCategoryListItem([{ id: "", item: "" }]);
                 }, 1000);
               })
               .catch((error) => {
@@ -357,7 +358,13 @@ const WriteBlogPage = () => {
   const handleDeleteDraft = (blogId) => {
     HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
       .then((res) => {
-        console.log(res);
+        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+          .then((res) => {
+            setDraftData(res.data.getAllBlogDraft);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -390,20 +397,23 @@ const WriteBlogPage = () => {
             <img
               src={draftImage}
               alt=""
-              className="h-[50%]  w-full p-1 object-conhtain"
+              className="h-[30%]  w-full p-1 object-conhtain"
             />
-            {draftData != "" ? (
+            {draftData.length > 0 ? (
               <div className="h-auto w-full overflow-hidden flex flex-col gap-3">
                 {draftData.map((item, index) => (
                   <div
                     key={index}
-                    onClick={() => {
-                      renderSavedDraft(item._id);
-                    }}
-                    className="overflow-hidden w-full gap-2 h-10 text-[16px] md:text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
-                    <span>{index + 1}.</span> {item.titleContent}
+                    className="overflow-hidden w-full gap-2 h-auto max-h-[5.5rem] text-[16px] md:text-[18px] flex items-start justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    <div
+                      className="w-auto flex-2 flex justify-start items-start  gap-1 hover:underline underline-offset-4"
+                      onClick={() => {
+                        renderSavedDraft(item._id);
+                      }}>
+                      <span>{index + 1}.</span> {item.titleContent}
+                    </div>
                     <div className="flex-1 relative right-0 flex justify-end items-center">
-                      <span className="group h-auto bg-gray-100 border-[1px] border-gray-300 hover:bg-red-100 rounded-md p-1">
+                      <span className="group h-auto bg-gray-100 border-[1px] border-gray-300 hover:bg-red-100 rounded-md p-1 ">
                         <MdDeleteOutline
                           size={25}
                           className="hover:cursor-pointer group-hover:text-red-600 "
@@ -444,12 +454,14 @@ const WriteBlogPage = () => {
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
                   onClick={(event) => {
-                    handleSubmit(
-                      event,
-                      "/blogPost/createDraft",
-                      "Blog Saved as draft."
-                    );
-                    setSetIsSaved("Saved");
+                    if (!diableSubmission) {
+                      handleSubmit(
+                        event,
+                        "/blogPost/createDraft",
+                        "Blog Saved as draft."
+                      );
+                      setSetIsSaved("Saved");
+                    }
                   }}>
                   Save as Draft
                 </div>
@@ -599,10 +611,10 @@ const WriteBlogPage = () => {
                       alt="Selected Photo"
                     />
                   )}
-                  <span className="text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60">
+                  <span className="relative text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60 ">
                     <RxCross2
                       size={20}
-                      className="hover:text-deep-purple cursor-pointer"
+                      className="hover:text-deep-purple cursor-pointer "
                       onClick={() => {
                         setSelectedPhoto("");
                         setSelectedDraftPhoto("");

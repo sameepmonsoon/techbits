@@ -22,7 +22,7 @@ const Button = ({
           : "min-w-[7rem] sm:min-w-[7.9rem] max-w-none"
       } rounded-md ${border && "border-[1px] border-gray-400"} ${
         background
-          ? "bg-deep-purple hover:bg-white hover:text-black text-white"
+          ? "bg-deep-purple hover:bg-blue-purple"
           : "hover:bg-gray-100/50 hover:text-deep-purple"
       } ${color ? "text-deep-purple/80" : "text-white"}`}>
       {image ? (
@@ -37,6 +37,7 @@ const Button = ({
           </span>
         )
       )}
+
       <span className="flex justify-center items-center">{title}</span>
     </Link>
   );

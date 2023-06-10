@@ -9,7 +9,7 @@ import {
   CiUser,
 } from "react-icons/all";
 import { useSelector } from "react-redux";
-const Navbar = ({ Links, fixed, border, color }) => {
+const Navbar = ({ Links, fixed, border }) => {
   const location = useLocation();
   const [openModal, setOpenModal] = useState(true);
   // function
@@ -25,17 +25,13 @@ const Navbar = ({ Links, fixed, border, color }) => {
   return (
     <>
       <div
-        className={`font-sans w-full z-[10] h-[4rem] flex justify-start items-center gap-10 px-4 0 ${
-          color == "black"
-            ? "bg-purple text-white border-b-[1px] border-b-purple"
-            : "bg-white/90 text-deep-purple/50"
-        }  backdrop-blur-sm  ${
+        className={`font-sans w-full z-[10] h-[4rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${
           border ? "border-b-[1px] border-b-gray-100" : "border-b-0"
         } overflow-hidden`}>
         <div>
           <Logo />
         </div>
-        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5  text-[18px] font-[350]">
+        <div className=" h-10 w-full flex justify-end sm:justify-between items-center gap-5 text-deep-purple/50 text-[18px] font-[350]">
           <div className="hidden sm:flex justify-start sm:gap-4 md:gap-5 items-center">
             {Links.map((item, index) => (
               <Link
@@ -55,8 +51,8 @@ const Navbar = ({ Links, fixed, border, color }) => {
                 title={"Write"}
                 border={false}
                 color={true}
+                background={false}
                 linkName={"/writeBlog"}
-                background={true}
               />
               <Button
                 image={currentLoggedUser?.profilePicture}

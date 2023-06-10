@@ -12,7 +12,7 @@ const BlogsPageLayout = ({ children, renderComponents }) => {
   return (
     <div className="max-h-auto w-full font-sans flex flex-col overflow-x-hidden overflow-y-auto">
       <Navbar Links={NavbarLinks} border={true} color='black' />
-      <div className="flex justify-start items-center px-10 flex-wrap h-auto bg-purple">
+      <div className="flex justify-start items-center px-10 flex-wrap h-auto bg-deep-purple text-white">
         {renderComponents}a
       </div>
       <div className="flex flex-col flex-grow items-center flex-wrap ">
