@@ -243,7 +243,7 @@ const ReadFullBlogPage = () => {
             </div>
             {/* article reactions and bookmark */}
             <div className=" w-[80%] sm:w-[50%] h-[3rem] flex justify-center items-center gap-3 border-b-[1px]">
-              <div className="flex justify-center items-center gap-[1px] group h-10">
+              <div className="group flex justify-center items-center gap-[1px] group h-10 relative">
                 <IoMdHeartEmpty
                   onClick={handleClickLike}
                   size={28}
@@ -252,48 +252,80 @@ const ReadFullBlogPage = () => {
                 <span className="group-hover:text-pink-500 group">
                   {likeComment?.likes?.length}
                 </span>
+                <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm   h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  React
+                </div>
               </div>
-              <span className="flex justify-start gap-1">
+              <div className="flex justify-start gap-1 group relative">
                 <AiOutlineComment
                   size={29}
                   className="text-deep-purple/70 hover:text-blue-500 cursor-pointer hover:bg-blue-100 rounded-full p-[3px]"
                 />
-              </span>
+                <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  Comment
+                </span>
+              </div>
               <span className="flex justify-start gap-1">
                 {isBookmarked ? (
-                  <BsFillBookmarkCheckFill
-                    onClick={handleClickBookmark}
-                    size={25}
-                    className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
-                  />
+                  <div className="relative group flex justify-center items-center gap-[1px]">
+                    <BsFillBookmarkCheckFill
+                      onClick={handleClickBookmark}
+                      size={25}
+                      className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
+                    />{" "}
+                    <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-[8rem] rounded-md overflow-hidden items-center justify-center">
+                      Remove Bookmark
+                    </span>
+                  </div>
                 ) : (
-                  <CiBookmarkPlus
-                    onClick={handleClickBookmark}
-                    size={29}
-                    className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
-                  />
+                  <div className="relative group flex justify-center items-center gap-[1px]">
+                    <CiBookmarkPlus
+                      onClick={handleClickBookmark}
+                      size={29}
+                      className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
+                    />
+                    <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-gray-300 border-[1px] shadow-sm  h-8 w-[8rem] rounded-md overflow-hidden items-center justify-center">
+                      Add Bookmark
+                    </span>
+                  </div>
                 )}
               </span>
               {/* to delete or edit the blog  */}
               {currentUserBlog && (
                 <div className="w-auto h-auto relative flex justify-center items-center">
                   <div
-                    className="h-auto hover:bg-gray-200/60 rounded-full p-1 cursor-pointer"
+                    className={`h-auto hover:bg-gray-200/60 ${
+                      showSetting && "bg-gray-200/60"
+                    } rounded-full p-1 cursor-pointer relative group`}
                     onClick={() => setShowSetting((prev) => !prev)}>
                     <IoSettingsOutline size={23} />
+
+                    <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                      Settings
+                    </div>
                   </div>
                   {showSetting && (
                     <>
                       <div className="flex gap-1 absolute left-10 bg-white border-[1px] shadow-sm h-10 w-20 justify-center items-center rounded-md">
-                        <MdEditNote
-                          size={28}
-                          className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
-                        />
-                        <MdDeleteOutline
-                          size={25}
-                          className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
-                          onClick={handleDeleteBLog}
-                        />
+                        <div className="relative group">
+                          <MdEditNote
+                            size={28}
+                            className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
+                          />
+                          <div className="absolute left-[-20px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm   h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                            Edit
+                          </div>
+                        </div>
+                        <div className="relative group">
+                          <MdDeleteOutline
+                            size={25}
+                            className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
+                            onClick={handleDeleteBLog}
+                          />
+                          <div className="absolute left-[-25px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                            Delete
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
@@ -356,36 +388,57 @@ const ReadFullBlogPage = () => {
                   }
                 })}
             </div>
-            <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
-              <div className="flex justify-start gap-[1px]">
+
+            {/* page bottom reaction */}
+            <div className=" w-[80%] sm:w-[50%] h-[3rem] flex justify-center items-center gap-3 border-b-[1px]">
+              <div className="group flex justify-center items-center gap-[1px] group h-10 relative">
                 <IoMdHeartEmpty
                   onClick={handleClickLike}
-                  size={25}
-                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
+                  size={28}
+                  className="text-deep-purple/70 hover:text-pink-600 cursor-pointer hover:bg-pink-100 rounded-full p-[3px]"
                 />
-                <span>{likeComment?.likes?.length}</span>
+                <span className="group-hover:text-pink-500 group">
+                  {likeComment?.likes?.length}
+                </span>
+                <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm   h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  React
+                </div>
+              </div>
+              <div className="flex justify-start gap-1 group relative">
+                <AiOutlineComment
+                  size={29}
+                  className="text-deep-purple/70 hover:text-blue-500 cursor-pointer hover:bg-blue-100 rounded-full p-[3px]"
+                />
+                <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  Comment
+                </span>
               </div>
               <span className="flex justify-start gap-1">
-                <AiOutlineComment
-                  size={25}
-                  className="text-deep-purple/70 hover:text-blue-purple cursor-pointer"
-                />
-              </span>
-              <span className="flex justify-start gap-1">
                 {isBookmarked ? (
-                  <BsFillBookmarkCheckFill
-                    onClick={handleClickBookmark}
-                    size={21}
-                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
-                  />
+                  <div className="relative group flex justify-center items-center gap-[1px]">
+                    <BsFillBookmarkCheckFill
+                      onClick={handleClickBookmark}
+                      size={25}
+                      className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
+                    />{" "}
+                    <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-[8rem] rounded-md overflow-hidden items-center justify-center">
+                      Remove Bookmark
+                    </span>
+                  </div>
                 ) : (
-                  <CiBookmarkPlus
-                    onClick={handleClickBookmark}
-                    size={25}
-                    className="text-deep-purple/80 hover:text-blue-purple cursor-pointer"
-                  />
+                  <div className="relative group flex justify-center items-center gap-[1px]">
+                    <CiBookmarkPlus
+                      onClick={handleClickBookmark}
+                      size={29}
+                      className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
+                    />
+                    <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-gray-300 border-[1px] shadow-sm  h-8 w-[8rem] rounded-md overflow-hidden items-center justify-center">
+                      Add Bookmark
+                    </span>
+                  </div>
                 )}
               </span>
+             
             </div>
           </div>
 
