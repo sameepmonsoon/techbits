@@ -34,7 +34,6 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   return (
     <div
       className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
-      // onClick={() => handleMouseLeave(false)}
     >
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
@@ -62,8 +61,8 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
                 onClick={() => {
                   setIsHovering((prev) => !prev);
                 }}
-                // onMouseEnter={() => handleMouseEnter(true)}
-              />{" "}
+     
+              />
               {!isHovering && (
                 <div className="absolute right-2 top-[3.4rem] group-hover:flex hidden  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
                   Settings
