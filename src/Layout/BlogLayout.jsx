@@ -53,7 +53,7 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
               // linkName={currentUserDetails ? "/Profile" : "/"}
             />
             <span
-              className={`group cursor-pointer z-20 flex justify-center items-center rounded-full hover:bg-purple/10 p-1 ${
+              className={`group  cursor-pointer z-20 flex justify-center items-center rounded-full hover:bg-purple/10 p-1 ${
                 isHovering && "bg-purple/10"
               } `}>
               <IoSettingsOutline
@@ -63,7 +63,12 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
                   setIsHovering((prev) => !prev);
                 }}
                 // onMouseEnter={() => handleMouseEnter(true)}
-              />
+              />{" "}
+              {!isHovering && (
+                <div className="absolute right-2 top-[3.4rem] group-hover:flex hidden  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  Settings
+                </div>
+              )}
             </span>
           </div>
         </div>

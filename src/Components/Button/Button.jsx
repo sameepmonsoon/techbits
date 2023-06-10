@@ -38,7 +38,9 @@ const Button = ({
         )
       )}
 
-      <span className="flex justify-center items-center">{title}</span>
+      <span className="flex justify-center items-center" data-textid="title">
+        {title}
+      </span>
     </Link>
   );
 };
