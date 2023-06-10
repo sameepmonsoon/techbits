@@ -253,8 +253,6 @@ const WriteBlogPage = () => {
           });
       }
     } else if (selectedPhoto == null) {
-      console.log("errr121");
-
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
 
@@ -271,7 +269,6 @@ const WriteBlogPage = () => {
         theme: "light",
       });
     } else if (textareaValue === "") {
-      console.log("errr");
       setDisableSubmission(false);
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
@@ -303,7 +300,6 @@ const WriteBlogPage = () => {
         theme: "light",
       });
     } else {
-      console.log("failed to do so");
       setDisableSubmission(false);
       toast.error(`${"Please enter something."}`, {
         position: "top-center",
@@ -381,7 +377,7 @@ const WriteBlogPage = () => {
           // }}
         >
           <div
-            className={`transition-h duration-400 top-[6.5rem] ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-[5rem] ease-in-out relative bg-white border-[1px] shadow-xl text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[40%] left-[-2.4rem]  sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
             <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
@@ -404,7 +400,7 @@ const WriteBlogPage = () => {
                 {draftData.map((item, index) => (
                   <div
                     key={index}
-                    className="overflow-hidden w-full gap-2 h-auto max-h-[5.5rem] text-[16px] md:text-[18px] flex items-start justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    className="overflow-hidden  w-full gap-2 h-auto max-h-[5.5rem] text-[16px] md:text-[18px] flex items-start justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
                     <div
                       className="w-auto flex-2 flex justify-start items-start  gap-1 hover:underline underline-offset-4"
                       onClick={() => {

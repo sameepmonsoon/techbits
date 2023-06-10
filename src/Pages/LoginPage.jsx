@@ -45,7 +45,6 @@ const LoginPage = () => {
   const formik = useFormik({
     initialValues: { password: "", email: "" },
     onSubmit: (values, action) => {
-      console.log(values);
       dispatch(login(values));
     },
     validationSchema: schema,

@@ -70,7 +70,7 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
       </div>
       <BlogContext.Provider
         value={{ isHovering, handleMouseEnter, handleMouseLeave }}>
-        <div className="flex-grow overflow-y-auto w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
+        <div className="flex-grow overflow-hidden w-full flex justify-start sm:justify-center items-start px-10 pt-[7rem]">
           {children}
         </div>
       </BlogContext.Provider>

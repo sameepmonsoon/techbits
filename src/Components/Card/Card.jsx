@@ -31,9 +31,9 @@ const Card = ({
     <div
       className={`font-sans ${
         autoHeight
-          ? "w-[40rem] h-[30rem] flex-col"
+          ? "sm:w-[35rem] md:w-[55rem] w-[22rem]  h-[28.2rem] sm:h-[28rem] flex-col"
           : row
-          ? "sm:w-[34rem] sm:h-[15rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
+          ? "w-[20rem] sm:w-[40rem] sm:h-[13rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
           : "w-[22rem] sm:w-[24rem] h-[28.2rem] flex-col"
       } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm  gap-2 flex justify-start items-start rounded-sm`}>
       <img
@@ -60,18 +60,16 @@ const Card = ({
             />
           </Link>
         </div>
-        <span className="text-black/80 text-[13px] overflow-hidden h-[4rem]">
+        <span className="text-black/80 text-[13px] overflow-hidden h-[3.5rem]">
           {filteredText}
         </span>
         <div className="text-black/70 text-[13px] h-20 overflow-hidden flex justify-start items-center gap-3 w-full">
-          {/* <img
-            src={cardUserImage}
-            alt=""
-            className="min-h-[3rem] w-[3rem] rounded-md object-cover"
-          /> */}
-          <div className="flex flex-col justify-center items-start h-full">
+          <div className="flex flex-row gap-1  justify-center items-center h-full">
             <span className="text-[16px] text-black font-[500] capitalize ">
               {cardUserName}
+            </span>
+            <span className="h-[1.5rem] flex justify-center items-start">
+              .
             </span>
             <span className="text-[14px]">
               {new Date(cardPostDate).toLocaleDateString("en-US", {
