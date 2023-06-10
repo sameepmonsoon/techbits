@@ -34,7 +34,7 @@ const WriteBlogPage = () => {
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
-  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState(null);
+  const [selectedDraftPhoto, setSelectedDraftPhoto] = useState("");
   // if current blog is extracted from a draft
   // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);
@@ -107,10 +107,10 @@ const WriteBlogPage = () => {
   //this part is  refactored using chatgpt
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
-    // setDisableSubmission(true);
+    setDisableSubmission(true);
     if (
       (textareaValue != "" && selectedPhoto != null) ||
-      (textareaValue != "" && selectedDraftPhoto != null)
+      (textareaValue != "" && selectedDraftPhoto != "")
     ) {
       // when its normal publishing
       if (selectedPhoto) {
@@ -150,6 +150,7 @@ const WriteBlogPage = () => {
               titleContent: textareaValue,
               selectedPhoto: compressedDataUrl,
               editorContent: editorContent,
+              id: currentDraftId,
             };
 
             HttpCalls.post(apiEndPoints, requestData)
@@ -168,7 +169,7 @@ const WriteBlogPage = () => {
                 setTimeout(() => {
                   setDisableSubmission(false);
                   setSelectedPhoto(null);
-                  setSelectedDraftPhoto(null);
+                  setSelectedDraftPhoto("");
                   setTextareaValue("");
                   setEditorContent("");
                   setCategoryListItem([{ id: "", item: "" }]);
@@ -196,7 +197,7 @@ const WriteBlogPage = () => {
 
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
-      if (selectedDraftPhoto != null) {
+      if (selectedDraftPhoto != "") {
         const requestData = {
           username: currentUser.username,
           userId: currentUser._id,
@@ -210,7 +211,7 @@ const WriteBlogPage = () => {
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
-            toast.success(`${"Blog Published successfully."}`, {
+            toast.success(`${response.data.message}`, {
               position: "top-center",
               autoClose: 5000,
               hideProgressBar: false,
@@ -220,10 +221,18 @@ const WriteBlogPage = () => {
               progress: undefined,
               theme: "light",
             });
+
+            HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+              .then((res) => {
+                setDraftData(res.data.getAllBlogDraft);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             setTimeout(() => {
               setDisableSubmission(false);
               setSelectedPhoto(null);
-              selectedDraftPhoto(null);
+              selectedDraftPhoto("");
               setTextareaValue("");
               setEditorContent("");
               setCategoryListItem([{ id: "", item: "" }]);
@@ -244,8 +253,6 @@ const WriteBlogPage = () => {
           });
       }
     } else if (selectedPhoto == null) {
-      console.log("errr121");
-
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
 
@@ -262,7 +269,6 @@ const WriteBlogPage = () => {
         theme: "light",
       });
     } else if (textareaValue === "") {
-      console.log("errr");
       setDisableSubmission(false);
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
@@ -294,7 +300,6 @@ const WriteBlogPage = () => {
         theme: "light",
       });
     } else {
-      console.log("failed to do so");
       setDisableSubmission(false);
       toast.error(`${"Please enter something."}`, {
         position: "top-center",
@@ -349,7 +354,13 @@ const WriteBlogPage = () => {
   const handleDeleteDraft = (blogId) => {
     HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
       .then((res) => {
-        console.log(res);
+        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+          .then((res) => {
+            setDraftData(res.data.getAllBlogDraft);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -366,7 +377,7 @@ const WriteBlogPage = () => {
           // }}
         >
           <div
-            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-[5rem] ease-in-out relative bg-white border-[1px] shadow-xl text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[40%] left-[-2.4rem]  sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
             <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
@@ -382,20 +393,23 @@ const WriteBlogPage = () => {
             <img
               src={draftImage}
               alt=""
-              className="h-[50%]  w-full p-1 object-conhtain"
+              className="h-[30%]  w-full p-1 object-conhtain"
             />
-            {draftData ? (
+            {draftData.length > 0 ? (
               <div className="h-auto w-full overflow-hidden flex flex-col gap-3">
                 {draftData.map((item, index) => (
-                  <p
+                  <div
                     key={index}
-                    onClick={() => {
-                      renderSavedDraft(item._id);
-                    }}
-                    className="overflow-hidden w-full gap-2 h-10 text-[16px] md:text-[18px] flex items-center justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
-                    <span>{index + 1}.</span> {item.titleContent}
+                    className="overflow-hidden  w-full gap-2 h-auto max-h-[5.5rem] text-[16px] md:text-[18px] flex items-start justify-start p-1 hover:bg-gray-100/80 rounded-md cursor-pointer">
+                    <div
+                      className="w-auto flex-2 flex justify-start items-start  gap-1 hover:underline underline-offset-4"
+                      onClick={() => {
+                        renderSavedDraft(item._id);
+                      }}>
+                      <span>{index + 1}.</span> {item.titleContent}
+                    </div>
                     <div className="flex-1 relative right-0 flex justify-end items-center">
-                      <span className="group h-auto bg-gray-100 border-[1px] border-gray-300 hover:bg-red-100 rounded-md p-1">
+                      <span className="group h-auto bg-gray-100 border-[1px] border-gray-300 hover:bg-red-100 rounded-md p-1 ">
                         <MdDeleteOutline
                           size={25}
                           className="hover:cursor-pointer group-hover:text-red-600 "
@@ -403,12 +417,12 @@ const WriteBlogPage = () => {
                         />
                       </span>
                     </div>
-                  </p>
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="h-auto w-full overflow-hidden">
-                You can save your draft heres
+              <div className="h-full w-full overflow-hidden flex justify-center items-center">
+                You have no draft.
               </div>
             )}
           </div>
@@ -436,12 +450,14 @@ const WriteBlogPage = () => {
                 <div
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2"
                   onClick={(event) => {
-                    handleSubmit(
-                      event,
-                      "/blogPost/createDraft",
-                      "Blog Saved as draft."
-                    );
-                    setSetIsSaved("Saved");
+                    if (!diableSubmission) {
+                      handleSubmit(
+                        event,
+                        "/blogPost/createDraft",
+                        "Blog Saved as draft."
+                      );
+                      setSetIsSaved("Saved");
+                    }
                   }}>
                   Save as Draft
                 </div>
@@ -591,10 +607,10 @@ const WriteBlogPage = () => {
                       alt="Selected Photo"
                     />
                   )}
-                  <span className="text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60">
+                  <span className="relative text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60 ">
                     <RxCross2
                       size={20}
-                      className="hover:text-deep-purple cursor-pointer"
+                      className="hover:text-deep-purple cursor-pointer "
                       onClick={() => {
                         setSelectedPhoto("");
                         setSelectedDraftPhoto("");

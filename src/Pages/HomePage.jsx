@@ -51,13 +51,41 @@ const HomePage = () => {
                               (category, index) =>
                                 category.id !== "" && index < 3
                             )
-                            .map((category, categoryIndex) => (
-                              <div
-                                key={categoryIndex}
-                                className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[14px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                                <span> {category.item}</span>
-                              </div>
-                            ))}
+                            .map((category, categoryIndex) => {
+                              if (categoryIndex === 0) {
+                                return (
+                                  <div
+                                    key={categoryIndex}
+                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-red-100/50 text-red-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                    <span> {category.item}</span>
+                                  </div>
+                                );
+                              } else if (categoryIndex == 1) {
+                                return (
+                                  <div
+                                    key={categoryIndex}
+                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-green-100/80 text-green-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                    <span> {category.item}</span>
+                                  </div>
+                                );
+                              } else if (categoryIndex === 2) {
+                                return (
+                                  <div
+                                    key={categoryIndex}
+                                    className="w-auto justify-center h-[1rem] max-w-[10rem]bg-yellow-100/70 text-yellow-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                    <span> {category.item}</span>
+                                  </div>
+                                );
+                              } else {
+                                return (
+                                  <div
+                                    key={categoryIndex}
+                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                    <span> {category.item}</span>
+                                  </div>
+                                );
+                              }
+                            })}
                         </div>
                       }
                       cardTitle={item.titleContent}

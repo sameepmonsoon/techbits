@@ -70,7 +70,6 @@ const UpdateProfile = () => {
             }
           })
           .catch((err) => {
-            console.log(err.response.data.error);
             setIsLoading(false);
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);

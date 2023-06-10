@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   CiBookmarkPlus,
@@ -16,6 +16,8 @@ import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-hot-toast";
+import Card from "../Components/Card/Card";
+import image from "../assets/data-processing.svg";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
   //loading state
@@ -43,6 +45,7 @@ const ReadFullBlogPage = () => {
 
   const creatorId = currentPost[0]?.userId;
   const [isFollowing, setIsFollowing] = useState(false);
+  const [allBlogPostByUser, setAllBlogPostByUser] = useState([]);
   const [showPage, setShowPage] = useState(true);
   // api calls for like bookmark and commetn
   const handleClickLike = () => {
@@ -133,9 +136,13 @@ const ReadFullBlogPage = () => {
         navigate("/");
       }
     });
+
+    // to get all the post of current id
+    setAllBlogPostByUser(
+      currentBlog?.filter((item) => item?.userId === creatorId)
+    );
   }, [cardId, creatorId, currentUserId]);
 
-  useEffect(() => {}, [blogIsPresent]);
   useEffect(() => {
     if (currentUser == null) {
       navigate("/");
@@ -183,6 +190,7 @@ const ReadFullBlogPage = () => {
         console.log(err);
       });
   };
+
   return (
     <HomeLayout>
       <LoadingOverlayComponent openCloseOverlay={showPage}>
@@ -312,13 +320,41 @@ const ReadFullBlogPage = () => {
             <div className="flex-col flex sm:flex-row gap-2 justify-center items-center w-[50%] sm:w-full h-auto sm:h-20 flex-wrap">
               {item.categoryList
                 .filter((category) => category.id != "")
-                .map((category, categoryIndex) => (
-                  <div
-                    key={categoryIndex}
-                    className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-purple/10 text-deep-purple hover:border-purple/60 border-purple/30 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
-                    <span> {category.item}</span>
-                  </div>
-                ))}
+                .map((category, categoryIndex) => {
+                  if (categoryIndex === 0) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-red-100 text-red-700 hover:border-red-500 border-red-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex == 1) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-green-100 text-green-700 hover:border-green-500 border-green-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex === 2) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-blue-100 text-blue-700 hover:border-blue-500 border-blue-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-yellow-100 text-yellow-700 hover:border-yellow-500 border-yellow-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  }
+                })}
             </div>
             <div className=" w-[80%] sm:w-[50%] h-10 flex justify-center items-center gap-3 border-b-[1px]">
               <div className="flex justify-start gap-[1px]">
@@ -352,8 +388,186 @@ const ReadFullBlogPage = () => {
               </span>
             </div>
           </div>
+
+          {/* container for similar blogs ---based on category  */}
+          {allBlogPostByUser.length > 1 && (
+            <div className="h-auto w-auto flex flex-col justify-center items-start py-5 gap-5">
+              <p className="w-full flex items-center justify-center text-[32px] font-[600]">
+                More from {item.username}
+              </p>
+
+              {allBlogPostByUser
+                .filter((item) => item._id !== cardId)
+                .map((item, index) => (
+                  <>
+                    <Link
+                      to={`/read/${item._id}`}
+                      key={index}
+                      className="w-[22rem] sm:w-[45rem] h-[22rem] sm:h-[15rem] border-[1px] shadow-md rounded-md flex gap-1 flex-col sm:flex-row">
+                      <div className="h-full w-full sm:w-[70%] p-2 flex-col flex justify-start items-start gap-2 order-2 sm:order-1">
+                        <div className="w-full h-[2rem] capitalize flex justify-start items-center  overflow-hidden gap-2 ">
+                          {item.username}{" "}
+                          <span className="h-full flex items-start">.</span>
+                          {new Date(item.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )}
+                        </div>
+
+                        <div className="w-full max-h-[4rem] text-[20px] capitalizeflex justify-start items-start overflow-hidden">
+                          {item.titleContent}
+                        </div>
+
+                        <div className="min-w-full h-auto sm:h-[3rem] capitalize flex justify-start items-center  overflow-hidden">
+                          <div className="flex gap-2 overflow-hidden flex-wrap min-w-full ">
+                            {item.categoryList
+                              .filter(
+                                (category, index) =>
+                                  category.id !== "" && index < 3
+                              )
+                              .map((category, categoryIndex) => {
+                                if (categoryIndex === 0) {
+                                  return (
+                                    <div
+                                      key={categoryIndex}
+                                      className="w-auto justify-center h-[1rem] max-w-[10rem] bg-green-100/80 text-green-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                      <span> {category.item}</span>
+                                    </div>
+                                  );
+                                } else if (categoryIndex == 1) {
+                                  return (
+                                    <div
+                                      key={categoryIndex}
+                                      className="w-auto justify-center h-[1rem] max-w-[10rem]  bg-red-100/50 text-red-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                      <span> {category.item}</span>
+                                    </div>
+                                  );
+                                } else if (categoryIndex === 2) {
+                                  return (
+                                    <div
+                                      key={categoryIndex}
+                                      className="w-auto justify-center h-[1rem] max-w-[10rem] bg-yellow-100/70 text-yellow-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                      <span> {category.item}</span>
+                                    </div>
+                                  );
+                                } else {
+                                  return (
+                                    <div
+                                      key={categoryIndex}
+                                      className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                      <span> {category.item}</span>
+                                    </div>
+                                  );
+                                }
+                              })}
+                          </div>
+                        </div>
+                      </div>
+                      <img
+                        src={item.selectedPhoto}
+                        alt="a"
+                        className="w-full  sm:w-[40%] min-h-[30%] sm:h-full object-cover rounded-sm order-1 sm:order-2"
+                      />
+                    </Link>
+                  </>
+                ))}
+            </div>
+          )}
         </div>
       ))}
+
+      {currentBlog.length > 1 && (
+        <div className="h-auto w-auto flex flex-col justify-center items-start py-5 gap-5">
+          <p className="w-full flex items-center justify-center text-[32px] font-[600]">
+            Recommended Blogs
+          </p>
+
+          {currentBlog
+            .filter(
+              (item, index) =>
+                item._id !== cardId &&
+                item.userId !== currentUserId &&
+                index < 6
+            )
+            .map((item, index) => (
+              <>
+                <Link
+                  to={`/read/${item._id}`}
+                  key={index}
+                  className="w-[22rem] sm:w-[45rem] h-[22rem] sm:h-[15rem] border-[1px] shadow-md rounded-md flex gap-1 flex-col sm:flex-row">
+                  <div className="h-full w-full sm:w-[70%] p-2 flex-col flex justify-start items-start gap-2 order-2 sm:order-1">
+                    <div className="w-full h-[2rem] capitalize flex justify-start items-center  overflow-hidden gap-2 ">
+                      {item.username}{" "}
+                      <span className="h-full flex items-start">.</span>
+                      {new Date(item.createdAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </div>
+
+                    <div className="w-full max-h-[4rem] text-[20px] capitalizeflex justify-start items-start overflow-hidden">
+                      {item.titleContent}
+                    </div>
+
+                    <div className="min-w-full h-auto sm:h-[3rem] capitalize flex justify-start items-center  overflow-hidden">
+                      <div className="flex gap-2 overflow-hidden flex-wrap min-w-full ">
+                        {item.categoryList
+                          .filter(
+                            (category, index) => category.id !== "" && index < 3
+                          )
+                          .map((category, categoryIndex) => {
+                            if (categoryIndex === 0) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-green-100/80 text-green-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else if (categoryIndex == 1) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem]  bg-red-100/50 text-red-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else if (categoryIndex === 2) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-yellow-100/70 text-yellow-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            }
+                          })}
+                      </div>
+                    </div>
+                  </div>
+                  <img
+                    src={item.selectedPhoto}
+                    alt="a"
+                    className="w-full  sm:w-[40%] min-h-[30%] sm:h-full object-cover rounded-sm order-1 sm:order-2"
+                  />
+                </Link>
+              </>
+            ))}
+        </div>
+      )}
     </HomeLayout>
   );
 };

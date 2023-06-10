@@ -14,6 +14,7 @@ import About from "./PageComponents/About/About";
 import UpdateProfile from "./Pages/UpdateProfile";
 
 import "react-toastify/dist/ReactToastify.css";
+import AllBlogs from "./Pages/AllBlogs";
 function App() {
   const [currentUser, setCurrentUser] = useState();
   const [allBlogList, setAllBlogList] = useState([]);
@@ -45,6 +46,7 @@ function App() {
     { path: "/writeBlog", element: <WriteBlogPage /> },
     { path: "/read/:cardId", element: <ReadFullBlogPage /> },
     { path: "/update", element: <UpdateProfile /> },
+    { path: "/blogs", element: <AllBlogs /> },
   ]);
   return <RouterProvider router={router}></RouterProvider>;
 }

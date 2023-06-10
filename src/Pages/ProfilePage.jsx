@@ -36,6 +36,7 @@ const HomePage = () => {
         {/* modal */}
 
         <div
+          onClick={handleSettingClick}
           className={`w-auto h-auto max-h-[20rem] ${
             openSetting ? "opacity-100 " : "opacity-0 "
           } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 relative z-20 left-[8rem] top-[25rem] sm:top-[15.5rem] sm:left-[18rem] md:left-[24rem] md:top-[12rem] rounded-lg transition-opacity duration-200`}>

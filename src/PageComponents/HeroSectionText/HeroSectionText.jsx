@@ -1,23 +1,25 @@
 import React from "react";
 import Button from "../../Components/Button/Button";
 
-const HeroSectionText = ({ align }) => {
+const HeroSectionText = ({ align, color }) => {
   return (
     <div
       className={`p-1 font-sans flex flex-col justify-center ${
+        color == "white" ? "text-white" : "text-purple "
+      } ${
         align == "center"
           ? "items-center"
           : align == "start"
           ? "items-start"
           : "items-center"
       } w-full h-[30rem] gap-3 sm:gap-5`}>
-      <span className="bg-gray-100/50 text-[13px] text-purple h-[1.5rem] min-w-[8rem] max-w-[20rem]  flex justify-center items-center rounded-[5rem]">
+      <span className={`bg-gray-100/50 text-[13px] h-[1.5rem] min-w-[8rem] max-w-[20rem]  flex justify-center items-center rounded-[5rem]`}>
         Latest Updates
       </span>
-      <span className="sm:h-[4rem] h-[3rem] w-auto text-deep-purple text-[2rem] sm:text-[3rem]">
+      <span className="sm:h-[4rem] h-[3rem] w-auto  text-[2rem] sm:text-[3rem]">
         Resources and insights
       </span>
-      <span className="h-[1.5rem] w-auto text-purple text-[1rem]">
+      <span className="h-[1.5rem] w-auto  text-[1rem]">
         The latest gadgets, devices, blogs and news.
       </span>
       <span className="flex sm:flex-row flex-col justify-center items-center gap-2">

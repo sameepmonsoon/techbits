@@ -112,16 +112,13 @@ const SignUpPage = () => {
     setTogglePassword(viewPassword ? "text" : "password");
   }, [viewPassword]);
 
-  console.log(success);
   // to show modal on error change
   useEffect(() => {
     if ((error !== "") | (success !== "")) {
       setToggleModal(true);
     }
   }, [error, success]);
-  const responseGoogle = (response) => {
-    console.log(response);
-  };
+  const responseGoogle = (response) => {};
   return (
     <>
       {!showSignUpPage ? (
