@@ -50,30 +50,7 @@ const About = ({ userDetails }) => {
           {currentUser?.username}
         </span>
       </div>
-      <div className="w-full flex justify-start items-center gap-5">
-        <span className="flex justify-start items-center text-black w-[20%]">
-          Bookmarks
-        </span>
-        <span className="flex justify-start items-center text-black/70">
-          {currentUser?.bookmarks?.length}
-        </span>
-      </div>
-      <div className="w-full flex justify-start items-center gap-5">
-        <span className="flex justify-start items-center text-black w-[20%]">
-          Followers
-        </span>
-        <span className="flex justify-start items-center text-black/70">
-          {currentUser?.followers?.length}
-        </span>
-      </div>
-      <div className="w-full flex justify-start items-center gap-5">
-        <span className="flex justify-start items-center text-black w-[20%]">
-          Following
-        </span>
-        <span className="flex justify-start items-center text-black/70">
-          {currentUser?.following.length}
-        </span>
-      </div>
+
       <div className="w-full flex justify-start items-center gap-5">
         <span className="flex justify-start items-center text-black w-[20%]">
           Blog Post

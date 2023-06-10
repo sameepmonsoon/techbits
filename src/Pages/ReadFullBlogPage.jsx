@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   CiBookmarkPlus,
@@ -16,6 +16,8 @@ import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-hot-toast";
+import Card from "../Components/Card/Card";
+import image from "../assets/data-processing.svg";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
   //loading state
@@ -43,6 +45,7 @@ const ReadFullBlogPage = () => {
 
   const creatorId = currentPost[0]?.userId;
   const [isFollowing, setIsFollowing] = useState(false);
+  const [allBlogPostByUser, setAllBlogPostByUser] = useState([]);
   const [showPage, setShowPage] = useState(true);
   // api calls for like bookmark and commetn
   const handleClickLike = () => {
@@ -133,9 +136,14 @@ const ReadFullBlogPage = () => {
         navigate("/");
       }
     });
+
+    // to get all the post of current id
+    setAllBlogPostByUser(
+      currentBlog?.filter((item) => item?.userId == currentUserId)
+    );
+    console.log(allBlogPostByUser, currentBlog);
   }, [cardId, creatorId, currentUserId]);
 
-  useEffect(() => {}, [blogIsPresent]);
   useEffect(() => {
     if (currentUser == null) {
       navigate("/");
@@ -183,6 +191,8 @@ const ReadFullBlogPage = () => {
         console.log(err);
       });
   };
+
+  console.log("all blog data", allBlogPostByUser);
   return (
     <HomeLayout>
       <LoadingOverlayComponent openCloseOverlay={showPage}>
@@ -351,6 +361,86 @@ const ReadFullBlogPage = () => {
                 )}
               </span>
             </div>
+          </div>
+
+          {/* container for similar blogs ---based on category  */}
+          <div className="h-auto w-auto flex flex-col justify-center items-start py-5 gap-2">
+            <p className="w-full flex items-center justify-center text-[32px] font-[600]">
+              More From {item.username}
+            </p>
+
+            {allBlogPostByUser.map((item, index) => (
+              <>
+                <Link
+                to={'/'}
+                  key={index}
+                  className="w-[45rem] h-[15rem] border-[1px] shadow-md rounded-md flex gap-1">
+                  <div className="h-full w-[70%] p-2 flex-col flex justify-start items-start gap-2">
+                    <div className="w-full h-[3rem] text-[20px] capitalizeflex justify-start items-start overflow-hidden">
+                      {item.titleContent}
+                    </div>
+                    <div className="w-full h-[2rem] capitalize bg-red-900 flex justify-start items-center  overflow-hidden">
+                      {new Date(item.createdAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </div>
+                    <div className="w-full h-[3rem] capitalize bg-red-900 flex justify-start items-center  overflow-hidden">
+                      <div className="flex gap-2 overflow-hidden">
+                        {item.categoryList
+                          .filter(
+                            (category, index) => category.id !== "" && index < 3
+                          )
+                          .map((category, categoryIndex) => (
+                            <div
+                              key={categoryIndex}
+                              className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[14px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                              <span> {category.item}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+
+                    <div className="w-full h-[2rem] capitalize bg-red-900 flex justify-start items-center overflow-hidden">
+                      {item.username}
+                    </div>
+                  </div>
+                  <img
+                    src={item.selectedPhoto}
+                    alt="a"
+                    className="min-w-[30%] h-full object-cover"
+                  />
+                </Link>
+                <Card
+                  key={index}
+                  cardId={item._id}
+                  row={true}
+                  writerId={item.userId}
+                  tag={
+                    <div className="flex gap-2 overflow-hidden">
+                      {item.categoryList
+                        .filter(
+                          (category, index) => category.id !== "" && index < 3
+                        )
+                        .map((category, categoryIndex) => (
+                          <div
+                            key={categoryIndex}
+                            className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[14px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                            <span> {category.item}</span>
+                          </div>
+                        ))}
+                    </div>
+                  }
+                  cardTitle={item.titleContent}
+                  cardDescription={""}
+                  cardUserName={item.username}
+                  cardImage={item.selectedPhoto}
+                  cardPostDate={item.createdAt}
+                  // cardUserImage={image}
+                />
+              </>
+            ))}
           </div>
         </div>
       ))}

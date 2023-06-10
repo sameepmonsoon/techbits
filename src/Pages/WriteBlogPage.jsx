@@ -374,7 +374,7 @@ const WriteBlogPage = () => {
           // }}
         >
           <div
-            className={`transition-h duration-400 top-40 ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
+            className={`transition-h duration-400 top-[6.5rem] ease-in-out relative bg-white border-[1px] shadow-lg text-gray-600 p-4 lg:w-[38%] w-[90%] sm:w-[50%] left-[-2.4rem] sm:left-auto z-20 ${
               showDraftModal ? "opacity-100  h-[35rem] " : "opacity-0 h-0 "
             } rounded-lg flex flex-col gap-2`}>
             <p className="w-full text-[18px] border-b-2 p-1 text-black flex justify-between px-2">
@@ -392,7 +392,7 @@ const WriteBlogPage = () => {
               alt=""
               className="h-[50%]  w-full p-1 object-conhtain"
             />
-            {draftData ? (
+            {draftData != "" ? (
               <div className="h-auto w-full overflow-hidden flex flex-col gap-3">
                 {draftData.map((item, index) => (
                   <div
@@ -415,8 +415,8 @@ const WriteBlogPage = () => {
                 ))}
               </div>
             ) : (
-              <div className="h-auto w-full overflow-hidden">
-                You can save your draft heres
+              <div className="h-full w-full overflow-hidden flex justify-center items-center">
+                You have no draft.
               </div>
             )}
           </div>
