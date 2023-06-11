@@ -5,6 +5,20 @@ const CategorySchema = new mongoose.Schema({
   item: String,
 });
 
+const CommentSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 const BlogSchema = new mongoose.Schema(
   {
     username: { type: String, required: true },
@@ -34,7 +48,7 @@ const BlogSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    comments: { type: Array, default: [] },
+    comments: { type: [CommentSchema], default: [] },
   },
   { timestamps: true }
 );

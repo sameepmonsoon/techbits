@@ -3,9 +3,24 @@ const Draft = require("../models/blogDraft.js");
 
 exports.createBlogPost = async (req, res, next) => {
   try {
-    console.log(req.body.cardId);
+    const { userId, comment } = req.body;
+    const { id } = req.params;
+
+    const commentBlog = await Blog.findById({ id });
     const fileData = Buffer.from(req.body.selectedPhoto, "base64");
     const blogId = req.body.blogId;
+    if (commentBlog) {
+      const newComment = {
+        userId,
+        content: comment,
+      };
+      commentBlog.comments.push(newComment);
+      const updatedBlogs = await commentBlog.save();
+      const { comments, ...otherData } = updatedBlogs.toObject();
+      res.status(200).json({ comments, message: "Published Successfully." });
+    } else if (!commentBlog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
     if (blogId) {
       const findBlog = await Blog.findOneAndUpdate(
         { _id: blogId },

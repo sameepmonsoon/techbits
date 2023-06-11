@@ -514,7 +514,7 @@ const WriteBlogPage = () => {
                   onClick={(event) =>
                     handleSubmit(
                       event,
-                      "/blogPost",
+                      "/blogPost/create",
                       "Blog published successfully."
                     )
                   }

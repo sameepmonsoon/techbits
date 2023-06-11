@@ -18,11 +18,14 @@ import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-hot-toast";
 import Card from "../Components/Card/Card";
 import image from "../assets/data-processing.svg";
+import CommentBox from "../PageComponents/CommentBox/CommentBox";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
 
   // state for delete modal open/close
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  // to show comment
+  const [showComment, setShowComment] = useState(false);
   //loading state
   const [isLoading, setIsLoading] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -442,7 +445,6 @@ const ReadFullBlogPage = () => {
                   }
                 })}
             </div>
-
             {/* page bottom reaction */}
             <div className=" w-[80%] sm:w-[50%] h-[3rem] flex justify-center items-center gap-3 border-b-[1px]">
               <div className="group flex justify-center items-center gap-[1px] group h-10 relative">
@@ -460,6 +462,9 @@ const ReadFullBlogPage = () => {
               </div>
               <div className="flex justify-start gap-1 group relative">
                 <AiOutlineComment
+                  onClick={() => {
+                    setShowComment((prev) => !prev);
+                  }}
                   size={29}
                   className="text-deep-purple/70 hover:text-blue-500 cursor-pointer hover:bg-blue-100 rounded-full p-[3px]"
                 />
@@ -493,6 +498,11 @@ const ReadFullBlogPage = () => {
                 )}
               </span>
             </div>
+            {showComment && (
+              <div className="">
+                <CommentBox />
+              </div>
+            )}{" "}
           </div>
 
           {/* container for similar blogs ---based on category  */}
