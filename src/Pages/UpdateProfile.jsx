@@ -183,6 +183,17 @@ const UpdateProfile = () => {
       reader.readAsDataURL(file);
     });
   };
+
+  const handleProfileDelete = () => {
+    HttpCalls.deleteData(`/auth/delete/${currentUser._id}`)
+      .then((res) => {
+        console.log(res);
+        localStorage.removeItem("user");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <HomeLayout>
       {!showSignUpPage ? (
@@ -284,6 +295,12 @@ const UpdateProfile = () => {
                 background={true}
                 fullWidth={true}
               />
+              <div className="flex justify-center items-center text-xl">or</div>
+              <div
+                onClick={handleProfileDelete}
+                className="bg-red-800 h-10 rounded-md flex justify-center items-center text-[18px] cursor-pointer text-white">
+                Delete Profile
+              </div>
             </form>
           </div>
           <img

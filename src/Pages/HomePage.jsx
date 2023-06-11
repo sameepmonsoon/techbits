@@ -52,7 +52,7 @@ const HomePage = () => {
                                 category.id !== "" && index < 3
                             )
                             .map((category, categoryIndex) => {
-                              if (categoryIndex === 0) {
+                              if (categoryIndex === 0 || categoryIndex == 2) {
                                 return (
                                   <div
                                     key={categoryIndex}
@@ -60,7 +60,10 @@ const HomePage = () => {
                                     <span> {category.item}</span>
                                   </div>
                                 );
-                              } else if (categoryIndex == 1) {
+                              } else if (
+                                categoryIndex == 1 ||
+                                categoryIndex == 3
+                              ) {
                                 return (
                                   <div
                                     key={categoryIndex}
@@ -68,11 +71,14 @@ const HomePage = () => {
                                     <span> {category.item}</span>
                                   </div>
                                 );
-                              } else if (categoryIndex === 2) {
+                              } else if (
+                                categoryIndex === 4 ||
+                                categoryIndex == 5
+                              ) {
                                 return (
                                   <div
                                     key={categoryIndex}
-                                    className="w-auto justify-center h-[1rem] max-w-[10rem]bg-yellow-100/70 text-yellow-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-rose-100/70 text-rose-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
                                     <span> {category.item}</span>
                                   </div>
                                 );

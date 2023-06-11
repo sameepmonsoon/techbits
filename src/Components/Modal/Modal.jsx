@@ -18,9 +18,9 @@ const Modal = ({
   const handleToggle = () => {
     toggleModal((prev) => !prev);
 
-    if (navigate) {
+    if (info) {
       setTimeout(() => {
-        navigatePath(navigate);
+       navigatePath(navigate);
       }, 400);
     }
   };

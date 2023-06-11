@@ -52,8 +52,21 @@ const WriteBlogPage = () => {
     const isItemExists = categoryListItem.some(
       (existingItem) => existingItem.id === id
     );
-    if (!isItemExists) {
-      setCategoryListItem((prevList) => [...prevList, { id, item }]);
+    if (categoryListItem.length < 6) {
+      if (!isItemExists) {
+        setCategoryListItem((prevList) => [...prevList, { id, item }]);
+      }
+    } else {
+      toast.success(`You can only add 5 categories`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   const handleRemoveCategoryItem = (id) => {

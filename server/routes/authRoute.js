@@ -2,6 +2,7 @@ const express = require("express");
 const {
   signin,
   signup,
+  deleteUser,
   bookmark,
   follow,
   getAllBookmark,
@@ -11,6 +12,7 @@ const {
 const router = express.Router();
 
 router.post("/signup", signup);
+router.delete("/delete/:id", deleteUser);
 router.post("/signin", signin);
 router.put("/bookmark", bookmark);
 router.post("/getBookmark", getAllBookmark);

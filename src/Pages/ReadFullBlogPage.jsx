@@ -20,6 +20,9 @@ import Card from "../Components/Card/Card";
 import image from "../assets/data-processing.svg";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
+
+  // state for delete modal open/close
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   //loading state
   const [isLoading, setIsLoading] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -299,10 +302,11 @@ const ReadFullBlogPage = () => {
                     } rounded-full p-1 cursor-pointer relative group`}
                     onClick={() => setShowSetting((prev) => !prev)}>
                     <IoSettingsOutline size={23} />
-
-                    <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
-                      Settings
-                    </div>
+                    {!showSetting && (
+                      <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                        Settings
+                      </div>
+                    )}
                   </div>
                   {showSetting && (
                     <>
@@ -316,15 +320,41 @@ const ReadFullBlogPage = () => {
                             Edit
                           </div>
                         </div>
-                        <div className="relative group">
-                          <MdDeleteOutline
-                            size={25}
-                            className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
-                            onClick={handleDeleteBLog}
-                          />
-                          <div className="absolute left-[-25px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
-                            Delete
-                          </div>
+                        <div className="relative ">
+                          <div className="relative group">
+                            <MdDeleteOutline
+                              size={25}
+                              className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
+                              onClick={() => {
+                                setOpenDeleteModal((prev) => !prev);
+                              }}
+                            />
+                            {!openDeleteModal && (
+                              <div className="absolute left-[-25px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                                Delete
+                              </div>
+                            )}
+                          </div>{" "}
+                          {openDeleteModal && (
+                            <div className="absolute bg-white border-[1px] shadow-md gap-2 h-20 w-40 rounded-md text-[16px] flex flex-col justify-center items-center left-[-5rem] z-30 top-[3rem]">
+                              <span>Are you sure?</span>
+
+                              <div className="w-full flex gap-4 justify-center">
+                                <span
+                                  onClick={handleDeleteBLog}
+                                  className="cursor-pointer h-auto  hover:text-red-500 px-1 rounded-md flex justify-center items-center">
+                                  Delete
+                                </span>
+                                <span
+                                  onClick={() => {
+                                    setOpenDeleteModal(false);
+                                  }}
+                                  className="cursor-pointer h-auto  hover:text-green-500 px-1 rounded-md flex justify-center items-center">
+                                  Cancel
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </>
@@ -353,27 +383,43 @@ const ReadFullBlogPage = () => {
               {item.categoryList
                 .filter((category) => category.id != "")
                 .map((category, categoryIndex) => {
-                  if (categoryIndex === 0) {
+                  if (categoryIndex === 0 || categoryIndex === 5) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-red-100 text-red-700 hover:border-red-500 border-red-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-red-100 text-red-700 hover:border-red-500 border-red-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
-                  } else if (categoryIndex == 1) {
+                  } else if (categoryIndex == 1 || categoryIndex === 5) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-green-100 text-green-700 hover:border-green-500 border-green-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-green-100 text-green-700 hover:border-green-500 border-green-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
-                  } else if (categoryIndex === 2) {
+                  } else if (categoryIndex === 2 || categoryIndex === 6) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-blue-100 text-blue-700 hover:border-blue-500 border-blue-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-blue-100 text-blue-700 hover:border-blue-500 border-blue-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex == 3 || categoryIndex === 7) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-teal-100 text-teal-700 hover:border-teal-500 border-teal-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex == 4 || categoryIndex === 8) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-yellow-100 text-yellow-700 hover:border-yellow-500 border-yellow-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
@@ -381,7 +427,7 @@ const ReadFullBlogPage = () => {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-yellow-100 text-yellow-700 hover:border-yellow-500 border-yellow-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-rose-100 text-rose-700 hover:border-rose-500 border-rose-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
@@ -438,7 +484,6 @@ const ReadFullBlogPage = () => {
                   </div>
                 )}
               </span>
-             
             </div>
           </div>
 

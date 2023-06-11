@@ -1,4 +1,7 @@
 const User = require("../models/auth.js");
+const Blog = require("../models/blogPost.js");
+const Draft = require("../models/blogDraft.js");
+const Bloglikes = require("../models/blogReaction.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 // to update the profile
@@ -125,6 +128,32 @@ exports.signin = async (req, res, next) => {
   }
 };
 
+// delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const isPresent = User.findById({ userId });
+    if (isPresent != null) {
+      await User.deleteOne({ _id: userId });
+      await Blog.deleteMany({ userId: userId });
+      await Bloglikes.deleteMany({ userId: userId });
+      await Draft.deleteMany({ userId: userId });
+      res.status(200).json({
+        message: "Deleted",
+        flag: true,
+      });
+    } else {
+      console.log(err);
+      res.status(500).json({ error: "User  not found." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Failed to delete the user." });
+  }
+};
+
+// bookmarks
 exports.bookmark = async (req, res) => {
   try {
     const userId = req.body.userId;
