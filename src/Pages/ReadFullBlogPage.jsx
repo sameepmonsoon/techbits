@@ -383,27 +383,43 @@ const ReadFullBlogPage = () => {
               {item.categoryList
                 .filter((category) => category.id != "")
                 .map((category, categoryIndex) => {
-                  if (categoryIndex === 0) {
+                  if (categoryIndex === 0 || categoryIndex === 5) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-red-100 text-red-700 hover:border-red-500 border-red-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-red-100 text-red-700 hover:border-red-500 border-red-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
-                  } else if (categoryIndex == 1) {
+                  } else if (categoryIndex == 1 || categoryIndex === 5) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-green-100 text-green-700 hover:border-green-500 border-green-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-green-100 text-green-700 hover:border-green-500 border-green-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
-                  } else if (categoryIndex === 2) {
+                  } else if (categoryIndex === 2 || categoryIndex === 6) {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-blue-100 text-blue-700 hover:border-blue-500 border-blue-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-blue-100 text-blue-700 hover:border-blue-500 border-blue-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex == 3 || categoryIndex === 7) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-teal-100 text-teal-700 hover:border-teal-500 border-teal-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
+                        <span> {category.item}</span>
+                      </div>
+                    );
+                  } else if (categoryIndex == 4 || categoryIndex === 8) {
+                    return (
+                      <div
+                        key={categoryIndex}
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-yellow-100 text-yellow-700 hover:border-yellow-500 border-yellow-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
@@ -411,7 +427,7 @@ const ReadFullBlogPage = () => {
                     return (
                       <div
                         key={categoryIndex}
-                        className="min-w-[6rem] justify-center h-10 max-w-[10rem] bg-yellow-100 text-yellow-700 hover:border-yellow-500 border-yellow-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
+                        className="min-w-[6rem] justify-center h-8 max-w-[10rem] bg-rose-100 text-rose-700 hover:border-rose-500 border-rose-300 text-[14px] p-[2px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 border-[0px]">
                         <span> {category.item}</span>
                       </div>
                     );
