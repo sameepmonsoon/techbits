@@ -15,9 +15,12 @@ import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import draftImage from "../assets/draft-2.svg";
 const WriteBlogPage = () => {
+  //  for edit blog
+  const { cardId } = useParams();
+  const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
   const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -163,6 +166,7 @@ const WriteBlogPage = () => {
               titleContent: textareaValue,
               selectedPhoto: compressedDataUrl,
               editorContent: editorContent,
+              blogId: cardId,
               id: currentDraftId,
             };
 
@@ -219,8 +223,8 @@ const WriteBlogPage = () => {
           selectedPhoto: selectedDraftPhoto,
           editorContent: editorContent,
           id: currentDraftId,
+          blogId: cardId,
         };
-
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
@@ -346,6 +350,21 @@ const WriteBlogPage = () => {
         console.log(err);
       });
   }, []);
+
+  // to edit the blog if cardId is present
+  useEffect(() => {
+    setcurrentDraftId(cardId);
+    const toRenderDraft = currentBlog
+      .filter((item) => item._id === cardId)
+      .map((item, index) => {
+        setSelectedDraftPhoto(item.selectedPhoto);
+        setTextareaValue(item.titleContent);
+        setEditorContent(item.editorContent);
+        setCategoryListItem(item.categoryList);
+      });
+
+    console.log(toRenderDraft);
+  }, [cardId]);
 
   const renderSavedDraft = (draftId) => {
     setcurrentDraftId(draftId);
@@ -495,7 +514,7 @@ const WriteBlogPage = () => {
                   onClick={(event) =>
                     handleSubmit(
                       event,
-                      "/blogPost",
+                      "/blogPost/create",
                       "Blog published successfully."
                     )
                   }

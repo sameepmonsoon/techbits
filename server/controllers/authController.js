@@ -38,6 +38,10 @@ exports.updateProfile = async (req, res) => {
 
     // Save the updated user data
     await existingUser.save();
+    await Blog.updateMany(
+      { userId: req.body.userId },
+      { username: req.body.username }
+    );
     const result = await User.findOne({ _id: req.body.userId });
     res.status(200).json({ result, message: "Profile updated successfully." });
   } catch (err) {

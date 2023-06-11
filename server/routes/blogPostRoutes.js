@@ -13,7 +13,8 @@ const {
 const router = express.Router();
 
 // Create a Tweet
-router.post("/", createBlogPost);
+router.post("/create", createBlogPost);
+router.post("/:id/comment", createBlogPost);
 router.post("/createDraft", createBlogDraft);
 router.get("/getDraft/:id", getBlogDraft);
 router.get("/getAll", getAllBlogPosts);

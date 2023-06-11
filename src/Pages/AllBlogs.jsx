@@ -42,7 +42,9 @@ const AllBlogs = () => {
                 .map((item, index) => {
                   if (index === 0) {
                     return (
-                      <div className="w-full flex items-center justify-center relative top-[-6rem] h-[10rem]"    key={index}>
+                      <div
+                        className="w-full flex items-center justify-center relative top-[-6rem] h-[10rem]"
+                        key={index}>
                         <Card
                           autoHeight={true}
                           key={index}
@@ -53,10 +55,13 @@ const AllBlogs = () => {
                               {item.categoryList
                                 .filter(
                                   (category, index) =>
-                                    category.id !== "" && index < 3
+                                    category.id !== "" && index < 10
                                 )
                                 .map((category, categoryIndex) => {
-                                  if (categoryIndex === 0) {
+                                  if (
+                                    categoryIndex === 0 ||
+                                    categoryIndex == 4
+                                  ) {
                                     return (
                                       <div
                                         key={categoryIndex}
@@ -64,7 +69,10 @@ const AllBlogs = () => {
                                         <span> {category.item}</span>
                                       </div>
                                     );
-                                  } else if (categoryIndex == 1) {
+                                  } else if (
+                                    categoryIndex == 1 ||
+                                    categoryIndex == 5
+                                  ) {
                                     return (
                                       <div
                                         key={categoryIndex}
@@ -72,11 +80,25 @@ const AllBlogs = () => {
                                         <span> {category.item}</span>
                                       </div>
                                     );
-                                  } else if (categoryIndex === 2) {
+                                  } else if (
+                                    categoryIndex === 2 ||
+                                    categoryIndex == 6
+                                  ) {
                                     return (
                                       <div
                                         key={categoryIndex}
-                                        className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                        className="w-auto justify-center h-[1rem] max-w-[10rem] bg-teal-100/80 text-teal-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                        <span> {category.item}</span>
+                                      </div>
+                                    );
+                                  } else if (
+                                    categoryIndex === 3 ||
+                                    categoryIndex == 7
+                                  ) {
+                                    return (
+                                      <div
+                                        key={categoryIndex}
+                                        className="w-auto justify-center h-[1rem] max-w-[10rem] bg-blue-100/70 text-blue-500 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
                                         <span> {category.item}</span>
                                       </div>
                                     );
@@ -84,7 +106,7 @@ const AllBlogs = () => {
                                     return (
                                       <div
                                         key={categoryIndex}
-                                        className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                        className="w-auto justify-center h-[1rem] max-w-[10rem] bg-yellow-100/90 text-yellow-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
                                         <span> {category.item}</span>
                                       </div>
                                     );
@@ -99,7 +121,6 @@ const AllBlogs = () => {
                           cardPostDate={item.createdAt}
                           cardUserImage={image}
                         />
-                        ;
                       </div>
                     );
                   } else {

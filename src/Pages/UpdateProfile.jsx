@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import signUpImage from "../assets/update.svg";
 import userImage from "../assets/user.svg";
 import Button from "../Components/Button/Button";
-import { useFormik } from "formik";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
 import { HttpCalls } from "../utils/HttpCalls";
-import { toast, Slide } from "react-toastify";
-
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { fetchAllBlogs } from "../Store/blogPostSlice";
+import { useNavigate } from "react-router-dom";
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,11 @@ const UpdateProfile = () => {
   const username = currentUser?.username;
   const image = currentUser?.selectedPhoto;
   const [userName, setUserName] = useState(username);
+  // state for delete dialog box
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // useEffect
   useEffect(() => {
     setTimeout(() => {
       if (currentUser == null) {
@@ -46,6 +52,7 @@ const UpdateProfile = () => {
         const response = await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
+            dispatch(fetchAllBlogs());
             setIsLoading(false);
             setMessage(res.data.message);
             const toastId = "alert";
@@ -189,9 +196,33 @@ const UpdateProfile = () => {
       .then((res) => {
         console.log(res);
         localStorage.removeItem("user");
+        dispatch(fetchAllBlogs());
+        toast.success("Profile Deleted Successfully", {
+          toastId: toastId,
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Error Deleting the profile.", {
+          toastId: toastId,
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       });
   };
   return (
@@ -222,7 +253,7 @@ const UpdateProfile = () => {
             <form
               action=""
               onSubmit={onSubmit}
-              className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
+              className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans relative`}>
               <label
                 htmlFor="image"
                 className="w-full flex items-center justify-center">
@@ -286,7 +317,10 @@ const UpdateProfile = () => {
                 onClick={onSubmit}
                 title={
                   isLoading ? (
-                    <ImSpinner5 size={25} className="animate-spin" />
+                    <div className="flex justify-center w-full gap-3 text-[16px] opacity-80">
+                      Updating...{" "}
+                      <ImSpinner5 size={25} className="animate-spin" />
+                    </div>
                   ) : (
                     "Update Profile"
                   )
@@ -297,10 +331,32 @@ const UpdateProfile = () => {
               />
               <div className="flex justify-center items-center text-xl">or</div>
               <div
-                onClick={handleProfileDelete}
-                className="bg-red-800 h-10 rounded-md flex justify-center items-center text-[18px] cursor-pointer text-white">
+                onClick={() => {
+                  setOpenDeleteModal((prev) => !prev);
+                }}
+                className="bg-red-800 h-10 min-w-[16rem] rounded-md flex justify-center items-center text-[16px] cursor-pointer text-white">
                 Delete Profile
               </div>
+              {openDeleteModal && (
+                <div className="absolute bg-white border-[1px]  border-red-100 shadow-red-100 shadow-sm gap-2 h-20 text-black w-40 rounded-md text-[16px] flex flex-col justify-center items-center z-30 left-[10rem] bottom-5">
+                  <span>Are you sure?</span>
+
+                  <div className="w-full flex gap-4 justify-center">
+                    <span
+                      onClick={handleProfileDelete}
+                      className="cursor-pointer h-auto  hover:text-red-500 px-1 rounded-md flex justify-center items-center">
+                      Delete
+                    </span>
+                    <span
+                      onClick={() => {
+                        setOpenDeleteModal(false);
+                      }}
+                      className="cursor-pointer h-auto  hover:text-green-500 px-1 rounded-md flex justify-center items-center">
+                      Cancel
+                    </span>
+                  </div>
+                </div>
+              )}
             </form>
           </div>
           <img
