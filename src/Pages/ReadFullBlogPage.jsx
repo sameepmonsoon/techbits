@@ -20,6 +20,9 @@ import Card from "../Components/Card/Card";
 import image from "../assets/data-processing.svg";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
+
+  // state for delete modal open/close
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   //loading state
   const [isLoading, setIsLoading] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -299,10 +302,11 @@ const ReadFullBlogPage = () => {
                     } rounded-full p-1 cursor-pointer relative group`}
                     onClick={() => setShowSetting((prev) => !prev)}>
                     <IoSettingsOutline size={23} />
-
-                    <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
-                      Settings
-                    </div>
+                    {!showSetting && (
+                      <div className="absolute  top-10 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                        Settings
+                      </div>
+                    )}
                   </div>
                   {showSetting && (
                     <>
@@ -316,15 +320,41 @@ const ReadFullBlogPage = () => {
                             Edit
                           </div>
                         </div>
-                        <div className="relative group">
-                          <MdDeleteOutline
-                            size={25}
-                            className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
-                            onClick={handleDeleteBLog}
-                          />
-                          <div className="absolute left-[-25px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
-                            Delete
-                          </div>
+                        <div className="relative ">
+                          <div className="relative group">
+                            <MdDeleteOutline
+                              size={25}
+                              className="text-deep-purple/70 hover:text-red-600 cursor-pointer"
+                              onClick={() => {
+                                setOpenDeleteModal((prev) => !prev);
+                              }}
+                            />
+                            {!openDeleteModal && (
+                              <div className="absolute left-[-25px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                                Delete
+                              </div>
+                            )}
+                          </div>{" "}
+                          {openDeleteModal && (
+                            <div className="absolute bg-white border-[1px] shadow-md gap-2 h-20 w-40 rounded-md text-[16px] flex flex-col justify-center items-center left-[-5rem] z-30 top-[3rem]">
+                              <span>Are you sure?</span>
+
+                              <div className="w-full flex gap-4 justify-center">
+                                <span
+                                  onClick={handleDeleteBLog}
+                                  className="cursor-pointer h-auto  hover:text-red-500 px-1 rounded-md flex justify-center items-center">
+                                  Delete
+                                </span>
+                                <span
+                                  onClick={() => {
+                                    setOpenDeleteModal(false);
+                                  }}
+                                  className="cursor-pointer h-auto  hover:text-green-500 px-1 rounded-md flex justify-center items-center">
+                                  Cancel
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </>
@@ -438,7 +468,6 @@ const ReadFullBlogPage = () => {
                   </div>
                 )}
               </span>
-             
             </div>
           </div>
 

@@ -8,6 +8,8 @@ import { IoIosLogOut } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { logout } from "../Store/authSlice";
 const HomePage = () => {
+  // state to verify logout
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -18,7 +20,7 @@ const HomePage = () => {
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
-    setOpenSetting((prev) => !prev);
+    if (!openDeleteModal) setOpenSetting((prev) => !prev);
   };
   const handleLogout = () => {
     dispatch(logout());
@@ -32,18 +34,44 @@ const HomePage = () => {
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}
-      <div className="p-5 flex flex-col inset-0 min-w-[50%] justify-start items-start ">
+      <div className="p-5 flex flex-col inset-0 min-w-[50%] justify-start items-start relative ">
         {/* modal */}
+        {openDeleteModal && (
+          <div className="absolute bg-white border-[1px] shadow-md gap-2 h-20 text-black w-40 rounded-md text-[16px] flex flex-col justify-center items-center sm:left-[25rem] z-30 left-[10rem] top-[25rem] sm:top-[16rem]">
+            <span>Are you sure?</span>
 
+            <div className="w-full flex gap-4 justify-center">
+              <span
+                onClick={handleLogout}
+                className="cursor-pointer h-auto  hover:text-red-500 px-1 rounded-md flex justify-center items-center">
+                Logout
+              </span>
+              <span
+                onClick={() => {
+                  setOpenDeleteModal(false);
+                }}
+                className="cursor-pointer h-auto  hover:text-green-500 px-1 rounded-md flex justify-center items-center">
+                Cancel
+              </span>
+            </div>
+          </div>
+        )}
         <div
-          onClick={handleSettingClick}
+          onMouseEnter={() => {
+            console.log("enter");
+          }}
           className={`w-auto h-auto max-h-[20rem] ${
-            openSetting ? "opacity-100 " : "opacity-0 "
-          } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 relative z-20 left-[8rem] top-[25rem] sm:top-[15.5rem] sm:left-[18rem] md:left-[24rem] md:top-[12rem] rounded-lg transition-opacity duration-200`}>
-          <>
+            openSetting
+              ? "opacity-100 relative left-[8rem] top-[25rem] sm:top-[15.5rem] sm:left-[18rem] md:left-[24rem] md:top-[15rem]"
+              : "opacity-0 absolute left-[-8rem] top-[-25rem] sm:top-[-15.5rem] sm:left-[-18rem] md:left-[-24rem] md:top-[-15rem]"
+          } max-w-[15rem] flex flex-col gap-3 bg-white border-[1px] shadow-md p-2 py-5 relative z-20  rounded-lg transition-opacity duration-200`}>
+          <div className="flex flex-col gap-2">
             <Link
-              onClick={handleLogout}
-              className="w-[6.5rem] flex items-center gap-2 justify-center  border-gray-300 cursor-pointer border-[1px] rounded-lg h-10 bg-red-600 hover:bg-red-700 text-white">
+              onClick={() => {
+                handleSettingClick();
+                setOpenDeleteModal((prev) => !prev);
+              }}
+              className="w-[6.5rem] flex items-center relative gap-2 justify-center  border-gray-300 cursor-pointer border-[1px] rounded-lg h-10 bg-red-600 hover:bg-red-700 text-white">
               <IoIosLogOut size={25} /> Logout
             </Link>
             <Link
@@ -51,7 +79,7 @@ const HomePage = () => {
               className="w-40 flex  items-center justify-center hover:border-gray-400/50 hover:bg-gray-200/60  border-gray-300 cursor-pointer border-[1px] rounded-md h-10 bg-gray-100 text-black">
               Update Profile
             </Link>
-          </>
+          </div>
         </div>
         {/* profile detail */}
         <div className="flex sm:flex-row flex-col w-full items-center sm:items-end justify-start p-5 gap-5 ">
@@ -61,13 +89,19 @@ const HomePage = () => {
           />
           <div className="flex justify-start text-5xl font-[500] h-20 sm:items-start items-end gap-5 ">
             {username}
-            <span
+            <div
               className={`flex items-end h-auto text-xl gap-1 ${
                 openSetting && "bg-gray-200"
-              } hover:bg-gray-200 rounded-full p-1 cursor-pointer`}
+              } hover:bg-gray-200 rounded-full p-1 cursor-pointer relative group`}
               onClick={handleSettingClick}>
               <IoSettingsOutline size={25} />
-            </span>
+
+              {!openSetting && (
+                <div className="absolute  top-10 group-hover:flex hidden z-20 text-[16px] font-[400]  group-hover:justify-center  group-hover:items-center cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                  Settings
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="border-b-[3px] w-full border-black/10 flex justify-start gap-5 p-1 transition-all duration-1000">
