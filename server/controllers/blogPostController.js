@@ -3,18 +3,35 @@ const Draft = require("../models/blogDraft.js");
 
 exports.createBlogPost = async (req, res, next) => {
   try {
+    console.log(req.body.cardId);
     const fileData = Buffer.from(req.body.selectedPhoto, "base64");
-    const newBlog = new Blog({
-      username: req.body.username,
-      userId: req.body.userId,
-      categoryList: req.body.categoryList,
-      titleContent: req.body.titleContent,
-      selectedPhoto: req.body.selectedPhoto,
-      editorContent: req.body.editorContent,
-    });
+    const blogId = req.body.blogId;
+    if (blogId) {
+      const findBlog = await Blog.findOneAndUpdate(
+        { _id: blogId },
+        {
+          username: req.body.username,
+          categoryList: req.body.categoryList,
+          titleContent: req.body.titleContent,
+          selectedPhoto: req.body.selectedPhoto,
+          editorContent: req.body.editorContent,
+        },
+        { new: true }
+      );
+      res.status(200).json({ findBlog, message: "Blog Updated Successfully." });
+    } else {
+      const newBlog = new Blog({
+        username: req.body.username,
+        userId: req.body.userId,
+        categoryList: req.body.categoryList,
+        titleContent: req.body.titleContent,
+        selectedPhoto: req.body.selectedPhoto,
+        editorContent: req.body.editorContent,
+      });
 
-    const savedBlog = await newBlog.save();
-    res.status(200).json({ savedBlog, message: "Published Successfully." });
+      const savedBlog = await newBlog.save();
+      res.status(200).json({ savedBlog, message: "Published Successfully." });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Failed to create blog post" });

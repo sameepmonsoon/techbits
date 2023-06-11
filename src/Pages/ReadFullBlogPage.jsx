@@ -275,7 +275,7 @@ const ReadFullBlogPage = () => {
                       onClick={handleClickBookmark}
                       size={25}
                       className="text-deep-purple/70 hover:text-green-700 cursor-pointer hover:bg-green-100 rounded-full p-[3px]"
-                    />{" "}
+                    />
                     <span className="absolute text-[14px] left-[-1rem] top-9 group-hover:flex hidden z-20  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-[8rem] rounded-md overflow-hidden items-center justify-center">
                       Remove Bookmark
                     </span>
@@ -312,11 +312,19 @@ const ReadFullBlogPage = () => {
                     <>
                       <div className="flex gap-1 absolute left-10 bg-white border-[1px] shadow-sm h-10 w-20 justify-center items-center rounded-md">
                         <div className="relative group">
-                          <MdEditNote
-                            size={28}
-                            className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
-                          />
-                          <div className="absolute left-[-20px]  top-9 group-hover:flex hidden z-20  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm   h-8 w-20 rounded-md overflow-hidden items-center justify-center">
+                          <Link to={`/writeBlog/${cardId}`}>
+                            {" "}
+                            <MdEditNote
+                              size={28}
+                              className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
+                            />
+                          </Link>
+                          <div
+                            className="absolute left-[-20px] top-9
+                            group-hover:flex hidden z-20 cursor-pointer
+                            group-hover:bg-white border-[1px] border-gray-300
+                            shadow-sm h-8 w-20 rounded-md overflow-hidden
+                            items-center justify-center">
                             Edit
                           </div>
                         </div>
@@ -583,7 +591,6 @@ const ReadFullBlogPage = () => {
           <p className="w-full flex items-center justify-center text-[32px] font-[600]">
             Recommended Blogs
           </p>
-
           {currentBlog
             .filter(
               (item, index) =>
@@ -611,7 +618,6 @@ const ReadFullBlogPage = () => {
                     <div className="w-full max-h-[4rem] text-[20px] capitalizeflex justify-start items-start overflow-hidden">
                       {item.titleContent}
                     </div>
-
                     <div className="min-w-full h-auto sm:h-[3rem] capitalize flex justify-start items-center  overflow-hidden">
                       <div className="flex gap-2 overflow-hidden flex-wrap min-w-full ">
                         {item.categoryList

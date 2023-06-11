@@ -43,7 +43,7 @@ function App() {
     { path: "/signup", element: <SignUpPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "/forgetPassword", element: <ForgetPasswordPage /> },
-    { path: "/writeBlog", element: <WriteBlogPage /> },
+    { path: "/writeBlog/:cardId?", element: <WriteBlogPage /> },
     { path: "/read/:cardId", element: <ReadFullBlogPage /> },
     { path: "/update", element: <UpdateProfile /> },
     { path: "/blogs", element: <AllBlogs /> },
