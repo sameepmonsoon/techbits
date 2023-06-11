@@ -16,8 +16,6 @@ import ReactQuill, { Quill } from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-hot-toast";
-import Card from "../Components/Card/Card";
-import image from "../assets/data-processing.svg";
 import CommentBox from "../PageComponents/CommentBox/CommentBox";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
@@ -37,7 +35,8 @@ const ReadFullBlogPage = () => {
   // flag for the blog posted by the currentuse
   const [currentUserBlog, setCurrentUserBlog] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
-
+  // state after adding comment
+  const [commentUpdated, setCommentUpdated] = useState(false);
   // state to check if the blog is present or not
   const [blogIsPresent, setBlogIsPresent] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -46,7 +45,7 @@ const ReadFullBlogPage = () => {
     .map((item) => item);
   useEffect(() => {
     setCurrentBlog(JSON.parse(localStorage.getItem("currentBlogPosts")));
-  }, [isLoading]);
+  }, [isLoading, commentUpdated]);
   const currentUserId = currentUser?._id;
 
   const creatorId = currentPost[0]?.userId;
@@ -197,6 +196,7 @@ const ReadFullBlogPage = () => {
       });
   };
 
+  console.log(currentBlog);
   return (
     <HomeLayout>
       <LoadingOverlayComponent openCloseOverlay={showPage}>
@@ -498,11 +498,27 @@ const ReadFullBlogPage = () => {
                 )}
               </span>
             </div>
+            {currentPost.map((item, index) => (
+              <div className="w-[50%] flex flex-col justify-start items-start gap-1">
+                <p className="w-full h-10 flex justify-center items-start border-b-[1px]">Comments</p>
+                <div className="w-full flex flex-col justify-start items-start gap-1">
+                  {item.comments.map((item, index) => (
+                    <div className="w-full h-10 border-[1px] rounded-md p-2 ">
+                      {item.content}
+                    </div>
+                  ))}{" "}
+                </div>
+              </div>
+            ))}
             {showComment && (
               <div className="">
-                <CommentBox />
+                <CommentBox
+                  cardId={cardId}
+                  userId={currentUserId}
+                  commentAdded={setCommentUpdated}
+                />
               </div>
-            )}{" "}
+            )}
           </div>
 
           {/* container for similar blogs ---based on category  */}

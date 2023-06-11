@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { HttpCalls } from "../../utils/HttpCalls";
-
-const CommentBox = ({ cardId, useId }) => {
+import { fetchAllBlogs } from "../../Store/blogPostSlice";
+import { useDispatch } from "react-redux";
+const CommentBox = ({ cardId, userId, commentAdded }) => {
+  // state for text/comment value
   const [comment, setComment] = useState("");
+
+  //   dispatch function
+
+  const dispatch = useDispatch();
   useEffect(() => {
     adjustTextareaHeight();
   }, [comment]);
@@ -22,7 +28,12 @@ const CommentBox = ({ cardId, useId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    HttpCalls.post(`/blogPost/${cardId}`,{});
+    HttpCalls.post(`/blogPost/${cardId}/comment`, { userId, comment })
+      .then((res) => {
+        dispatch(fetchAllBlogs);
+        commentAdded((prev = !prev));
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <div className="w-full">
