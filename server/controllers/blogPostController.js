@@ -9,18 +9,18 @@ exports.createBlogPost = async (req, res, next) => {
     const commentBlog = await Blog.findById(id);
     console.log(commentBlog);
     const blogId = req.body.blogId;
-    if (commentBlog) {
-      const newComment = {
-        userId,
-        content: comment,
-      };
-      commentBlog.comments.push(newComment);
-      const updatedBlogs = await commentBlog.save();
-      const { comments, ...otherData } = updatedBlogs.toObject();
-      res.status(200).json({ comments, message: "Published Successfully." });
-    } else if (!commentBlog) {
-      return res.status(404).json({ error: "Blog not found" });
-    } else {
+    // if (commentBlog) {
+    //   const newComment = {
+    //     userId,
+    //     content: comment,
+    //   };
+    //   commentBlog.comments.push(newComment);
+    //   const updatedBlogs = await commentBlog.save();
+    //   const { comments, ...otherData } = updatedBlogs.toObject();
+    //   res.status(200).json({ comments, message: "Published Successfully." });
+    // } else if (!commentBlog) {
+    //   return res.status(404).json({ error: "Blog not found" });
+    // } else {
       if (blogId) {
         const findBlog = await Blog.findOneAndUpdate(
           { _id: blogId },
@@ -49,7 +49,7 @@ exports.createBlogPost = async (req, res, next) => {
         const savedBlog = await newBlog.save();
         res.status(200).json({ savedBlog, message: "Published Successfully." });
       }
-    }
+    // }
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Failed to create blog post" });

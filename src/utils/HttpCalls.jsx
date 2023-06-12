@@ -1,12 +1,14 @@
 import axios from "axios";
 import { BASEURL } from "./Credentials";
+
+import axiosInstance from "../Services/Axiosinstance";
 const token = localStorage.getItem("locaToken");
 // http calls using axios
 function get(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.get(BASEURL + url, {
+  return axiosInstance.get(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
 }
@@ -14,7 +16,7 @@ function post(url, data) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.post(BASEURL + url, data, {
+  return axiosInstance.post(url, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 }

@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import {
   CiBookmarkPlus,
   BsFillBookmarkCheckFill,
   MdDeleteOutline,
-  FiEdit3,
   MdEditNote,
   IoSettingsOutline,
 } from "react-icons/all";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { AiOutlineComment, AiOutlineDelete } from "react-icons/ai";
-import ReactQuill, { Quill } from "react-quill";
+import { AiOutlineComment } from "react-icons/ai";
+import ReactQuill from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import { toast } from "react-hot-toast";
@@ -29,7 +27,6 @@ const ReadFullBlogPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [likeComment, setLikeComment] = useState([]);
   const { cardId } = useParams();
-  const dispatch = useDispatch();
   const [currentBlog, setCurrentBlog] = useState([]);
 
   // flag for the blog posted by the currentuse
@@ -38,7 +35,6 @@ const ReadFullBlogPage = () => {
   // state after adding comment
   const [commentUpdated, setCommentUpdated] = useState(false);
   // state to check if the blog is present or not
-  const [blogIsPresent, setBlogIsPresent] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const currentPost = currentBlog
     .filter((item) => item._id === cardId)
@@ -196,7 +192,6 @@ const ReadFullBlogPage = () => {
       });
   };
 
-  console.log(currentBlog);
   return (
     <HomeLayout>
       <LoadingOverlayComponent openCloseOverlay={showPage}>
@@ -499,14 +494,20 @@ const ReadFullBlogPage = () => {
               </span>
             </div>
             {currentPost.map((item, index) => (
-              <div className="w-[50%] flex flex-col justify-start items-start gap-1">
-                <p className="w-full h-10 flex justify-center items-start border-b-[1px]">Comments</p>
+              <div
+                key={index}
+                className="w-[50%] flex flex-col justify-start items-start gap-1">
+                <p className="w-full h-10 flex justify-center items-start border-b-[1px]">
+                  Comments
+                </p>
                 <div className="w-full flex flex-col justify-start items-start gap-1">
                   {item.comments.map((item, index) => (
-                    <div className="w-full h-10 border-[1px] rounded-md p-2 ">
+                    <div
+                      key={index}
+                      className="w-full h-10 border-[1px] rounded-md p-2 ">
                       {item.content}
                     </div>
-                  ))}{" "}
+                  ))}
                 </div>
               </div>
             ))}

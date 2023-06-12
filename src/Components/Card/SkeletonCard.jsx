@@ -1,5 +1,3 @@
-import React from "react";
-import { HiOutlineDotsHorizontal, MdArrowOutward } from "react-icons/all";
 import { Link } from "react-router-dom";
 const SkeletonCard = ({
   cardId,

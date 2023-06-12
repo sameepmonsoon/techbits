@@ -62,7 +62,7 @@ const authSlice = createSlice({
           state.error = "";
         }
       })
-      .addCase(signUp.pending, (state, action) => {
+      .addCase(signUp.pending, (state,) => {
         state.isLoading = true;
         state.error = "";
         state.success = "";
@@ -85,7 +85,7 @@ const authSlice = createSlice({
           state.showToast = true;
         }
       })
-      .addCase(login.pending, (state, action) => {
+      .addCase(login.pending, (state) => {
         state.isLoading = true;
         state.error = "";
         state.success = "";
