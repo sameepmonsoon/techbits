@@ -1,38 +1,28 @@
-import axios from "axios";
-import { BASEURL } from "./Credentials";
-const token = localStorage.getItem("locaToken");
-// http calls using axios
+import axiosInstance from "../Services/Axiosinstance";
+
 function get(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.get(BASEURL + url, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axiosInstance.get(url);
 }
 function post(url, data) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.post(BASEURL + url, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axiosInstance.post(url, data);
 }
 function put(url, data) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.put(BASEURL + url, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axiosInstance.put(url, data);
 }
 function deleteData(url) {
   if (!url) {
     throw new Error("Url not provided");
   }
-  return axios.delete(BASEURL + url, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  return axiosInstance.delete(url);
 }
 
 export const HttpCalls = { get, post, put, deleteData };

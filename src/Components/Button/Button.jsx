@@ -1,17 +1,17 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
-const Button = ({
-  icon,
-  title,
-  border,
-  color,
-  background,
-  linkName,
-  fullWidth,
-  image,
-  ...rest
-}) => {
+const Button = (prop) => {
+  let {
+    icon,
+    title,
+    border,
+    color,
+    background,
+    linkName,
+    fullWidth,
+    image,
+    ...rest
+  } = prop;
   return (
     <Link
       {...rest}

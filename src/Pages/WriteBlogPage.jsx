@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { IoAdd, MdDeleteOutline, RxCross1 } from "react-icons/all";
-import { blogCategories, randomColors } from "../Details";
+import { blogCategories } from "../Details";
 import { RxCross2 } from "react-icons/all";
 import { BsImage, BsUpload } from "react-icons/bs";
 import { BiText } from "react-icons/bi";
@@ -21,7 +21,9 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-  const { isHovering } = useContext(BlogContext);
+
+
+  // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -38,6 +40,8 @@ const WriteBlogPage = () => {
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [selectedDraftPhoto, setSelectedDraftPhoto] = useState("");
+  
+  
   // if current blog is extracted from a draft
   // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);
@@ -46,6 +50,19 @@ const WriteBlogPage = () => {
     setShowDropdown(false);
   };
 
+  // function to map the items inside draft and the edit
+  function mapDraftDataOrEditData(id, array) {
+    setcurrentDraftId(id);
+    const toRenderDraft = array.find(({ _id }) => {
+      return _id === id;
+    });
+    if (toRenderDraft) {
+      setSelectedDraftPhoto(toRenderDraft.selectedPhoto);
+      setTextareaValue(toRenderDraft.titleContent);
+      setEditorContent(toRenderDraft.editorContent);
+      setCategoryListItem(toRenderDraft.categoryList);
+    }
+  }
   // use dispatch
   const dispatch = useDispatch();
   const handleAddCategoriesClick = () => {
@@ -117,9 +134,7 @@ const WriteBlogPage = () => {
       textAreaRef.current.focus();
     }
   }, [isFocused]);
-  const handleSaveAsDraft = () => {
-    alert("Draft");
-  };
+
   //this part is  refactored using chatgpt
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
@@ -171,7 +186,7 @@ const WriteBlogPage = () => {
             };
 
             HttpCalls.post(apiEndPoints, requestData)
-              .then((response) => {
+              .then(() => {
                 dispatch(fetchAllBlogs());
                 toast.success(`${message}`, {
                   position: "top-center",
@@ -193,7 +208,6 @@ const WriteBlogPage = () => {
                 }, 1000);
               })
               .catch((error) => {
-                console.log(error);
                 toast.error(`${error.response.data.error}`, {
                   position: "top-center",
                   autoClose: 5000,
@@ -270,12 +284,8 @@ const WriteBlogPage = () => {
           });
       }
     } else if (selectedPhoto == null) {
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-
       setDisableSubmission(false);
       toast.error(`${"Please Choose a cover image for your blog."}`, {
-        toastId: toastId,
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -287,23 +297,17 @@ const WriteBlogPage = () => {
       });
     } else if (textareaValue === "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
 
-      if (existingToast) {
-      } else {
-        toast.error(`${"Blog Title can't be empty."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toast.error(`${"Blog Title can't be empty."}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else if (categoryListItem == "") {
       setDisableSubmission(false);
       toast.error(`${"Category list is empty"}`, {
@@ -331,12 +335,12 @@ const WriteBlogPage = () => {
     }
   };
 
-  const [result, setResult] = useState([]);
+  // const [result, setResult] = useState([]);
 
   useEffect(() => {
     HttpCalls.get("/blogPost/getAll")
-      .then((response) => {
-        setResult(response.data.getAllBlog);
+      .then(() => {
+        // setResult(response.data.getAllBlog);
       })
       .catch((error) => {
         console.log(error);
@@ -353,29 +357,11 @@ const WriteBlogPage = () => {
 
   // to edit the blog if cardId is present
   useEffect(() => {
-    setcurrentDraftId(cardId);
-    const toRenderDraft = currentBlog
-      .filter((item) => item._id === cardId)
-      .map((item, index) => {
-        setSelectedDraftPhoto(item.selectedPhoto);
-        setTextareaValue(item.titleContent);
-        setEditorContent(item.editorContent);
-        setCategoryListItem(item.categoryList);
-      });
-
-    console.log(toRenderDraft);
+    mapDraftDataOrEditData(cardId, currentBlog);
   }, [cardId]);
 
   const renderSavedDraft = (draftId) => {
-    setcurrentDraftId(draftId);
-    const toRenderDraft = draftData
-      .filter((item) => item._id === draftId)
-      .map((item, index) => {
-        setSelectedDraftPhoto(item.selectedPhoto);
-        setTextareaValue(item.titleContent);
-        setEditorContent(item.editorContent);
-        setCategoryListItem(item.categoryList);
-      });
+    mapDraftDataOrEditData(draftId, draftData);
   };
 
   const handleViewDraft = () => {
@@ -385,7 +371,7 @@ const WriteBlogPage = () => {
   // to delete draft
   const handleDeleteDraft = (blogId) => {
     HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
-      .then((res) => {
+      .then(() => {
         HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
           .then((res) => {
             setDraftData(res.data.getAllBlogDraft);
@@ -462,7 +448,7 @@ const WriteBlogPage = () => {
       )}
       <LoadingOverlayComponent openCloseOverlay={diableSubmission} />
       <BlogContext.Consumer>
-        {({ isHovering, handleMouseEnter, handleMouseLeave }) => (
+        {({ isHovering }) => (
           <div className="gap-2 md:w-[50%]  flex justify-center items-center flex-col h-auto max-h-full ">
             {isHovering && (
               <div
@@ -544,7 +530,7 @@ const WriteBlogPage = () => {
                       className={` absolute top-11 left-0 bg-white gap-1 backdrop-blur-md rounded-md border-[1px] capitalize transition-opacity duration-700 border-purple/20 p-2 w-full flex flex-col justify-start items-start `}>
                       {blogCategories.map((item, index) => (
                         <li
-                          key={item.id}
+                          key={index}
                           onClick={() => {
                             handleCategoryItemClick(item.id, item.name);
                           }}
@@ -561,7 +547,7 @@ const WriteBlogPage = () => {
                   .filter((item) => item.id !== "")
                   .map((item, index) => (
                     <div
-                      key={item.id}
+                      key={index}
                       className="w-auto max-w-[12rem] bg-purple/0 text-deep-purple hover:border-purple/60 border-purple/30 text-[14px] p-[2px] gap-1 flex justify-start items-center whitespace-nowrap capitalize rounded-full px-2 border-[1px]">
                       <span> {item.item}</span>
                       <span className="text-deep-purple/80">
