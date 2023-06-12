@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signInImage from "../assets/login.svg";
 import Button from "../Components/Button/Button";
@@ -7,10 +7,9 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { login, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
-import { HttpCalls } from "../utils/HttpCalls";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
@@ -25,15 +24,15 @@ const LoginPage = () => {
   // for modal open and close
   const [toggleModal, setToggleModal] = useState(false);
   const [showSignUpPage, setShowSignUpPage] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  // const [loading, setLoading] = useState(false);
+  // const navigate = useNavigate();
   // yup validation
   let schema = yup.object().shape({
     password: yup.string().required("Password is required."),
     email: yup.string().email().required("Email or user name is required."),
   });
 
-  const location = useLocation();
+  // const location = useLocation();
   // functions
   useEffect(() => {
     dispatch(clearState());
@@ -44,7 +43,7 @@ const LoginPage = () => {
   // formik form validation
   const formik = useFormik({
     initialValues: { password: "", email: "" },
-    onSubmit: (values, action) => {
+    onSubmit: (values) => {
       dispatch(login(values));
     },
     validationSchema: schema,

@@ -9,47 +9,46 @@ exports.createBlogPost = async (req, res, next) => {
     const commentBlog = await Blog.findById(id);
     console.log(commentBlog);
     const blogId = req.body.blogId;
-    // if (commentBlog) {
-    //   const newComment = {
-    //     userId,
-    //     content: comment,
-    //   };
-    //   commentBlog.comments.push(newComment);
-    //   const updatedBlogs = await commentBlog.save();
-    //   const { comments, ...otherData } = updatedBlogs.toObject();
-    //   res.status(200).json({ comments, message: "Published Successfully." });
-    // } else if (!commentBlog) {
-    //   return res.status(404).json({ error: "Blog not found" });
-    // } else {
-      if (blogId) {
-        const findBlog = await Blog.findOneAndUpdate(
-          { _id: blogId },
-          {
-            username: req.body.username,
-            categoryList: req.body.categoryList,
-            titleContent: req.body.titleContent,
-            selectedPhoto: req.body.selectedPhoto,
-            editorContent: req.body.editorContent,
-          },
-          { new: true }
-        );
-        res
-          .status(200)
-          .json({ findBlog, message: "Blog Updated Successfully." });
-      } else {
-        const newBlog = new Blog({
+    if (commentBlog && id) {
+      const newComment = {
+        userId,
+        content: comment,
+      };
+      commentBlog.comments.push(newComment);
+      const updatedBlogs = await commentBlog.save();
+      const { comments } = updatedBlogs.toObject();
+      res.status(200).json({ comments, message: "Published Successfully." });
+    }
+    if (!commentBlog && id) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    if (blogId) {
+      const findBlog = await Blog.findOneAndUpdate(
+        { _id: blogId },
+        {
           username: req.body.username,
-          userId: req.body.userId,
           categoryList: req.body.categoryList,
           titleContent: req.body.titleContent,
           selectedPhoto: req.body.selectedPhoto,
           editorContent: req.body.editorContent,
-        });
+        },
+        { new: true }
+      );
+      res.status(200).json({ findBlog, message: "Blog Updated Successfully." });
+    }
+    if (!blogId) {
+      const newBlog = new Blog({
+        username: req.body.username,
+        userId: req.body.userId,
+        categoryList: req.body.categoryList,
+        titleContent: req.body.titleContent,
+        selectedPhoto: req.body.selectedPhoto,
+        editorContent: req.body.editorContent,
+      });
 
-        const savedBlog = await newBlog.save();
-        res.status(200).json({ savedBlog, message: "Published Successfully." });
-      }
-    // }
+      const savedBlog = await newBlog.save();
+      res.status(200).json({ savedBlog, message: "Published Successfully." });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Failed to create blog post" });

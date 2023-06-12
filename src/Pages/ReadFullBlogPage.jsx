@@ -297,7 +297,6 @@ const ReadFullBlogPage = () => {
                       <div className="flex gap-1 absolute left-10 bg-white border-[1px] shadow-sm h-10 w-20 justify-center items-center rounded-md">
                         <div className="relative group">
                           <Link to={`/writeBlog/${cardId}`}>
-                            {" "}
                             <MdEditNote
                               size={28}
                               className="text-deep-purple/70  hover:text-green-600 cursor-pointer"
