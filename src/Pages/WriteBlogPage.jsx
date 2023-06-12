@@ -22,7 +22,6 @@ const WriteBlogPage = () => {
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
 
-
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -40,8 +39,7 @@ const WriteBlogPage = () => {
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [selectedDraftPhoto, setSelectedDraftPhoto] = useState("");
-  
-  
+
   // if current blog is extracted from a draft
   // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);
@@ -242,16 +240,27 @@ const WriteBlogPage = () => {
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
-            toast.success(`${response.data.message}`, {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
+
+            const toastId = "alert";
+            const existingToast = toast.isActive(toastId);
+            if (existingToast) {
+              toast.update(toastId, {
+                render: `${response.data.message}`,
+                autoClose: 4000,
+              });
+            } else {
+              toast.success(`${response.data.message}`, {
+                position: "top-center",
+                autoClose: 5000,
+                toastId,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+            }
 
             HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
               .then((res) => {
@@ -283,55 +292,77 @@ const WriteBlogPage = () => {
             });
           });
       }
-    } else if (selectedPhoto == null) {
-      setDisableSubmission(false);
-      toast.error(`${"Please Choose a cover image for your blog."}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else if (textareaValue === "") {
+    }
+    if (selectedPhoto == null) {
       setDisableSubmission(false);
 
-      toast.error(`${"Blog Title can't be empty."}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else if (categoryListItem == "") {
+      const toastId = "alert";
+      const existingToast = toast.isActive(toastId);
+      if (existingToast) {
+        toast.update(toastId, {
+          render: `Please Choose a cover image for your blog.`,
+          autoClose: 4000,
+        });
+      } else {
+        toast.error("Please Choose a cover image for your blog.", {
+          position: "top-center",
+          autoClose: 5000,
+          toastId,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    }
+    if (textareaValue === "") {
       setDisableSubmission(false);
-      toast.error(`${"Category list is empty"}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
+      const toastId = "alert";
+      const existingToast = toast.isActive(toastId);
+      if (existingToast) {
+        toast.update(toastId, {
+          render: `Blog Title can't be empty.`,
+          autoClose: 4000,
+        });
+      } else {
+        toast.error(`Blog Title can't be empty.`, {
+          position: "top-center",
+          autoClose: 5000,
+          toastId,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    }
+    if (categoryListItem.length < 2) {
       setDisableSubmission(false);
-      toast.error(`${"Please enter something."}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+
+      const toastId = "alert";
+      const existingToast = toast.isActive(toastId);
+      if (existingToast) {
+        toast.update(toastId, {
+          render: `Category list is empty`,
+          autoClose: 4000,
+        });
+      } else {
+        toast.error(`${"Category list is empty"}`, {
+          position: "top-center",
+          autoClose: 5000,
+          toastId,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
   };
 
