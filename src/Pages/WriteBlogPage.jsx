@@ -21,6 +21,8 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
+
+
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -38,6 +40,8 @@ const WriteBlogPage = () => {
   const [isSaved, setSetIsSaved] = useState("");
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [selectedDraftPhoto, setSelectedDraftPhoto] = useState("");
+  
+  
   // if current blog is extracted from a draft
   // state to store the draft Id if the draft is to be published from the draft gallery
   const [currentDraftId, setcurrentDraftId] = useState(null);

@@ -5,11 +5,11 @@ const axiosInstance = axios.create({
   headers: { Authorization: `Bearer ${token}` },
 });
 
+
+
+// create a axios insterceptor here
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log(config);
-    console.log(config.url);
-
     return config;
   },
   (error) => {

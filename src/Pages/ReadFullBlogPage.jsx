@@ -110,21 +110,7 @@ const ReadFullBlogPage = () => {
           console.log(err);
         });
 
-      //   // Update the follow status
-      //   HttpCalls.put("/auth/follow", {
-      //     userId: creatorId,
-      //     followerId: currentUserId,
-      //   })
-      //     .then((res) => {
-      //       console.log("inside follow api", res.data.updatedFollowList);
-      //       setIsFollowing(
-      //         res.data.updatedFollowList.following?.includes(creatorId)
-      //       );
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      //
+
     }
 
     currentBlog.map((item) => {

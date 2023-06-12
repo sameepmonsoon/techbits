@@ -40,7 +40,7 @@ const blogPostSlice = createSlice({
           state.success = action.payload.message;
         }
       })
-      .addCase(fetchAllBlogs.pending, (state, action) => {
+      .addCase(fetchAllBlogs.pending, (state) => {
         state.isLoading = true;
         state.error = "";
         state.success = "";

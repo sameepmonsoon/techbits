@@ -11,7 +11,6 @@ import Home from "./PageComponents/Home/Home";
 import Bookmarks from "./PageComponents/Bookmarks/Bookmarks";
 import About from "./PageComponents/About/About";
 import UpdateProfile from "./Pages/UpdateProfile";
-
 import "react-toastify/dist/ReactToastify.css";
 import AllBlogs from "./Pages/AllBlogs";
 function App() {
@@ -42,5 +41,4 @@ function App() {
   ]);
   return <RouterProvider router={router}></RouterProvider>;
 }
-
 export default App;

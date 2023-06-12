@@ -24,7 +24,8 @@ const connect = () => {
     })
     .catch((err) => {
       console.error("Error connecting to MongoDB database:", err.message);
-      process.exit(1); // Exit the process with a non-zero status code to indicate failure
+      process.exit(1);
+      // Exit the process with a non-zero status code to indicate failure
     });
 };
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -32,11 +33,9 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-// app.use("/api/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/blogPost", blogPostRoutes);
 app.use("/blogReact", blogReactionRoutes);
-// app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {
   connect();
