@@ -1,6 +1,5 @@
 import axiosInstance from "../Services/Axiosinstance";
 
-// http calls using axios
 function get(url) {
   if (!url) {
     throw new Error("Url not provided");

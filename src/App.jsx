@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import "./App.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import HomePage from "./Pages/HomePage";
@@ -16,13 +15,6 @@ import UpdateProfile from "./Pages/UpdateProfile";
 import "react-toastify/dist/ReactToastify.css";
 import AllBlogs from "./Pages/AllBlogs";
 function App() {
-  const [currentUser, setCurrentUser] = useState();
-  const [allBlogList, setAllBlogList] = useState([]);
-  useEffect(() => {
-    setCurrentUser(JSON.parse(localStorage?.getItem("user")));
-    setAllBlogList(JSON.parse(localStorage?.getItem("currentBlogPost")));
-  }, []);
-
   const router = createBrowserRouter([
     {
       path: "/",

@@ -1,16 +1,6 @@
 import { Link } from "react-router-dom";
-const SkeletonCard = ({
-  cardId,
-  tag,
-  cardTitle,
-  cardDescription,
-  cardUserName,
-  cardImage,
-  cardUserImage,
-  cardPostDate,
-  row,
-  autoHeight,
-}) => {
+const SkeletonCard = (prop) => {
+  let { cardId, cardTitle, row, autoHeight } = prop;
   return (
     <div
       className={`font-sans ${

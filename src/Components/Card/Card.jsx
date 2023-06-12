@@ -1,31 +1,29 @@
-import React from "react";
-import { HiOutlineDotsHorizontal, MdArrowOutward } from "react-icons/all";
+import { MdArrowOutward } from "react-icons/all";
 import { Link } from "react-router-dom";
-const Card = ({
-  cardId,
-  writerId,
-  tag,
-  cardTitle,
-  cardDescription,
-  cardUserName,
-  cardImage,
-  cardUserImage,
-  cardPostDate,
-  row,
-  autoHeight,
-}) => {
+const Card = (prop) => {
+  let {
+    cardId,
+    tag,
+    cardTitle,
+    cardDescription,
+    cardUserName,
+    cardImage,
+    cardPostDate,
+    row,
+    autoHeight,
+  } = prop;
   const parser = new DOMParser();
   const doc = parser.parseFromString(cardDescription, "text/html");
 
   let filteredText = "";
   const paragraphs = doc.querySelectorAll("p");
-  const images = doc.querySelectorAll("img");
+  // const images = doc.querySelectorAll("img");
 
   paragraphs.forEach((p) => {
     filteredText += p.textContent + " ";
   });
 
-  const imageSources = Array.from(images).map((img) => img.src);
+  // const imageSources = Array.from(images).map((img) => img.src);
 
   return (
     <div
