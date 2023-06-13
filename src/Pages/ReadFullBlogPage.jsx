@@ -109,8 +109,6 @@ const ReadFullBlogPage = () => {
         .catch((err) => {
           console.log(err);
         });
-
-
     }
 
     currentBlog.map((item) => {
@@ -159,7 +157,8 @@ const ReadFullBlogPage = () => {
           "currentBlogPosts",
           JSON.stringify(res?.data?.allBlogsAfterDelete)
         );
-        toast.success(`Blog Deleted Successfully.`, {
+
+        toast.success(`Blog Deleted successfully.`, {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -169,6 +168,7 @@ const ReadFullBlogPage = () => {
           progress: undefined,
           theme: "light",
         });
+
         setTimeout(() => {
           navigate("/");
         }, 500);
