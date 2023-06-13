@@ -92,6 +92,7 @@ const WriteBlogPage = () => {
       prevList.filter((item) => item.id !== id)
     );
   };
+
   //   for the components inside form
   // to handle the text area height
   const [isFocused, setIsFocused] = useState(false);

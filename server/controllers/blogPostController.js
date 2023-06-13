@@ -94,7 +94,7 @@ exports.likeDislikeBlog = async (req, res) => {
     const existingLikeIndex = likeBlog.likes.findIndex(
       (like) => like === userId
     );
-
+    // to remove like if it already exists
     if (existingLikeIndex !== -1) {
       likeBlog.likes.splice(existingLikeIndex, 1);
     } else {
@@ -116,7 +116,7 @@ exports.likeDislikeBlog = async (req, res) => {
 };
 
 // for draft
-exports.createBlogDraft = async (req, res, next) => {
+exports.createBlogDraft = async (req, res) => {
   try {
     const getAllBlogDraft = await Draft.find({ userId: req.body.userId });
     const checkSameDraft = await Draft.find({ _id: req.body?.id });
@@ -124,7 +124,6 @@ exports.createBlogDraft = async (req, res, next) => {
     if (getAllBlogDraft.length > 4) {
       res.status(500).json({ error: "Can't save more than 5 drafts." });
     } else {
-      const fileData = Buffer.from(req.body.selectedPhoto, "base64");
       if (checkSameDraft.length > 0) {
         const updatedDraft = await Draft.findOneAndUpdate(
           { _id: req.body?.id },

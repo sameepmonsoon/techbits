@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
 import Button from "../Components/Button/Button";
@@ -7,12 +7,11 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import GoogleLogin from "react-google-login";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import { toast } from "react-hot-toast";
 const SignUpPage = () => {
@@ -21,7 +20,6 @@ const SignUpPage = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   // for modal open and close
   const [toggleModal, setToggleModal] = useState(false);
-  const location = useLocation();
 
   // functions
   useEffect(() => {
@@ -71,11 +69,10 @@ const SignUpPage = () => {
   // formik form validation
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
-    onSubmit: (values, action) => {
+    onSubmit: (values) => {
       dispatch(signUp(values));
       const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-
+      // const existingToast = toast.isActive(toastId);
       if (success) {
         toast.success(`${"Welcome to Techbits."}`, {
           toastId: toastId,
@@ -118,7 +115,6 @@ const SignUpPage = () => {
       setToggleModal(true);
     }
   }, [error, success]);
-  const responseGoogle = (response) => {};
   return (
     <>
       {!showSignUpPage ? (
