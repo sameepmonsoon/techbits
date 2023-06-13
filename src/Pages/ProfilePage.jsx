@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -14,8 +14,8 @@ const HomePage = () => {
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
-  // const followersLength = currentUser?.followers?.length;
   const dispatch = useDispatch();
+
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
@@ -80,6 +80,7 @@ const HomePage = () => {
             </Link>
           </div>
         </div>
+
         {/* profile detail */}
         <div className="flex sm:flex-row flex-col w-full items-center sm:items-end justify-start p-5 gap-5 ">
           <img

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import signUpImage from "../assets/update.svg";
 import userImage from "../assets/user.svg";
 import Button from "../Components/Button/Button";
@@ -15,11 +15,11 @@ import { useNavigate } from "react-router-dom";
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
+  
   const [toggleModal, setToggleModal] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
-  const image = currentUser?.selectedPhoto;
   const [userName, setUserName] = useState(username);
   // state for delete dialog box
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -35,7 +35,7 @@ const UpdateProfile = () => {
     }, 500);
   }, []);
 
-  const onSubmit = async (values, event) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     try {
       let profilePicture = null;
@@ -49,12 +49,11 @@ const UpdateProfile = () => {
         profilePicture,
       };
       if (profilePicture != null) {
-        const response = await HttpCalls.put("/auth/updateProfile", updatedData)
+        await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
             dispatch(fetchAllBlogs());
             setIsLoading(false);
-            setMessage(res.data.message);
             const toastId = "alert";
             const existingToast = toast.isActive(toastId);
             if (existingToast) {
@@ -198,7 +197,6 @@ const UpdateProfile = () => {
         localStorage.removeItem("user");
         dispatch(fetchAllBlogs());
         toast.success("Profile Deleted Successfully", {
-          toastId: toastId,
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -213,7 +211,6 @@ const UpdateProfile = () => {
       .catch((err) => {
         console.log(err);
         toast.error("Error Deleting the profile.", {
-          toastId: toastId,
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -307,11 +304,6 @@ const UpdateProfile = () => {
                   maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {userName == "" && (
-                  <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
-                    {formik.errors}
-                  </span>
-                )}
               </label>
               <Button
                 onClick={onSubmit}

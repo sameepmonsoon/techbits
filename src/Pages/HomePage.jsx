@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
 import image from "../assets/amr-taha-PksS6SX-t-c-unsplash.jpg";
-import { Outlet } from "react-router-dom";
+import { Outlet, useFetcher } from "react-router-dom";
 import InfoSection from "../PageComponents/InfoSection/InfoSection";
 import infoImage from "../assets/rezvani-IIDZ77VDVQE-unsplash.jpg";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
@@ -22,7 +22,6 @@ const HomePage = () => {
     setIsLoading(false);
   }, 800);
   // const { isLoading } = useSelector((state) => state.blog);
-
   return (
     <HomeLayout
       renderComponents={

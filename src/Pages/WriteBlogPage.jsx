@@ -92,6 +92,7 @@ const WriteBlogPage = () => {
       prevList.filter((item) => item.id !== id)
     );
   };
+
   //   for the components inside form
   // to handle the text area height
   const [isFocused, setIsFocused] = useState(false);
@@ -404,7 +405,6 @@ const WriteBlogPage = () => {
     // check value for the blog photo
     if (!selectedDraftPhoto && selectedPhoto == null) {
       setDisableSubmission(false);
-
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
       if (existingToast) {
@@ -426,10 +426,10 @@ const WriteBlogPage = () => {
         });
       }
     }
+
     // check value for the blog body
     if (!editorContent) {
       setDisableSubmission(false);
-
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
       if (existingToast) {
@@ -569,10 +569,7 @@ const WriteBlogPage = () => {
         {({ isHovering }) => (
           <div className="gap-2 md:w-[50%]  flex justify-center items-center flex-col h-auto max-h-full ">
             {isHovering && (
-              <div
-                // onMouseEnter={() => handleMouseEnter(true)}
-                // onMouseLeave={() => handleMouseLeave(false)}
-                className="absolute z-[100] top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
+              <div className="absolute z-[100] top-[3.3rem] cursor-pointer  border-[1px] border-gray-200 right-[0.5rem] h-auto max-h-40 w-40 bg-white rounded-md p-[2px] text-[14px] text-black/80">
                 <Link
                   to="/"
                   className="w-full h-[1.9rem] flex items-center p-1 rounded-md hover:bg-gray-100/60 px-2">
@@ -624,7 +621,8 @@ const WriteBlogPage = () => {
                   }
                 />
               </div>
-              {/* category component */}
+
+              {/*add category component */}
               <div className="relative  bg-white z-[10] group flex justify-center h-10 min-w-[2.5rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <IoAdd
                   onClick={handleIconClick}
@@ -679,7 +677,8 @@ const WriteBlogPage = () => {
                   ))}
               </div>
             </div>
-            {/* form */}
+
+            {/* form  body*/}
             <form className="relative w-full h-auto gap-4 flex flex-col justify-start items-start ">
               <div className="relative left-0 bg-white z-[5] group flex justify-center h-[3rem] min-w-[3rem] items-center rounded-full border-[1px] border-purple/50 p-[1px] cursor-pointer ">
                 <div
@@ -719,7 +718,6 @@ const WriteBlogPage = () => {
                     onChange={handleChange}
                     onFocus={() => {
                       setShowAddCategories(false);
-                      // setOpenBlogCategory(false);
                     }}
                     ref={textAreaRef}
                     className="w-full border-[1px] overflow-hidden border-purple/30 rounded-md focus:outline-0 focus:border-deep-purple p-2 h-auto max-h-none resize-none"></textarea>
