@@ -48,7 +48,8 @@ const ReadFullBlogPage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [allBlogPostByUser, setAllBlogPostByUser] = useState([]);
   const [showPage, setShowPage] = useState(true);
-  // api calls for like bookmark and commetn
+
+  // api calls for like bookmark and comment
   const handleClickLike = () => {
     setIsLoading(true);
     HttpCalls.post(`/blogReact/like`, {
@@ -70,16 +71,6 @@ const ReadFullBlogPage = () => {
       .then((res) => {
         const bookmarkFlag = res?.data?.updatedUser?.bookmarks.includes(cardId);
         setIsBookmarked(bookmarkFlag);
-
-        // HttpCalls.post(`/auth/getBookmark`, { userId: currentUserId })
-        //   .then((res) => {
-        //     const isBookMarked =
-        //       res.data?.getAll[0]?.bookmarks.includes(cardId);
-        //     // setIsBookmarked(isBookMarked);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
       })
       .catch((err) => {
         console.log(err);
@@ -149,7 +140,6 @@ const ReadFullBlogPage = () => {
   };
 
   // delete your blog
-
   const handleDeleteBLog = () => {
     HttpCalls.deleteData(`/blogPost/deleteBlog/${cardId}`)
       .then((res) => {
