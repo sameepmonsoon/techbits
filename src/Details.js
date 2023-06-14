@@ -20,6 +20,9 @@ const blogCategories = [
   { name: "Life", id: "6" },
   { name: "Mindfulness", id: "7" },
   { name: "Leadership", id: "8" },
+  { name: "Frontend", id: "9" },
+  { name: "Backend", id: "10" },
+  { name: "Full-stack", id: "11" },
 ];
 
 const randomColors = [
@@ -29,4 +32,4 @@ const randomColors = [
   { blue: "#D2F5F5", blue: "#22ccee" },
 ];
 
-export { footerDetails, socialMediaLinks, blogCategories ,randomColors};
+export { footerDetails, socialMediaLinks, blogCategories, randomColors };

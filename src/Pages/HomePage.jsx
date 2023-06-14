@@ -14,6 +14,7 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const [getSearchValue, setGetSearchValue] = useState("");
   useEffect(() => {
     dispatch(fetchAllBlogs());
     setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
@@ -22,6 +23,10 @@ const HomePage = () => {
     setIsLoading(false);
   }, 800);
   // const { isLoading } = useSelector((state) => state.blog);
+
+  const searchValueContent = (value) => {
+    setGetSearchValue(value.toLowerCase().split(" ").join());
+  };
   return (
     <HomeLayout
       renderComponents={
@@ -37,7 +42,14 @@ const HomePage = () => {
                 </>
               ) : (
                 currentBlogPosts
-                  .filter((item, index) => index < 6)
+                  .slice(0, 6)
+                  .filter((item) =>
+                    item.titleContent
+                      .toLowerCase()
+                      .split(" ")
+                      .join()
+                      .includes(getSearchValue)
+                  )
                   .map((item, index) => (
                     <Card
                       key={index}
@@ -112,7 +124,7 @@ const HomePage = () => {
           </div>
         </>
       }>
-      <HeroSectionText align={"center"} />
+      <HeroSectionText align={"center"} getSearchValue={searchValueContent} />
       <Outlet />
     </HomeLayout>
   );

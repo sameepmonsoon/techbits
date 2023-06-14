@@ -75,16 +75,26 @@ const WriteBlogPage = () => {
         setCategoryListItem((prevList) => [...prevList, { id, item }]);
       }
     } else {
-      toast.success(`You can only add 5 categories`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      const toastId = "category";
+      const existingToast = toast.isActive(toastId);
+      if (existingToast) {
+        toast.update(toastId, {
+          render: `You can only add 5 categories`,
+          autoClose: 4000,
+        });
+      } else {
+        toast.success(`You can only add 5 categories`, {
+          position: "top-center",
+          autoClose: 5000,
+          toastId,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
   };
   const handleRemoveCategoryItem = (id) => {
@@ -120,9 +130,20 @@ const WriteBlogPage = () => {
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const textAreaRef = useRef(null);
+
+  // function for photo change
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     setSelectedPhoto(file);
+
+    setSelectedDraftPhoto("");
+  };
+
+  // for draft photo
+  const handlePhotoChangeForDraft = (event) => {
+    const draftFile = URL.createObjectURL(event.target.files[0]);
+    setSelectedDraftPhoto(draftFile);
+    setSelectedPhoto(null);
   };
 
   const handleTextClick = () => {
@@ -134,7 +155,6 @@ const WriteBlogPage = () => {
     }
   }, [isFocused]);
 
-  //this part is  refactored using chatgpt
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
     setDisableSubmission(true);
@@ -145,6 +165,8 @@ const WriteBlogPage = () => {
       // when its normal publishing
       if (selectedPhoto) {
         const fileReader = new FileReader();
+
+        //this part is  refactored using chatgpt
         fileReader.onload = function () {
           const img = new Image();
           img.onload = function () {
@@ -163,16 +185,14 @@ const WriteBlogPage = () => {
               width *= MAX_HEIGHT / height;
               height = MAX_HEIGHT;
             }
-
+            //this part is  refactored using chatgpt
             // Set the canvas dimensions and draw the compressed image
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
-
-            // Get the compressed image data as a data URL (base64 format)
+            //this part is  refactored using chatgpt
             const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3);
-            // Adjust the compression quality as needed (0.8 represents 80% quality)
 
             const requestData = {
               username: currentUser.username,
@@ -189,7 +209,7 @@ const WriteBlogPage = () => {
               .then(() => {
                 dispatch(fetchAllBlogs());
 
-                const toastId = "alert";
+                const toastId = "success";
                 const existingToast = toast.isActive(toastId);
                 if (existingToast) {
                   toast.update(toastId, {
@@ -243,7 +263,7 @@ const WriteBlogPage = () => {
               });
           };
 
-          img.src = fileReader.result; // Set the image source to trigger the onload event
+          img.src = fileReader.result;
         };
         if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
       }
@@ -355,7 +375,7 @@ const WriteBlogPage = () => {
       }
     }
 
-    if (selectedDraftPhoto == "") {
+    if (!selectedPhoto && selectedDraftPhoto == "") {
       setDisableSubmission(false);
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
@@ -428,7 +448,7 @@ const WriteBlogPage = () => {
     }
 
     // check value for the blog body
-    if (!editorContent) {
+    if (editorContent == "") {
       setDisableSubmission(false);
       const toastId = "alert";
       const existingToast = toast.isActive(toastId);
@@ -732,14 +752,24 @@ const WriteBlogPage = () => {
                         type="file"
                         id="photo"
                         accept="image/*"
-                        onChange={handlePhotoChange}
+                        onChange={handlePhotoChangeForDraft}
                       />
                     </>
                   ) : (
-                    <img
-                      src={URL.createObjectURL(selectedPhoto)}
-                      alt="Selected Photo"
-                    />
+                    <>
+                      <input
+                        hidden
+                        value={selectedDraftPhoto}
+                        type="file"
+                        id="photo"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                      />
+                      <img
+                        src={URL.createObjectURL(selectedPhoto)}
+                        alt="Selected Photo"
+                      />
+                    </>
                   )}
                   <span className="relative text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60 ">
                     <RxCross2
