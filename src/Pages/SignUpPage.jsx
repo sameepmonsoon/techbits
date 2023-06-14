@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
 import Button from "../Components/Button/Button";
@@ -20,6 +20,21 @@ const SignUpPage = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   // for modal open and close
   const [toggleModal, setToggleModal] = useState(false);
+
+  // form states
+  const [userName, setUserName] = useState("");
+  const [validUserName, setValidUserName] = useState(false);
+  const [email, setEmail] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
+
+  const userNameRegex = new RegExp(/^[a-zA-Z0-9_]+$/);
+  const passwordRegex = new RegExp(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/
+  );
+  const emailRegex = new RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{3,5}$/i);
+  const phoneNumberRegEx = new RegExp(/[9]{1}[8]{1}[0-9]{8}/);
+
+  const handleUserNameChange = () => {};
 
   // functions
   useEffect(() => {
@@ -66,7 +81,7 @@ const SignUpPage = () => {
       )
       .required("Email is required."),
   });
-  // formik form validation
+  // // formik form validation
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values) => {
@@ -75,6 +90,9 @@ const SignUpPage = () => {
     },
     validationSchema: schema,
   });
+
+  // const handleFormSubmit = () => {};
+
   const handleToggle = () => {
     setViewPassword((prevViewPassword) => !prevViewPassword);
   };
@@ -134,16 +152,16 @@ const SignUpPage = () => {
                   name="username"
                   id="username"
                   placeholder={"User name"}
-                  onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   maxLength={30}
+                  onChange={(e) => setUserName(e.target.value)}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {formik.errors.username && formik.touched.username && (
+                {
                   <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
-                    {formik.errors.username}
+                    Valid User
                   </span>
-                )}
+                }
               </label>
               <label
                 htmlFor="email"
@@ -154,23 +172,37 @@ const SignUpPage = () => {
                   id="email"
                   onBlur={formik.handleBlur}
                   placeholder={"Email"}
-                  onChange={formik.handleChange}
-                  maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {formik.touched.email && formik.errors.email && (
+                {
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
-                    {formik.errors.email}
+                    Invalid Email
                   </span>
-                )}
+                }
               </label>
+              <label
+                htmlFor="phone"
+                className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
+                <input
+                  type="number"
+                  name="phone"
+                  id="phone"
+                  onBlur={formik.handleBlur}
+                  placeholder={"Phone Number"}
+                  className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                />
+                {
+                  <span
+                    className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
+                    Invalid Number
+                  </span>
+                }
+              </label>
+
               <label
                 htmlFor="password"
                 className="relative group flex flex-col justify-start items-start sm:w-auto w-3/5">
-                {/* <span className="text-[20px] w-full p-2 capitalize text-deep-purple">
-              Password
-            </span> */}
                 <span className="absolute right-3 top-3 text-deep-purple">
                   {viewPassword ? (
                     <AiFillEyeInvisible
@@ -192,16 +224,16 @@ const SignUpPage = () => {
                   id="password"
                   onBlur={formik.handleBlur}
                   placeholder={"Password"}
-                  onChange={formik.handleChange}
                   maxLength={15}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
-                />{" "}
-                {formik.errors.password && formik.touched.password && (
+                />
+
+                {
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[3rem] overflow-hidden flex justify-start items-center sm:w-full`}>
-                    {formik.errors.password}
+                    Error
                   </span>
-                )}
+                }
               </label>
               <Button
                 onClick={formik.handleSubmit}
@@ -218,31 +250,13 @@ const SignUpPage = () => {
               />
             </form>
             <p className="w-full flex justify-center items-center px-5">
-              {/* {authType == "Log in" ? (
-            <span>
-              Create a new account?{" "}
-              <Link to={"/signup"} className="underline text-deep-purple">
-                Sign up
-              </Link>
-            </span>
-          ) : ( */}
               <span>
                 Already have an account?{" "}
                 <Link to={"/login"} className="underline text-deep-purple">
                   Log in
                 </Link>
               </span>
-              {/* )} */}
             </p>
-            {/* <div className="w-full flex justify-center items-center">
-          <GoogleLogin
-            clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-            buttonText="Sign Up with Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={"single_host_origin"}
-          />
-        </div> */}
           </div>
           <img
             src={signUpImage}

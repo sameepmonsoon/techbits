@@ -132,7 +132,7 @@ const WriteBlogPage = () => {
     event.preventDefault();
     setDisableSubmission(true);
     if (
-      (textareaValue != "" &&
+      (textareaValue.trim().length != 0 &&
         selectedPhoto != null &&
         editorContent != "" &&
         categoryListItem.length != 1) ||
@@ -268,7 +268,7 @@ const WriteBlogPage = () => {
     }
 
     // check value for the blog title
-    if (textareaValue === "") {
+    if (textareaValue.trim().length==0) {
       setDisableSubmission(false);
 
       toastMessageError(`Blog Title can't be empty.`);
