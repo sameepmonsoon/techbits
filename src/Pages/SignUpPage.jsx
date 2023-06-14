@@ -13,7 +13,7 @@ import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
-import { toast } from "react-hot-toast";
+import { toastMessageSuccess } from "../Services/Toast Messages/ToastMessages";
 const SignUpPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
@@ -71,33 +71,7 @@ const SignUpPage = () => {
     initialValues: { username: "", password: "", email: "" },
     onSubmit: (values) => {
       dispatch(signUp(values));
-      const toastId = "alert";
-      // const existingToast = toast.isActive(toastId);
-      if (success) {
-        toast.success(`${"Welcome to Techbits."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      } else {
-        toast.error(`${"Sorry can't login."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toastMessageSuccess("Welcome to Techbits.");
     },
     validationSchema: schema,
   });

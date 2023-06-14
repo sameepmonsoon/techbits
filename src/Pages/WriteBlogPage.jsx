@@ -13,10 +13,13 @@ import { HttpCalls } from "../utils/HttpCalls";
 import { useDispatch } from "react-redux";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import draftImage from "../assets/draft-2.svg";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
@@ -29,6 +32,7 @@ const WriteBlogPage = () => {
   const [textareaValue, setTextareaValue] = useState("");
   const [showAddCategories, setShowAddCategories] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [dataExtractedFromDraft, setDataExtractedFromDraft] = useState(false);
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
@@ -55,6 +59,7 @@ const WriteBlogPage = () => {
       return _id === id;
     });
     if (toRenderDraft) {
+      setDataExtractedFromDraft(true);
       setSelectedDraftPhoto(toRenderDraft.selectedPhoto);
       setTextareaValue(toRenderDraft.titleContent);
       setEditorContent(toRenderDraft.editorContent);
@@ -75,26 +80,7 @@ const WriteBlogPage = () => {
         setCategoryListItem((prevList) => [...prevList, { id, item }]);
       }
     } else {
-      const toastId = "category";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `You can only add 5 categories`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.success(`You can only add 5 categories`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toastMessageSuccess(`You can only add 5 categories`);
     }
   };
   const handleRemoveCategoryItem = (id) => {
@@ -110,15 +96,7 @@ const WriteBlogPage = () => {
   const handleChange = (event) => {
     setTextareaValue(event.target.value);
   };
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [textareaValue]);
 
-  useEffect(() => {
-    if (currentUser == null) {
-      navigate("/");
-    }
-  }, []);
   const adjustTextareaHeight = () => {
     if (isFocused) {
       const textarea = document.getElementById("myTextarea");
@@ -149,18 +127,19 @@ const WriteBlogPage = () => {
   const handleTextClick = () => {
     setIsFocused(!isFocused);
   };
-  useEffect(() => {
-    if (isFocused && textAreaRef.current) {
-      textAreaRef.current.focus();
-    }
-  }, [isFocused]);
 
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
     setDisableSubmission(true);
     if (
-      (textareaValue != "" && selectedPhoto != null && editorContent != "") ||
-      (textareaValue != "" && selectedDraftPhoto != "" && editorContent != "")
+      (textareaValue != "" &&
+        selectedPhoto != null &&
+        editorContent != "" &&
+        categoryListItem.length != 1) ||
+      (textareaValue != "" &&
+        selectedDraftPhoto != "" &&
+        editorContent != "" &&
+        categoryListItem.length != 1)
     ) {
       // when its normal publishing
       if (selectedPhoto) {
@@ -209,26 +188,8 @@ const WriteBlogPage = () => {
               .then(() => {
                 dispatch(fetchAllBlogs());
 
-                const toastId = "success";
-                const existingToast = toast.isActive(toastId);
-                if (existingToast) {
-                  toast.update(toastId, {
-                    render: `${message}`,
-                    autoClose: 4000,
-                  });
-                } else {
-                  toast.success(`${message}`, {
-                    position: "top-center",
-                    autoClose: 5000,
-                    toastId,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-                }
+                toastMessageSuccess(`${message}`);
+
                 setTimeout(() => {
                   setDisableSubmission(false);
                   setSelectedPhoto(null);
@@ -240,26 +201,7 @@ const WriteBlogPage = () => {
                 navigate("/");
               })
               .catch((error) => {
-                const toastId = "alert";
-                const existingToast = toast.isActive(toastId);
-                if (existingToast) {
-                  toast.update(toastId, {
-                    render: `${error.response.data.error}`,
-                    autoClose: 4000,
-                  });
-                } else {
-                  toast.error(`${error.response.data.error}`, {
-                    position: "top-center",
-                    autoClose: 5000,
-                    toastId,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-                }
+                toastMessageSuccess(`${error.response.data.error}`);
               });
           };
 
@@ -284,29 +226,11 @@ const WriteBlogPage = () => {
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             dispatch(fetchAllBlogs());
-            if (apiEndPoints.toLowerCase().includes("/createDraft")) {
+            if (apiEndPoints.toLowerCase().includes("/createDraft") || cardId) {
               navigate("/");
             }
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${response.data.message}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.success(`${response.data.message}`, {
-                position: "top-center",
-                autoClose: 5000,
-                toastId,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-            }
+
+            toastMessageSuccess(`${response.data.message}`);
 
             HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
               .then((res) => {
@@ -326,154 +250,62 @@ const WriteBlogPage = () => {
           })
           .catch((error) => {
             console.log(error);
+            toastMessageError(`${error.response.data.error}`);
 
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${error.response.data.error}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.error(`${error.response.data.error}`, {
-                position: "top-center",
-                autoClose: 5000,
-                toastId,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-            }
+            // c
           });
       }
     }
 
-    if (categoryListItem.length < 2) {
+    if (categoryListItem.length == 1) {
+      toastMessageError(`Category list is empty`);
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Category list is empty`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Category list is empty"}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
     }
 
     if (!selectedPhoto && selectedDraftPhoto == "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Draft Photo is empty`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Draft Photo is empty"}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toastMessageError(`Please Choose a cover image for your blog`);
     }
+
     // check value for the blog title
     if (textareaValue === "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Blog Title can't be empty.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`Blog Title can't be empty.`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Blog Title can't be empty.`);
     }
     // check value for the blog photo
     if (!selectedDraftPhoto && selectedPhoto == null) {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Please Choose a cover image for your blog.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error("Please Choose a cover image for your blog.", {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Please Choose a cover image for your blog.`);
     }
 
     // check value for the blog body
     if (editorContent == "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Blog body can't be empty.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Blog body can't be empty."}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Blog body can't be empty.`);
     }
   };
 
-  // const [result, setResult] = useState([]);
+  // to delete draft
+  const handleDeleteDraft = (blogId) => {
+    HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
+      .then(() => {
+        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+          .then((res) => {
+            setDraftData(res.data.getAllBlogDraft);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // effects
 
   useEffect(() => {
     HttpCalls.get("/blogPost/getAll")
@@ -506,22 +338,23 @@ const WriteBlogPage = () => {
     setShowDraftModal((prev) => !prev);
   };
 
-  // to delete draft
-  const handleDeleteDraft = (blogId) => {
-    HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
-      .then(() => {
-        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
-          .then((res) => {
-            setDraftData(res.data.getAllBlogDraft);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [textareaValue]);
+
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+
+    setDataExtractedFromDraft(false);
+  }, []);
+
+  useEffect(() => {
+    if (isFocused && textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, [isFocused]);
 
   return (
     <BlogLayout renderComponents={""} getIsSaved={isSaved}>
@@ -627,10 +460,17 @@ const WriteBlogPage = () => {
               <div className="absolute right-0 top-[-2.5rem]">
                 <Button
                   icon={<BsUpload size={16} />}
-                  title={"Publish"}
+                  title={
+                    dataExtractedFromDraft
+                      ? "Publish Draft"
+                      : cardId
+                      ? "Update"
+                      : "Publish"
+                  }
                   border={true}
                   color={true}
                   background={false}
+                  fullWidth={true}
                   linkName={"/writeBlog"}
                   onClick={(event) =>
                     handleSubmit(

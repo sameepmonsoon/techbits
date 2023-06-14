@@ -45,7 +45,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("localToken");
       localStorage.removeItem("user");
-      return {};
     },
   },
   extraReducers: (builder) => {
@@ -60,9 +59,10 @@ const authSlice = createSlice({
           state.token = action.payload.token;
           state.success = action.payload.message;
           state.error = "";
+          state.isAuthenticated = true;
         }
       })
-      .addCase(signUp.pending, (state,) => {
+      .addCase(signUp.pending, (state) => {
         state.isLoading = true;
         state.error = "";
         state.success = "";

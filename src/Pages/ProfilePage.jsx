@@ -4,7 +4,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import image from "../assets/noah-silliman-gzhyKEo_cbU-unsplash.jpg";
 import { IoIosLogOut } from "react-icons/io";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Store/authSlice";
 const HomePage = () => {
   // state to verify logout
@@ -16,6 +16,9 @@ const HomePage = () => {
   const profilePicture = currentUser?.profilePicture;
   const dispatch = useDispatch();
 
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  console.log(isAuthenticated);
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
@@ -29,7 +32,10 @@ const HomePage = () => {
     if (currentUser == null) {
       navigate("/");
     }
-  }, []);
+    if (!isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}
