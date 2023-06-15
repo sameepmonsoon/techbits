@@ -1,24 +1,27 @@
-import { useEffect,  useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useFormik } from "formik";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
-import { toastMessageSuccess } from "../Services/Toast Messages/ToastMessages";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const SignUpPage = () => {
+  const dispatch = useDispatch();
+  const { error, isLoading, success } = useSelector((state) => state.auth);
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const [showSignUpPage, setShowSignUpPage] = useState(false);
-  // for modal open and close
-  const [toggleModal, setToggleModal] = useState(false);
+  const navigate = useNavigate();
 
   // form states
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formValue, setFormValue] = useState({
     username: "",
     email: "",
@@ -36,33 +39,68 @@ const SignUpPage = () => {
     console.log(formValue);
   };
 
+  // handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true);
     setFormError(validate(formValue));
+
+    if (Object.keys(formError).length === 0) {
+      console.log("this is the initial length", Object.keys(formError).length);
+      // dispatch(signUp(formValue));
+    }
   };
 
+  // validation function
   const validate = (values) => {
     const errors = {};
-    const emailRegEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
     if (!values.username) {
       errors.username = "User name is required";
     } else {
-      if (emailRegEx.test(values.username)) {
-        console.log(emailRegEx);
+      let userRegEx = /^[a-zA-Z0-9]{4,10}$/;
+      if (!userRegEx.test(values.username)) {
+        errors.username = "Invalid Username";
       }
     }
+
     if (!values.email) {
       errors.email = "Email is required";
+    } else {
+      let emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{3,5}$/i;
+      if (!emailRegEx.test(values.email)) {
+        errors.email = "Email is not valid";
+      }
     }
     if (!values.phone) {
       errors.phone = "Phone number is required";
+    } else {
+      let phoneRegEx = /[9][6-9]\d{8}/;
+
+      if (!phoneRegEx.test(values.phone)) {
+        errors.phone = "Phone number is not valid";
+      }
     }
     if (!values.password) {
-      errors.password = "Password is required";
+      errors.password = "Password is valid";
+    } else {
+      let passwordRegEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+      if (!passwordRegEx.test(values.password)) {
+        errors.password =
+          "Password must contain atleast 6 characters, one uppercase, one lowercase, one special-character and one number ";
+      }
     }
 
     return errors;
+  };
+
+  // to handle form phone number input
+  const handleOnInput = (e) => {
+    let maxLength = 10;
+    if (e.target.value.length > 10) {
+      e.target.value = e.target.value.trim().slice(0, maxLength);
+    }
   };
 
   useEffect(() => {
@@ -71,21 +109,6 @@ const SignUpPage = () => {
       setShowSignUpPage(true);
     }, 500);
   }, []);
-  //  redux store dispatch
-  const dispatch = useDispatch();
-  const { error, isLoading, success } = useSelector((state) => state.auth);
-  // yup validation
-
-  // // formik form validation
-  const formik = useFormik({
-    initialValues: { username: "", password: "", email: "" },
-    onSubmit: (values) => {
-      dispatch(signUp(values));
-      toastMessageSuccess("Welcome to Techbits.");
-    },
-  });
-
-  // const handleFormSubmit = () => {};
 
   const handleToggle = () => {
     setViewPassword((prevViewPassword) => !prevViewPassword);
@@ -97,8 +120,14 @@ const SignUpPage = () => {
 
   // to show modal on error change
   useEffect(() => {
-    if ((error !== "") | (success !== "")) {
-      setToggleModal(true);
+    if (success) {
+      toastMessageSuccess(success);
+      setIsSubmitting(false);
+      navigate("/");
+    }
+    if (error) {
+      toastMessageError(error);
+      setIsSubmitting(false);
     }
   }, [error, success]);
   return (
@@ -112,16 +141,7 @@ const SignUpPage = () => {
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
           {/* to disable the navigation while loading-- lock the page */}
           <LoadingOverlayComponent openCloseOverlay={isLoading} />
-          <Modal
-            autoHeight={false}
-            error={error ? true : false}
-            info={success ? true : false}
-            toggleModal={setToggleModal}
-            openCloseModal={(error && toggleModal) || (success && toggleModal)}
-            modalMessage={success ? success : error}
-            top={true}
-            navigate={"/"}
-          />
+
           <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <div className="h-20 w-full flex justify-center items-center gap-4 ">
               <Logo />
@@ -150,6 +170,7 @@ const SignUpPage = () => {
                   placeholder={"User name"}
                   maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
                 {formError?.username && (
                   <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
@@ -168,6 +189,7 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   placeholder={"Email"}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
                 {formError?.email && (
                   <span
@@ -183,10 +205,12 @@ const SignUpPage = () => {
                   type="number"
                   name="phone"
                   id="phone"
+                  onInput={handleOnInput}
                   value={formValue?.phone}
                   onChange={handleChange}
                   placeholder={"Phone Number"}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
                 {formError?.phone && (
                   <span
@@ -218,24 +242,25 @@ const SignUpPage = () => {
                   type={togglePassword}
                   name="password"
                   id="password"
-                  onBlur={formik.handleBlur}
                   placeholder={"Password"}
                   maxLength={15}
                   value={formValue?.password}
                   onChange={handleChange}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
-
-                {formError?.password && (
-                  <span
-                    className={`text-red-600 p-2 px-2 text-[14px] max-h-[3rem] overflow-hidden flex justify-start items-center sm:w-full`}>
-                    {formError?.password}
-                  </span>
-                )}
+                <span className="relative w-full min-h-[4rem] sm:min-h-[3rem] max-h-[5rem]">
+                  {formError?.password && (
+                    <span
+                      className={`absolute  text-red-600 p-2 px-2 text-[14px] max-h-[5rem] overflow-hidden flex justify-start items-center sm:w-full`}>
+                      {formError?.password}
+                    </span>
+                  )}
+                </span>
               </label>
               <button
                 type="submit"
-                className="w-full h-10 rounded-md bg-black text-white">
+                className="w-[60%] sm:w-full h-10 rounded-md bg-black text-white">
                 Sign Up
               </button>
             </form>

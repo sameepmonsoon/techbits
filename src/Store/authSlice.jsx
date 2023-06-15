@@ -9,6 +9,7 @@ const initialState = {
   showToast: false,
   currentUserDetail: [],
   isAuthenticated: false,
+  logoutState: false,
 };
 
 export const signUp = createAsyncThunk("signup", async (body) => {
@@ -42,9 +43,11 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.currentUserDetail = "";
+      state.logoutState = true;
       state.isAuthenticated = false;
       localStorage.removeItem("localToken");
       localStorage.removeItem("user");
+      localStorage.setItem("isAuthenticated", false);
     },
   },
   extraReducers: (builder) => {
@@ -56,6 +59,7 @@ const authSlice = createSlice({
         } else {
           localStorage.setItem("localToken", action.payload.token);
           localStorage.setItem("user", JSON.stringify(action.payload));
+          localStorage.setItem("isAuthenticated", true);
           state.token = action.payload.token;
           state.success = action.payload.message;
           state.error = "";
@@ -78,6 +82,7 @@ const authSlice = createSlice({
         } else {
           localStorage.setItem("localToken", action.payload.token);
           localStorage.setItem("user", JSON.stringify(action.payload));
+          localStorage.setItem("isAuthenticated", true);
           state.token = action.payload.token;
           state.currentUserDetail = action.payload;
           state.isAuthenticated = true;
@@ -92,7 +97,6 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = false;
         state.error = action.payload
           ? action.payload.error
           : "An error occurred.";

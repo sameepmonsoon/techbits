@@ -24,7 +24,7 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-
+  console.log(currentBlog);
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -649,6 +649,7 @@ const WriteBlogPage = () => {
                   setShowAddCategories(false);
                 }}>
                 <ReactQuill
+                  value={editorContent}
                   onChange={setEditorContent}
                   theme="snow"
                   modules={{

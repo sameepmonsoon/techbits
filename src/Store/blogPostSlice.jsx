@@ -32,7 +32,7 @@ const blogPostSlice = createSlice({
           localStorage.setItem("localToken", action.payload.token);
           localStorage.setItem(
             "currentBlogPosts",
-            JSON.stringify(action.payload?.getAllBlog)
+            JSON.stringify(action?.payload?.getAllBlog)
           );
           state.token = action.payload.token;
           state.currentBlogPosts = action.payload?.getAllBlog;

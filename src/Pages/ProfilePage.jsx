@@ -15,10 +15,9 @@ const HomePage = () => {
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
   const dispatch = useDispatch();
-
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
-  console.log(isAuthenticated);
+  const isUserAuthenticated = localStorage.getItem("isAuthenticated");
+  const { logoutState } = useSelector((state) => state.auth);
+  console.log(isUserAuthenticated);
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
@@ -32,10 +31,10 @@ const HomePage = () => {
     if (currentUser == null) {
       navigate("/");
     }
-    if (!isAuthenticated) {
+    if (!isUserAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated]);
+  }, [isUserAuthenticated, currentUser, logoutState]);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}
