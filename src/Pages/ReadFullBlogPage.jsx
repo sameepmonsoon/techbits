@@ -13,7 +13,6 @@ import { AiOutlineComment } from "react-icons/ai";
 import ReactQuill from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import { toast } from "react-hot-toast";
 import CommentBox from "../PageComponents/CommentBox/CommentBox";
 import { toastMessageSuccess } from "../Services/Toast Messages/ToastMessages";
 const ReadFullBlogPage = () => {

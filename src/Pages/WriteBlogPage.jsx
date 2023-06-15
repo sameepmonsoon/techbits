@@ -24,7 +24,17 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-  console.log(currentBlog);
+
+  const requestData = {
+    username: "",
+    userId: "",
+    categoryList: "",
+    titleContent: "",
+    selectedPhoto: "",
+    editorContent: "",
+    blogId: "",
+    id: "",
+  };
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -142,6 +152,18 @@ const WriteBlogPage = () => {
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
     setDisableSubmission(true);
+
+    const requestDataInitial = {
+      username: currentUser.username,
+      userId: currentUser._id,
+      categoryList: categoryListItem,
+      titleContent: textareaValue,
+      selectedPhoto: "",
+      editorContent: editorContent,
+      blogId: cardId,
+      id: currentDraftId,
+    };
+
     if (
       (textareaValue.trim().length !== 0 &&
         selectedPhoto != null &&
@@ -183,18 +205,10 @@ const WriteBlogPage = () => {
             ctx.drawImage(img, 0, 0, width, height);
             //this part is  refactored using chatgpt
             const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3);
-
-            const requestData = {
-              username: currentUser.username,
-              userId: currentUser._id,
-              categoryList: categoryListItem,
-              titleContent: textareaValue,
+            var requestData = {
+              ...requestDataInitial,
               selectedPhoto: compressedDataUrl,
-              editorContent: editorContent,
-              blogId: cardId,
-              id: currentDraftId,
             };
-
             HttpCalls.post(apiEndPoints, requestData)
               .then(() => {
                 dispatch(fetchAllBlogs());
@@ -223,19 +237,25 @@ const WriteBlogPage = () => {
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
       if (selectedDraftPhoto != "") {
-        const requestData = {
-          username: currentUser.username,
-          userId: currentUser._id,
-          categoryList: categoryListItem,
-          titleContent: textareaValue,
+        // const requestData = {
+        //   username: currentUser.username,
+        //   userId: currentUser._id,
+        //   categoryList: categoryListItem,
+        //   titleContent: textareaValue,
+        //   selectedPhoto: selectedDraftPhoto,
+        //   editorContent: editorContent,
+        //   id: currentDraftId,
+        //   blogId: cardId,
+        // };
+
+        var requestData = {
+          ...requestDataInitial,
           selectedPhoto: selectedDraftPhoto,
-          editorContent: editorContent,
-          id: currentDraftId,
-          blogId: cardId,
         };
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
-            dispatch(fetchAllBlogs());
+            // dispatch(fetchAllBlogs());
+            // localStorage.setItem("isUpdated", true);
             if (apiEndPoints.toLowerCase().includes("/createDraft") || cardId) {
               navigate("/");
             }
@@ -261,8 +281,6 @@ const WriteBlogPage = () => {
           .catch((error) => {
             console.log(error);
             toastMessageError(`${error.response.data.error}`);
-
-            // c
           });
       }
     }

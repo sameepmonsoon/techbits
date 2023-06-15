@@ -12,14 +12,16 @@ import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const { isFetched, isLoading } = useSelector((state) => state.blog);
-  const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const { isFetched, isLoading, currentBlogPosts } = useSelector(
+    (state) => state.blog
+  );
+  // const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
   const [getSearchValue, setGetSearchValue] = useState("");
-  console.log(currentBlogPosts);
+
   useEffect(() => {
     dispatch(fetchAllBlogs());
-    setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
-  }, [isFetched]);
+    // setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
+  }, [dispatch]);
 
   const searchValueContent = (value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
@@ -32,7 +34,7 @@ const HomePage = () => {
           <div className="font-sans flex flex-col justify-center items-center w-full ">
             <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
             <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
-              {!isLoading && !isFetched ? (
+              {isLoading ? (
                 <>
                   <SkeletonCard />
                   <SkeletonCard />

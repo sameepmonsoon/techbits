@@ -62,7 +62,7 @@ const LoginPage = () => {
   }, [viewPassword]);
   // to show modal on error change
   useEffect(() => {
-    if (error !== "") {
+    if (error) {
       toastMessageError("Wrong Password.");
     }
   }, [error]);
