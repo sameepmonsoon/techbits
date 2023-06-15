@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
-import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
@@ -22,21 +19,49 @@ const SignUpPage = () => {
   const [toggleModal, setToggleModal] = useState(false);
 
   // form states
-  const [userName, setUserName] = useState("");
-  const [validUserName, setValidUserName] = useState(false);
-  const [email, setEmail] = useState("");
-  const [validEmail, setValidEmail] = useState(false);
+  const [formValue, setFormValue] = useState({
+    username: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
 
-  const userNameRegex = new RegExp(/^[a-zA-Z0-9_]+$/);
-  const passwordRegex = new RegExp(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/
-  );
-  const emailRegex = new RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{3,5}$/i);
-  const phoneNumberRegEx = new RegExp(/[9]{1}[8]{1}[0-9]{8}/);
-
-  const handleUserNameChange = () => {};
-
+  const [formError, setFormError] = useState({});
   // functions
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setFormValue({ ...formValue, [name]: value });
+    console.log(formValue);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setFormError(validate(formValue));
+  };
+
+  const validate = (values) => {
+    const errors = {};
+    const emailRegEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    if (!values.username) {
+      errors.username = "User name is required";
+    }
+    // else{if(values.username)}
+    if (!values.email) {
+      errors.email = "Email is required";
+    }
+    if (!values.phone) {
+      errors.phone = "Phone number is required";
+    }
+    if (!values.password) {
+      errors.password = "Password is required";
+    }
+
+    return errors;
+  };
+
   useEffect(() => {
     dispatch(clearState());
     setTimeout(() => {
@@ -47,40 +72,7 @@ const SignUpPage = () => {
   const dispatch = useDispatch();
   const { error, isLoading, success } = useSelector((state) => state.auth);
   // yup validation
-  let schema = yup.object().shape({
-    username: yup
-      .string()
-      .test(
-        "no-special-characters",
-        "Username must not contain special characters",
-        (value) => /^[a-zA-Z0-9_]+$/.test(value)
-      )
-      .required("User name is required."),
-    password: yup
-      .string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/,
-        "At least one uppercase letter,number, and  special character required."
-      )
-      .test(
-        "not-same-as-username",
-        "Password must not match the username",
-        function (value) {
-          const { username } = this.parent;
-          return value !== username;
-        }
-      )
-      .min(6, "At least 6 characters required.")
-      .required("Password is required."),
-    email: yup
-      .string()
-      .email()
-      .matches(
-        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}$/i,
-        "Invalid email address."
-      )
-      .required("Email is required."),
-  });
+
   // // formik form validation
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
@@ -88,7 +80,6 @@ const SignUpPage = () => {
       dispatch(signUp(values));
       toastMessageSuccess("Welcome to Techbits.");
     },
-    validationSchema: schema,
   });
 
   // const handleFormSubmit = () => {};
@@ -142,7 +133,7 @@ const SignUpPage = () => {
             {/* sign up form */}
             <form
               action=""
-              onSubmit={formik.handleSubmit}
+              onSubmit={handleSubmit}
               className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
               <label
                 htmlFor="username"
@@ -151,17 +142,17 @@ const SignUpPage = () => {
                   type="text"
                   name="username"
                   id="username"
+                  value={formValue.username}
+                  onChange={handleChange}
                   placeholder={"User name"}
-                  onBlur={formik.handleBlur}
                   maxLength={30}
-                  onChange={(e) => setUserName(e.target.value)}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {
+                {formError?.username && (
                   <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
-                    Valid User
+                    {formError?.username}
                   </span>
-                }
+                )}
               </label>
               <label
                 htmlFor="email"
@@ -170,16 +161,17 @@ const SignUpPage = () => {
                   type="email"
                   name="email"
                   id="email"
-                  onBlur={formik.handleBlur}
+                  value={formValue.email}
+                  onChange={handleChange}
                   placeholder={"Email"}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {
+                {formError?.email && (
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
-                    Invalid Email
+                    {formError?.email}
                   </span>
-                }
+                )}
               </label>
               <label
                 htmlFor="phone"
@@ -188,16 +180,17 @@ const SignUpPage = () => {
                   type="number"
                   name="phone"
                   id="phone"
-                  onBlur={formik.handleBlur}
+                  value={formValue?.phone}
+                  onChange={handleChange}
                   placeholder={"Phone Number"}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
-                {
+                {formError?.phone && (
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
-                    Invalid Number
+                    {formError?.phone}
                   </span>
-                }
+                )}
               </label>
 
               <label
@@ -225,29 +218,23 @@ const SignUpPage = () => {
                   onBlur={formik.handleBlur}
                   placeholder={"Password"}
                   maxLength={15}
+                  value={formValue?.password}
+                  onChange={handleChange}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
 
-                {
+                {formError?.password && (
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[3rem] overflow-hidden flex justify-start items-center sm:w-full`}>
-                    Error
+                    {formError?.password}
                   </span>
-                }
+                )}
               </label>
-              <Button
-                onClick={formik.handleSubmit}
-                title={
-                  isLoading ? (
-                    <ImSpinner5 size={25} className="animate-spin" />
-                  ) : (
-                    "Register"
-                  )
-                }
-                color={false}
-                background={true}
-                fullWidth={true}
-              />
+              <button
+                type="submit"
+                className="w-full h-10 rounded-md bg-black text-white">
+                Sign Up
+              </button>
             </form>
             <p className="w-full flex justify-center items-center px-5">
               <span>

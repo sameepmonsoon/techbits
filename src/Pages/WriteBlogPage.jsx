@@ -38,6 +38,17 @@ const WriteBlogPage = () => {
   ]);
   const navigate = useNavigate();
 
+  // react quill empty field validation
+  function isQuillEmpty(value) {
+    if (
+      value.replace(/<(.|\n)*?>/g, "").trim().length === 0 &&
+      !value.includes("<img")
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
   const [isSaved, setSetIsSaved] = useState("");
@@ -132,13 +143,13 @@ const WriteBlogPage = () => {
     event.preventDefault();
     setDisableSubmission(true);
     if (
-      (textareaValue.trim().length != 0 &&
+      (textareaValue.trim().length !== 0 &&
         selectedPhoto != null &&
-        editorContent != "" &&
+        !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1) ||
-      (textareaValue != "" &&
+      (textareaValue.trim().length !== 0 &&
         selectedDraftPhoto != "" &&
-        editorContent != "" &&
+        !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)
     ) {
       // when its normal publishing
@@ -187,7 +198,6 @@ const WriteBlogPage = () => {
             HttpCalls.post(apiEndPoints, requestData)
               .then(() => {
                 dispatch(fetchAllBlogs());
-
                 toastMessageSuccess(`${message}`);
 
                 setTimeout(() => {
@@ -268,7 +278,7 @@ const WriteBlogPage = () => {
     }
 
     // check value for the blog title
-    if (textareaValue.trim().length==0) {
+    if (textareaValue.trim().length == 0) {
       setDisableSubmission(false);
 
       toastMessageError(`Blog Title can't be empty.`);
@@ -281,7 +291,7 @@ const WriteBlogPage = () => {
     }
 
     // check value for the blog body
-    if (editorContent == "") {
+    if (isQuillEmpty(editorContent)) {
       setDisableSubmission(false);
 
       toastMessageError(`Blog body can't be empty.`);
@@ -639,7 +649,6 @@ const WriteBlogPage = () => {
                   setShowAddCategories(false);
                 }}>
                 <ReactQuill
-                  value={editorContent}
                   onChange={setEditorContent}
                   theme="snow"
                   modules={{
