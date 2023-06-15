@@ -3,26 +3,24 @@ import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
 import image from "../assets/amr-taha-PksS6SX-t-c-unsplash.jpg";
-import { Outlet, useFetcher } from "react-router-dom";
+import { Outlet, useFetcher, useLocation } from "react-router-dom";
 import InfoSection from "../PageComponents/InfoSection/InfoSection";
 import infoImage from "../assets/rezvani-IIDZ77VDVQE-unsplash.jpg";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
+  const { isFetched } = useSelector((state) => state.blog);
   const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
   const [getSearchValue, setGetSearchValue] = useState("");
+  const location = useLocation();
+  console.log(isFetched);
   useEffect(() => {
     dispatch(fetchAllBlogs());
     setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
-  }, []);
-  setTimeout(() => {
-    setIsLoading(false);
-  }, 800);
-  // const { isLoading } = useSelector((state) => state.blog);
+  }, [location?.pathname, isFetched]);
 
   const searchValueContent = (value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
@@ -34,7 +32,7 @@ const HomePage = () => {
           <div className="font-sans flex flex-col justify-center items-center w-full ">
             <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
             <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
-              {isLoading ? (
+              {!isFetched ? (
                 <>
                   <SkeletonCard />
                   <SkeletonCard />

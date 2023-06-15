@@ -7,7 +7,7 @@ const initialState = {
   token: "",
   success: "",
   currentBlogPosts: [],
-  isAuthenticated: false,
+  isFetched: false,
 };
 export const fetchAllBlogs = createAsyncThunk("fetchBlogs", async () => {
   try {
@@ -36,7 +36,7 @@ const blogPostSlice = createSlice({
           );
           state.token = action.payload.token;
           state.currentBlogPosts = action.payload?.getAllBlog;
-          state.isAuthenticated = true;
+          state.isFetched = true;
           state.success = action.payload.message;
         }
       })
@@ -47,7 +47,7 @@ const blogPostSlice = createSlice({
       })
       .addCase(fetchAllBlogs.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = false;
+        state.isFetched = false;
         state.error = action.payload
           ? action.payload.error
           : "An error occurred.";

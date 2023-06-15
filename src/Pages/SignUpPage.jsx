@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect,  useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
@@ -44,11 +44,14 @@ const SignUpPage = () => {
 
   const validate = (values) => {
     const errors = {};
-    const emailRegEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    const emailRegEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     if (!values.username) {
       errors.username = "User name is required";
+    } else {
+      if (emailRegEx.test(values.username)) {
+        console.log(emailRegEx);
+      }
     }
-    // else{if(values.username)}
     if (!values.email) {
       errors.email = "Email is required";
     }
