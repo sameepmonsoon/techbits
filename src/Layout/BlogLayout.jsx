@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
@@ -10,10 +10,8 @@ export const BlogContext = createContext({
 });
 
 const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
-  const NavbarLinks = [{ title: "Publish", link: "/" }];
   const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
-  const [toggleModal, setToggleModal] = useState(true);
   const [isHovering, setIsHovering] = useState(true);
   const handleMouseEnter = (event) => {
     setIsHovering(event);
