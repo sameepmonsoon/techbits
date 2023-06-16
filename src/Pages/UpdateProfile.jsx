@@ -68,11 +68,12 @@ const UpdateProfile = () => {
         password: formValue?.password,
         phone: formValue?.phone,
       };
-
+console.log(updatedData);
       if (
         profilePicture != null &&
         Object.keys(validateUserInputForm(formValue)).length === 0
       ) {
+        console.log(updatedData);
         await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));

@@ -7,7 +7,6 @@ exports.createBlogPost = async (req, res, next) => {
     const { id } = req.params;
 
     const commentBlog = await Blog.findById(id);
-    console.log(commentBlog);
     const blogId = req.body.blogId;
     if (commentBlog && id) {
       const newComment = {

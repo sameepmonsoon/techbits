@@ -18,19 +18,22 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // const existingUserName = await User.findOne({
-    //   username: req.body.username,
-    // });
+    const existingUserName = await User.findOne({
+      username: req.body.username,
+    });
+
     if (req.body.username === existingUser.username) {
       return res.status(400).json({
         error: "Username is already taken. Please choose a different username.",
       });
     }
+
     const { username, email, password, phone } = req.body;
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    await User.update({
+
+    await existingUser.populate({
       username,
       email,
       password: hash,
@@ -40,9 +43,9 @@ exports.updateProfile = async (req, res) => {
     // Update the user's username
 
     // Update the user's profile picture
-    // existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
-    //   "base64"
-    // )}`;
+    existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
+      "base64"
+    )}`;
 
     // Save the updated user data
     await existingUser.save();
@@ -51,7 +54,6 @@ exports.updateProfile = async (req, res) => {
       { username: req.body.username }
     );
     const result = await User.findOne({ _id: req.body.userId });
-    console.log("the updated result is ", result);
     res.status(200).json({ result, message: "Profile updated successfully." });
   } catch (err) {
     res.status(500).json({ error: "Internal server error." });
