@@ -24,7 +24,7 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-  const [formErrors, setFormErrors] = useState(true);
+  const [formErrors, setFormErrors] = useState(null);
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -106,6 +106,11 @@ const WriteBlogPage = () => {
   const [openBlogCategory, setOpenBlogCategory] = useState(true);
   const handleChange = (event) => {
     setTextareaValue(event.target.value);
+    if (Object.keys(handleFormValidation(textareaValue)).length > 0) {
+      setFormErrors(true);
+    } else {
+      setFormErrors(false);
+    }
   };
 
   const adjustTextareaHeight = () => {
@@ -141,11 +146,19 @@ const WriteBlogPage = () => {
 
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
-    // setDisableSubmission(true);
+    setDisableSubmission(true);
+    console.log(
+      "form error",
+      formErrors,
+      Object.keys(handleFormValidation(textareaValue))
+    );
 
-    if (Object.keys(handleFormValidation(textareaValue)).length) {
-      setFormErrors(true);
-    }
+    // if (Object.keys(handleFormValidation(textareaValue)).length > 0) {
+    //   setFormErrors(true);
+    //   setDisableSubmission(false);
+    // } else {
+    //   setFormErrors(false);
+    // }
     const requestDataInitial = {
       username: currentUser.username,
       userId: currentUser._id,
@@ -159,16 +172,17 @@ const WriteBlogPage = () => {
 
     if (
       (textareaValue.trim().length !== 0 &&
-        !formErrors &&
+        formErrors === false &&
         selectedPhoto != null &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1) ||
       (textareaValue.trim().length !== 0 &&
-        !formErrors &&
+        formErrors === false &&
         selectedDraftPhoto != "" &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)
     ) {
+      console.log(requestDataInitial);
       // when its normal publishing
       if (selectedPhoto) {
         const fileReader = new FileReader();
@@ -238,6 +252,8 @@ const WriteBlogPage = () => {
           ...requestDataInitial,
           selectedPhoto: selectedDraftPhoto,
         };
+
+        console.log(requestData);
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             // dispatch(fetchAllBlogs());
@@ -301,7 +317,7 @@ const WriteBlogPage = () => {
       toastMessageError(`Blog body can't be empty.`);
     }
 
-    if (!formErrors) {
+    if (formErrors === true) {
       setDisableSubmission(false);
       toastMessageError("The title must be string only.");
     }
@@ -311,9 +327,7 @@ const WriteBlogPage = () => {
 
   const handleFormValidation = (values) => {
     let errors = {};
-    const contentTitleRegEx = /^[A-Za-z]+$/;
-
-    console.log(values);
+    const contentTitleRegEx = /^[a-zA-Z\s.?a-zA-z]+\.?\??$/;
     console.log(contentTitleRegEx.test(values));
     if (!contentTitleRegEx.test(values)) {
       errors.contentTitle = "The Title must be string only.";
