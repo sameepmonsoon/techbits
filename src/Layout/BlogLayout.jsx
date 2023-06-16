@@ -32,9 +32,7 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   }, []);
 
   return (
-    <div
-      className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
-    >
+    <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden ">
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
@@ -61,7 +59,6 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
                 onClick={() => {
                   setIsHovering((prev) => !prev);
                 }}
-     
               />
               {!isHovering && (
                 <div className="absolute right-2 top-[3.4rem] group-hover:flex hidden  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">

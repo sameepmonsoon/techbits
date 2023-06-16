@@ -13,13 +13,11 @@ const HomePage = () => {
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  console.log("current user length", currentUser?._id);
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
   const dispatch = useDispatch();
   const isUserAuthenticated = localStorage.getItem("isAuthenticated");
   const { logoutState } = useSelector((state) => state.auth);
-  console.log(isUserAuthenticated);
   // for child modal
   const [openSetting, setOpenSetting] = useState(false);
   const handleSettingClick = () => {
@@ -63,9 +61,6 @@ const HomePage = () => {
           </div>
         )}
         <div
-          onMouseEnter={() => {
-            console.log("enter");
-          }}
           className={`w-auto h-auto max-h-[20rem] ${
             openSetting
               ? "opacity-100 relative left-[8rem] top-[25rem] sm:top-[15.5rem] sm:left-[18rem] md:left-[24rem] md:top-[15rem]"

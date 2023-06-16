@@ -28,7 +28,6 @@ const AllBlogs = () => {
     setIsLoading(false);
   }, [currentBlogPosts]);
 
-  console.log("its in the home page blog", getSearchValue);
   return (
     <BlogsPageLayout
       renderComponents={

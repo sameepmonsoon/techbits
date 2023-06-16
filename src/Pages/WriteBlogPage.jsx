@@ -171,13 +171,13 @@ const WriteBlogPage = () => {
     };
 
     if (
-      (textareaValue.trim().length !== 0 &&
-        formErrors === false &&
+      (textareaValue.trim().length !== 0 && formErrors === false) ||
+      (formErrors === null &&
         selectedPhoto != null &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1) ||
-      (textareaValue.trim().length !== 0 &&
-        formErrors === false &&
+      (textareaValue.trim().length !== 0 && formErrors === false) ||
+      (formErrors === null &&
         selectedDraftPhoto != "" &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)

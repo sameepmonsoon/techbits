@@ -42,7 +42,7 @@ const HeroSectionText = ({ align, color, getSearchValue }) => {
             name="text"
             id="search"
             placeholder="Search Blogs"
-            className="border-[1px] border-gray-200 focus:outline-1 text-gray-600 focus:outline-purple/90 h-[2.4rem] w-[18rem] capitalize rounded-md px-4"
+            className="border-[1px] border-gray-200 focus:outline-1 text-gray-600 focus:outline-purple/90 h-[2.4rem] w-[18rem] rounded-md px-4"
           />
         </label>
         <Button
