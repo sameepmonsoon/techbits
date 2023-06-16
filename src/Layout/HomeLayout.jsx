@@ -5,7 +5,7 @@ import Footer from "../Pages/Footer";
 const HomeLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [
     { title: "Home", link: "/" },
-  ,
+    ,
     { title: "Blogs", link: "/blogs" },
   ];
   // Schedule the deletion after one hour
@@ -18,7 +18,7 @@ const HomeLayout = ({ children, renderComponents }) => {
   return (
     <div className="max-h-auto w-full font-sans flex flex-col overflow-x-hidden overflow-y-auto">
       <Navbar Links={NavbarLinks} border={true} />
-      <div className="flex flex-col flex-grow items-center flex-wrap">
+      <div className="flex flex-col flex-grow items-center flex-wrap h-auto">
         {children}
       </div>
       <div className="flex justify-start items-center px-10 flex-wrap h-auto ">

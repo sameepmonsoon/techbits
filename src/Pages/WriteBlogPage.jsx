@@ -24,17 +24,7 @@ const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-
-  const requestData = {
-    username: "",
-    userId: "",
-    categoryList: "",
-    titleContent: "",
-    selectedPhoto: "",
-    editorContent: "",
-    blogId: "",
-    id: "",
-  };
+  const [formErrors, setFormErrors] = useState(true);
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -151,8 +141,11 @@ const WriteBlogPage = () => {
 
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
-    setDisableSubmission(true);
+    // setDisableSubmission(true);
 
+    if (Object.keys(handleFormValidation(textareaValue)).length) {
+      setFormErrors(true);
+    }
     const requestDataInitial = {
       username: currentUser.username,
       userId: currentUser._id,
@@ -166,10 +159,12 @@ const WriteBlogPage = () => {
 
     if (
       (textareaValue.trim().length !== 0 &&
+        !formErrors &&
         selectedPhoto != null &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1) ||
       (textareaValue.trim().length !== 0 &&
+        !formErrors &&
         selectedDraftPhoto != "" &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)
@@ -178,7 +173,7 @@ const WriteBlogPage = () => {
       if (selectedPhoto) {
         const fileReader = new FileReader();
 
-        //this part is  refactored using chatgpt
+        //this part is  refactored
         fileReader.onload = function () {
           const img = new Image();
           img.onload = function () {
@@ -197,7 +192,7 @@ const WriteBlogPage = () => {
               width *= MAX_HEIGHT / height;
               height = MAX_HEIGHT;
             }
-            //this part is  refactored using chatgpt
+            //this part is  refactored
             // Set the canvas dimensions and draw the compressed image
             canvas.width = width;
             canvas.height = height;
@@ -209,6 +204,8 @@ const WriteBlogPage = () => {
               ...requestDataInitial,
               selectedPhoto: compressedDataUrl,
             };
+
+            console.log(requestData);
             HttpCalls.post(apiEndPoints, requestData)
               .then(() => {
                 dispatch(fetchAllBlogs());
@@ -237,17 +234,6 @@ const WriteBlogPage = () => {
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
       if (selectedDraftPhoto != "") {
-        // const requestData = {
-        //   username: currentUser.username,
-        //   userId: currentUser._id,
-        //   categoryList: categoryListItem,
-        //   titleContent: textareaValue,
-        //   selectedPhoto: selectedDraftPhoto,
-        //   editorContent: editorContent,
-        //   id: currentDraftId,
-        //   blogId: cardId,
-        // };
-
         var requestData = {
           ...requestDataInitial,
           selectedPhoto: selectedDraftPhoto,
@@ -314,8 +300,26 @@ const WriteBlogPage = () => {
 
       toastMessageError(`Blog body can't be empty.`);
     }
+
+    if (!formErrors) {
+      setDisableSubmission(false);
+      toastMessageError("The title must be string only.");
+    }
   };
 
+  // form validation function
+
+  const handleFormValidation = (values) => {
+    let errors = {};
+    const contentTitleRegEx = /^[A-Za-z]+$/;
+
+    console.log(values);
+    console.log(contentTitleRegEx.test(values));
+    if (!contentTitleRegEx.test(values)) {
+      errors.contentTitle = "The Title must be string only.";
+    }
+    return errors;
+  };
   // to delete draft
   const handleDeleteDraft = (blogId) => {
     HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)

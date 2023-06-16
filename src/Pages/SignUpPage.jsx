@@ -34,7 +34,6 @@ const SignUpPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormValue({ ...formValue, [name]: value });
   };
 
@@ -90,7 +89,7 @@ const SignUpPage = () => {
 
       if (!passwordRegEx.test(values.password)) {
         // setIsSubmitting(false);
-        
+
         errors.password =
           "Password must contain atleast 6 characters, one uppercase, one lowercase, one special-character and one number ";
       }
