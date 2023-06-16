@@ -39,9 +39,10 @@ exports.updateProfile = async (req, res) => {
     existingUser.phone = phone;
     existingUser.password = hash;
     // Update the user's profile picture
-    existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
-      "base64"
-    )}`;
+    if (req.body.profilePicture)
+      existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
+        "base64"
+      )}`;
 
     // Save the updated user data
 

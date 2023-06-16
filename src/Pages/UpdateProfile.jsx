@@ -21,17 +21,17 @@ const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({});
-  const [formValue, setFormValue] = useState({
-    username: "",
-    email: "",
-    password: "",
-    phone: "",
-  });
   const [togglePasswordName, setTogglePasswordName] = useState("Password");
   const [togglePassword, setTogglePassword] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const username = currentUser?.username;
   const email = currentUser?.email;
+  const [formValue, setFormValue] = useState({
+    username: currentUser.username,
+    email: currentUser.email,
+    password: "",
+    phone: currentUser.phone,
+  });
 
   // state for delete dialog box
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -52,14 +52,14 @@ const UpdateProfile = () => {
   // submit function
   const onSubmit = async (e) => {
     e.preventDefault();
+    let profilePicture = null;
     setIsLoading(true);
     setMessage(validateUserInputForm(formValue));
     if (selectedPhoto == null) {
-      setMessage({ ...message, ["photo"]: "Please upload new profile photo." });
+      profilePicture = currentUser.selectedPhoto;
+      // setMessage({ ...message, ["photo"]: "Please upload new profile photo." });
     }
     try {
-      let profilePicture = null;
-
       if (selectedPhoto) {
         profilePicture = await compressAndConvertToBase64(selectedPhoto);
       }
@@ -72,10 +72,7 @@ const UpdateProfile = () => {
         password: formValue?.password,
         phone: formValue?.phone,
       };
-      if (
-        profilePicture != null &&
-        Object.keys(validateUserInputForm(formValue)).length === 0
-      ) {
+      if (Object.keys(validateUserInputForm(formValue)).length === 0) {
         await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
@@ -332,7 +329,7 @@ const UpdateProfile = () => {
                   name="phone"
                   id="phone"
                   onInput={handleOnInput}
-                  value={formValue?.phone}
+                  value={formValue?.phone ? formValue.phone : ""}
                   placeholder={"Phone number"}
                   onChange={handleChange}
                   maxLength={30}
@@ -370,7 +367,7 @@ const UpdateProfile = () => {
                   type={togglePasswordName}
                   name="password"
                   id="password"
-                  placeholder={"Password"}
+                  placeholder={"New Password"}
                   maxLength={15}
                   value={formValue?.password}
                   onChange={handleChange}
