@@ -49,7 +49,6 @@ const UpdateProfile = () => {
 
     setFormValue({ ...formValue, [name]: value });
   };
-  console.log(message);
   // submit function
   const onSubmit = async (e) => {
     e.preventDefault();
