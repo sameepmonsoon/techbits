@@ -6,7 +6,6 @@ const HeroSectionText = ({ align, color, getSearchValue }) => {
   const handleSearchChange = () => {
     // setSearchValue(e?.target?.value);
   };
-
   const handleSubmit = () => {
     getSearchValue(searchContent.current?.value);
   };
