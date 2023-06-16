@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import  { useRef } from "react";
 import Button from "../../Components/Button/Button";
 
 const HeroSectionText = ({ align, color, getSearchValue }) => {

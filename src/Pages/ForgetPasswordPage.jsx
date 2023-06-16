@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/forget-password.svg";
 import Button from "../Components/Button/Button";
@@ -68,7 +68,7 @@ const ForgetPasswordPage = () => {
   // formik form validation
   const formik = useFormik({
     initialValues: { username: "", password: "", email: "" },
-    onSubmit: (values, action) => {
+    onSubmit: (values) => {
       dispatch(signUp(values));
     },
     validationSchema: schema,
@@ -106,7 +106,7 @@ const ForgetPasswordPage = () => {
             error={error ? true : false}
             info={success ? true : false}
             toggleModal={setToggleModal}
-            openCloseModal={error  && toggleModal || (success && toggleModal)}
+            openCloseModal={(error && toggleModal) || (success && toggleModal)}
             modalMessage={success ? success : error}
             bottom={true}
           />

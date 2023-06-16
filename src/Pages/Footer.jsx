@@ -1,8 +1,7 @@
-import React from "react";
 import Logo from "../Components/Logo/Logo";
 import SocialMedia from "../Components/SocialMedia/SocialMedia";
 import { footerDetails } from "../Details";
-const Footer = ({ footerText }) => {
+const Footer = () => {
   return (
     <div className="relative bottom-0 font-sans min-h-[30rem] w-full bg-deep-purple flex flex-col justify-start items-center sm:items-start">
       <div className="flex-1 flex sm:flex-row flex-col p-20 flex-wrap lg:flex-nowrap items-center sm:items-start">
@@ -18,8 +17,8 @@ const Footer = ({ footerText }) => {
           </div>
         </div>
         {/* link container */}
-        <div className="font-sans flex flex-col sm:flex-row justify-start items-start gap-5 flex-nowrap sm:flex-wrap h-full sm:h-auto w-auto"> 
-        {/* link container div */}
+        <div className="font-sans flex flex-col sm:flex-row justify-start items-start gap-5 flex-nowrap sm:flex-wrap h-full sm:h-auto w-auto">
+          {/* link container div */}
           <div className=" w-[12rem] h-[12rem] p-2 flex flex-col justify-start items-start gap-1">
             <span className=" text-[20px] sm:text-[18px] capitalize text-gray-400 cursor-pointer hover:underline">
               Products
@@ -42,10 +41,10 @@ const Footer = ({ footerText }) => {
           </div>
           <div className=" w-[12rem] h-[12rem] p-2 flex flex-col justify-start items-start gap-1">
             <span className=" text-[20px] sm:text-[18px] capitalize text-gray-400 cursor-pointer hover:underline">
-          News
+              News
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
-             Technology
+              Technology
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
               Gadgets
@@ -57,27 +56,26 @@ const Footer = ({ footerText }) => {
               Mobile
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
-             Laptop
+              Laptop
             </span>
-          </div><div className=" w-[12rem] h-[12rem] p-2 flex flex-col justify-start items-start gap-1">
+          </div>
+          <div className=" w-[12rem] h-[12rem] p-2 flex flex-col justify-start items-start gap-1">
             <span className=" text-[20px] sm:text-[18px] capitalize text-gray-400 cursor-pointer hover:underline">
               Blog
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
-            Personal
+              Personal
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
-            Technology
+              Technology
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
               Opinion
             </span>
             <span className="capitalize text-[16px] sm:text-[14px] text-gray-100 cursor-pointer hover:underline">
-             Trending
+              Trending
             </span>
-            
           </div>
-          
         </div>
       </div>
       <div className="socials min-h-[6rem] w-full flex sm:flex-row flex-col justify-evenly sm:justify-between px-20 items-center bg-blue-purple">
