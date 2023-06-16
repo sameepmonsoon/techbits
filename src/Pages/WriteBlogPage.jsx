@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -113,13 +113,13 @@ const WriteBlogPage = () => {
     }
   };
 
-  const adjustTextareaHeight = () => {
+  const adjustTextareaHeight = useCallback(() => {
     if (isFocused) {
       const textarea = document.getElementById("myTextarea");
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  };
+  }, [isFocused]);
 
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
