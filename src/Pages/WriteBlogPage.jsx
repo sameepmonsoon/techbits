@@ -369,12 +369,12 @@ const WriteBlogPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [currentUser._id]);
 
   // to edit the blog if cardId is present
   useEffect(() => {
     mapDraftDataOrEditData(cardId, currentBlog);
-  }, [cardId]);
+  }, [cardId, currentBlog]);
 
   const renderSavedDraft = (draftId) => {
     mapDraftDataOrEditData(draftId, draftData);
@@ -386,7 +386,7 @@ const WriteBlogPage = () => {
 
   useEffect(() => {
     adjustTextareaHeight();
-  }, [textareaValue]);
+  }, [textareaValue, adjustTextareaHeight]);
 
   useEffect(() => {
     if (currentUser == null) {
@@ -394,7 +394,7 @@ const WriteBlogPage = () => {
     }
 
     setDataExtractedFromDraft(false);
-  }, []);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     if (isFocused && textAreaRef.current) {

@@ -34,7 +34,7 @@ const HomePage = () => {
     if (!isUserAuthenticated) {
       navigate("/");
     }
-  }, [isUserAuthenticated, currentUser, logoutState]);
+  }, [isUserAuthenticated, currentUser, logoutState, navigate]);
   return (
     <HomeLayout renderComponents={""}>
       {/*profile container */}

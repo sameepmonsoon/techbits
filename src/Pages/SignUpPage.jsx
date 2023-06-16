@@ -111,7 +111,7 @@ const SignUpPage = () => {
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
-  }, []);
+  }, [dispatch]);
 
   const handleToggle = () => {
     setViewPassword((prevViewPassword) => !prevViewPassword);
@@ -132,7 +132,7 @@ const SignUpPage = () => {
       toastMessageError(error);
       setIsSubmitting(false);
     }
-  }, [error, success]);
+  }, [error, success, navigate]);
   return (
     <>
       {!showSignUpPage ? (

@@ -20,7 +20,7 @@ const AllBlogs = () => {
   useEffect(() => {
     dispatch(fetchAllBlogs());
     setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     console.log("loadinngg");

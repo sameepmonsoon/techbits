@@ -25,7 +25,7 @@ const ForgetPasswordPage = () => {
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
-  }, []);
+  }, [dispatch]);
   //  redux store dispatch
   const dispatch = useDispatch();
   const { error, isLoading, success } = useSelector((state) => state.auth);
@@ -82,7 +82,7 @@ const ForgetPasswordPage = () => {
   }, [viewPassword]);
   useEffect(() => {
     dispatch(clearState());
-  }, []);
+  }, [dispatch]);
   console.log(success);
   // to show modal on error change
   useEffect(() => {
