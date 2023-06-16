@@ -13,15 +13,18 @@ import { HttpCalls } from "../utils/HttpCalls";
 import { useDispatch } from "react-redux";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import { toast } from "react-toastify";
 import { BlogContext } from "../Layout/BlogLayout";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import draftImage from "../assets/draft-2.svg";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
-
+  const [formErrors, setFormErrors] = useState(true);
   // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
@@ -29,10 +32,22 @@ const WriteBlogPage = () => {
   const [textareaValue, setTextareaValue] = useState("");
   const [showAddCategories, setShowAddCategories] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [dataExtractedFromDraft, setDataExtractedFromDraft] = useState(false);
   const [categoryListItem, setCategoryListItem] = useState([
     { id: "", item: "" },
   ]);
   const navigate = useNavigate();
+
+  // react quill empty field validation
+  function isQuillEmpty(value) {
+    if (
+      value.replace(/<(.|\n)*?>/g, "").trim().length === 0 &&
+      !value.includes("<img")
+    ) {
+      return true;
+    }
+    return false;
+  }
 
   // state for draft modals
   const [draftData, setDraftData] = useState([]);
@@ -55,6 +70,7 @@ const WriteBlogPage = () => {
       return _id === id;
     });
     if (toRenderDraft) {
+      setDataExtractedFromDraft(true);
       setSelectedDraftPhoto(toRenderDraft.selectedPhoto);
       setTextareaValue(toRenderDraft.titleContent);
       setEditorContent(toRenderDraft.editorContent);
@@ -75,16 +91,7 @@ const WriteBlogPage = () => {
         setCategoryListItem((prevList) => [...prevList, { id, item }]);
       }
     } else {
-      toast.success(`You can only add 5 categories`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toastMessageSuccess(`You can only add 5 categories`);
     }
   };
   const handleRemoveCategoryItem = (id) => {
@@ -100,15 +107,7 @@ const WriteBlogPage = () => {
   const handleChange = (event) => {
     setTextareaValue(event.target.value);
   };
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [textareaValue]);
 
-  useEffect(() => {
-    if (currentUser == null) {
-      navigate("/");
-    }
-  }, []);
   const adjustTextareaHeight = () => {
     if (isFocused) {
       const textarea = document.getElementById("myTextarea");
@@ -120,31 +119,61 @@ const WriteBlogPage = () => {
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const textAreaRef = useRef(null);
+
+  // function for photo change
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     setSelectedPhoto(file);
+
+    setSelectedDraftPhoto("");
+  };
+
+  // for draft photo
+  const handlePhotoChangeForDraft = (event) => {
+    const draftFile = URL.createObjectURL(event.target.files[0]);
+    setSelectedDraftPhoto(draftFile);
+    setSelectedPhoto(null);
   };
 
   const handleTextClick = () => {
     setIsFocused(!isFocused);
   };
-  useEffect(() => {
-    if (isFocused && textAreaRef.current) {
-      textAreaRef.current.focus();
-    }
-  }, [isFocused]);
 
-  //this part is  refactored using chatgpt
   const handleSubmit = (event, apiEndPoints, message) => {
     event.preventDefault();
-    setDisableSubmission(true);
+    // setDisableSubmission(true);
+
+    if (Object.keys(handleFormValidation(textareaValue)).length) {
+      setFormErrors(true);
+    }
+    const requestDataInitial = {
+      username: currentUser.username,
+      userId: currentUser._id,
+      categoryList: categoryListItem,
+      titleContent: textareaValue,
+      selectedPhoto: "",
+      editorContent: editorContent,
+      blogId: cardId,
+      id: currentDraftId,
+    };
+
     if (
-      (textareaValue != "" && selectedPhoto != null && editorContent != "") ||
-      (textareaValue != "" && selectedDraftPhoto != "" && editorContent != "")
+      (textareaValue.trim().length !== 0 &&
+        !formErrors &&
+        selectedPhoto != null &&
+        !isQuillEmpty(editorContent) &&
+        categoryListItem.length != 1) ||
+      (textareaValue.trim().length !== 0 &&
+        !formErrors &&
+        selectedDraftPhoto != "" &&
+        !isQuillEmpty(editorContent) &&
+        categoryListItem.length != 1)
     ) {
       // when its normal publishing
       if (selectedPhoto) {
         const fileReader = new FileReader();
+
+        //this part is  refactored
         fileReader.onload = function () {
           const img = new Image();
           img.onload = function () {
@@ -163,52 +192,25 @@ const WriteBlogPage = () => {
               width *= MAX_HEIGHT / height;
               height = MAX_HEIGHT;
             }
-
+            //this part is  refactored
             // Set the canvas dimensions and draw the compressed image
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
-
-            // Get the compressed image data as a data URL (base64 format)
+            //this part is  refactored using chatgpt
             const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3);
-            // Adjust the compression quality as needed (0.8 represents 80% quality)
-
-            const requestData = {
-              username: currentUser.username,
-              userId: currentUser._id,
-              categoryList: categoryListItem,
-              titleContent: textareaValue,
+            var requestData = {
+              ...requestDataInitial,
               selectedPhoto: compressedDataUrl,
-              editorContent: editorContent,
-              blogId: cardId,
-              id: currentDraftId,
             };
 
+            console.log(requestData);
             HttpCalls.post(apiEndPoints, requestData)
               .then(() => {
                 dispatch(fetchAllBlogs());
+                toastMessageSuccess(`${message}`);
 
-                const toastId = "alert";
-                const existingToast = toast.isActive(toastId);
-                if (existingToast) {
-                  toast.update(toastId, {
-                    render: `${message}`,
-                    autoClose: 4000,
-                  });
-                } else {
-                  toast.success(`${message}`, {
-                    position: "top-center",
-                    autoClose: 5000,
-                    toastId,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-                }
                 setTimeout(() => {
                   setDisableSubmission(false);
                   setSelectedPhoto(null);
@@ -220,30 +222,11 @@ const WriteBlogPage = () => {
                 navigate("/");
               })
               .catch((error) => {
-                const toastId = "alert";
-                const existingToast = toast.isActive(toastId);
-                if (existingToast) {
-                  toast.update(toastId, {
-                    render: `${error.response.data.error}`,
-                    autoClose: 4000,
-                  });
-                } else {
-                  toast.error(`${error.response.data.error}`, {
-                    position: "top-center",
-                    autoClose: 5000,
-                    toastId,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-                }
+                toastMessageSuccess(`${error.response.data.error}`);
               });
           };
 
-          img.src = fileReader.result; // Set the image source to trigger the onload event
+          img.src = fileReader.result;
         };
         if (selectedPhoto != null) fileReader.readAsDataURL(selectedPhoto);
       }
@@ -251,42 +234,19 @@ const WriteBlogPage = () => {
       // to call api when publishing the file after getting it from a draft
       // image is already base64 ---and low quality
       if (selectedDraftPhoto != "") {
-        const requestData = {
-          username: currentUser.username,
-          userId: currentUser._id,
-          categoryList: categoryListItem,
-          titleContent: textareaValue,
+        var requestData = {
+          ...requestDataInitial,
           selectedPhoto: selectedDraftPhoto,
-          editorContent: editorContent,
-          id: currentDraftId,
-          blogId: cardId,
         };
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
-            dispatch(fetchAllBlogs());
-            if (apiEndPoints.toLowerCase().includes("/createDraft")) {
+            // dispatch(fetchAllBlogs());
+            // localStorage.setItem("isUpdated", true);
+            if (apiEndPoints.toLowerCase().includes("/createDraft") || cardId) {
               navigate("/");
             }
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${response.data.message}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.success(`${response.data.message}`, {
-                position: "top-center",
-                autoClose: 5000,
-                toastId,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-            }
+
+            toastMessageSuccess(`${response.data.message}`);
 
             HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
               .then((res) => {
@@ -306,154 +266,78 @@ const WriteBlogPage = () => {
           })
           .catch((error) => {
             console.log(error);
-
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${error.response.data.error}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.error(`${error.response.data.error}`, {
-                position: "top-center",
-                autoClose: 5000,
-                toastId,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-            }
+            toastMessageError(`${error.response.data.error}`);
           });
       }
     }
 
-    if (categoryListItem.length < 2) {
+    if (categoryListItem.length == 1) {
+      toastMessageError(`Category list is empty`);
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Category list is empty`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Category list is empty"}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
     }
 
-    if (selectedDraftPhoto == "") {
+    if (!selectedPhoto && selectedDraftPhoto == "") {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Draft Photo is empty`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Draft Photo is empty"}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toastMessageError(`Please Choose a cover image for your blog`);
     }
+
     // check value for the blog title
-    if (textareaValue === "") {
+    if (textareaValue.trim().length == 0) {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Blog Title can't be empty.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`Blog Title can't be empty.`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Blog Title can't be empty.`);
     }
     // check value for the blog photo
     if (!selectedDraftPhoto && selectedPhoto == null) {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Please Choose a cover image for your blog.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error("Please Choose a cover image for your blog.", {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Please Choose a cover image for your blog.`);
     }
 
     // check value for the blog body
-    if (!editorContent) {
+    if (isQuillEmpty(editorContent)) {
       setDisableSubmission(false);
-      const toastId = "alert";
-      const existingToast = toast.isActive(toastId);
-      if (existingToast) {
-        toast.update(toastId, {
-          render: `Blog body can't be empty.`,
-          autoClose: 4000,
-        });
-      } else {
-        toast.error(`${"Blog body can't be empty."}`, {
-          position: "top-center",
-          autoClose: 5000,
-          toastId,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+
+      toastMessageError(`Blog body can't be empty.`);
+    }
+
+    if (!formErrors) {
+      setDisableSubmission(false);
+      toastMessageError("The title must be string only.");
     }
   };
 
-  // const [result, setResult] = useState([]);
+  // form validation function
+
+  const handleFormValidation = (values) => {
+    let errors = {};
+    const contentTitleRegEx = /^[A-Za-z]+$/;
+
+    console.log(values);
+    console.log(contentTitleRegEx.test(values));
+    if (!contentTitleRegEx.test(values)) {
+      errors.contentTitle = "The Title must be string only.";
+    }
+    return errors;
+  };
+  // to delete draft
+  const handleDeleteDraft = (blogId) => {
+    HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
+      .then(() => {
+        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
+          .then((res) => {
+            setDraftData(res.data.getAllBlogDraft);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // effects
 
   useEffect(() => {
     HttpCalls.get("/blogPost/getAll")
@@ -486,22 +370,23 @@ const WriteBlogPage = () => {
     setShowDraftModal((prev) => !prev);
   };
 
-  // to delete draft
-  const handleDeleteDraft = (blogId) => {
-    HttpCalls.deleteData(`/blogPost/deleteBlogDraft/${blogId}`)
-      .then(() => {
-        HttpCalls.get(`/blogPost/getDraft/${currentUser._id}`)
-          .then((res) => {
-            setDraftData(res.data.getAllBlogDraft);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [textareaValue]);
+
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate("/");
+    }
+
+    setDataExtractedFromDraft(false);
+  }, []);
+
+  useEffect(() => {
+    if (isFocused && textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, [isFocused]);
 
   return (
     <BlogLayout renderComponents={""} getIsSaved={isSaved}>
@@ -607,10 +492,17 @@ const WriteBlogPage = () => {
               <div className="absolute right-0 top-[-2.5rem]">
                 <Button
                   icon={<BsUpload size={16} />}
-                  title={"Publish"}
+                  title={
+                    dataExtractedFromDraft
+                      ? "Publish Draft"
+                      : cardId
+                      ? "Update"
+                      : "Publish"
+                  }
                   border={true}
                   color={true}
                   background={false}
+                  fullWidth={true}
                   linkName={"/writeBlog"}
                   onClick={(event) =>
                     handleSubmit(
@@ -732,14 +624,24 @@ const WriteBlogPage = () => {
                         type="file"
                         id="photo"
                         accept="image/*"
-                        onChange={handlePhotoChange}
+                        onChange={handlePhotoChangeForDraft}
                       />
                     </>
                   ) : (
-                    <img
-                      src={URL.createObjectURL(selectedPhoto)}
-                      alt="Selected Photo"
-                    />
+                    <>
+                      <input
+                        hidden
+                        value={selectedDraftPhoto}
+                        type="file"
+                        id="photo"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                      />
+                      <img
+                        src={URL.createObjectURL(selectedPhoto)}
+                        alt="Selected Photo"
+                      />
+                    </>
                   )}
                   <span className="relative text-deep-purple/80 rounded-full border-[1px] p-1 border-deep-purple/60 ">
                     <RxCross2

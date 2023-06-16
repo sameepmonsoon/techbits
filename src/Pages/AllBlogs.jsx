@@ -14,18 +14,32 @@ const AllBlogs = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const [getSearchValue, setGetSearchValue] = useState("");
+  const searchValueContent = (value) => {
+    setGetSearchValue(value.toLowerCase().split(" ").join());
+  };
+  // effects
   useEffect(() => {
     dispatch(fetchAllBlogs());
     setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
   }, []);
-  setTimeout(() => {
-    setIsLoading(false);
-  }, 800);
-  // const { isLoading } = useSelector((state) => state.blog);
 
+  useEffect(() => {
+    console.log("loadinngg");
+
+    setIsLoading(false);
+  }, [currentBlogPosts]);
+
+  console.log("its in the home page blog", getSearchValue);
   return (
     <BlogsPageLayout
-      renderComponents={<HeroSectionText align={"center"} color={"white"} />}>
+      renderComponents={
+        <HeroSectionText
+          align={"center"}
+          color={"white"}
+          getSearchValue={searchValueContent}
+        />
+      }>
       <>
         <div className="font-sans flex flex-col justify-center items-center w-full ">
           {/* <p className="text-[18px] font-[700] capitalize">Recent Posts</p> */}
@@ -38,7 +52,14 @@ const AllBlogs = () => {
               </>
             ) : (
               currentBlogPosts
-                .filter((item, index) => index < 6)
+                // .slice(1, 6)
+                .filter((item) =>
+                  item.titleContent
+                    .toLowerCase()
+                    .split(" ")
+                    .join()
+                    .includes(getSearchValue)
+                )
                 .map((item, index) => {
                   if (index === 0) {
                     return (

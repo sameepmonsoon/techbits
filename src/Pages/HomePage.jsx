@@ -3,25 +3,30 @@ import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
 import image from "../assets/amr-taha-PksS6SX-t-c-unsplash.jpg";
-import { Outlet, useFetcher } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import InfoSection from "../PageComponents/InfoSection/InfoSection";
 import infoImage from "../assets/rezvani-IIDZ77VDVQE-unsplash.jpg";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const { isFetched, isLoading, currentBlogPosts } = useSelector(
+    (state) => state.blog
+  );
+  // const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const [getSearchValue, setGetSearchValue] = useState("");
+
   useEffect(() => {
     dispatch(fetchAllBlogs());
-    setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
-  }, []);
-  setTimeout(() => {
-    setIsLoading(false);
-  }, 800);
-  // const { isLoading } = useSelector((state) => state.blog);
+    // setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
+  }, [dispatch]);
+
+  const searchValueContent = (value) => {
+    setGetSearchValue(value.toLowerCase().split(" ").join());
+  };
+
   return (
     <HomeLayout
       renderComponents={
@@ -37,7 +42,14 @@ const HomePage = () => {
                 </>
               ) : (
                 currentBlogPosts
-                  .filter((item, index) => index < 6)
+                  .slice(0, 6)
+                  .filter((item) =>
+                    item.titleContent
+                      .toLowerCase()
+                      .split(" ")
+                      .join()
+                      .includes(getSearchValue)
+                  )
                   .map((item, index) => (
                     <Card
                       key={index}
@@ -112,7 +124,7 @@ const HomePage = () => {
           </div>
         </>
       }>
-      <HeroSectionText align={"center"} />
+      <HeroSectionText align={"center"} getSearchValue={searchValueContent} />
       <Outlet />
     </HomeLayout>
   );

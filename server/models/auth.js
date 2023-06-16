@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema(
     followers: { type: Array, defaultValue: [] },
     following: { type: Array, defaultValue: [] },
     description: { type: String },
-    profilePicture: { type: String },
+    phone: { type: String },
     bookmarks: { type: Array, defaultValue: [] },
     image: { type: String },
   },

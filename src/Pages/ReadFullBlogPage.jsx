@@ -13,8 +13,8 @@ import { AiOutlineComment } from "react-icons/ai";
 import ReactQuill from "react-quill";
 import { HttpCalls } from "../utils/HttpCalls";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
-import { toast } from "react-hot-toast";
 import CommentBox from "../PageComponents/CommentBox/CommentBox";
+import { toastMessageSuccess } from "../Services/Toast Messages/ToastMessages";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
 
@@ -148,16 +148,7 @@ const ReadFullBlogPage = () => {
           JSON.stringify(res?.data?.allBlogsAfterDelete)
         );
 
-        toast.success(`Blog Deleted successfully.`, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toastMessageSuccess(`Blog Deleted successfully.`);
 
         setTimeout(() => {
           navigate("/");

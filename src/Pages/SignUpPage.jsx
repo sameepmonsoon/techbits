@@ -1,106 +1,118 @@
 import { useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import signUpImage from "../assets/signup-4.svg";
-import Button from "../Components/Button/Button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useFormik } from "formik";
-import * as yup from "yup";
 import { signUp, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { ImSpinner5 } from "react-icons/im";
-import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
-import { toast } from "react-hot-toast";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const SignUpPage = () => {
+  const dispatch = useDispatch();
+  const { error, isLoading, success } = useSelector((state) => state.auth);
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const [showSignUpPage, setShowSignUpPage] = useState(false);
-  // for modal open and close
-  const [toggleModal, setToggleModal] = useState(false);
+  const navigate = useNavigate();
 
+  // form states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formValue, setFormValue] = useState({
+    username: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
+
+  const [formError, setFormError] = useState({});
   // functions
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValue({ ...formValue, [name]: value });
+  };
+
+  // handle submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // setIsSubmitting(true);
+    setFormError(validate(formValue));
+    if (Object.keys(validate(formValue)).length === 0) {
+      dispatch(signUp(formValue));
+    }
+  };
+
+  // validation function
+  const validate = (values) => {
+    const errors = {};
+
+    if (!values.username) {
+      errors.username = "User name is required";
+    } else {
+      let userRegEx = /^[a-zA-Z0-9]{4,10}$/;
+      if (!userRegEx.test(values.username)) {
+        errors.username = "Invalid Username";
+      }
+    }
+
+    if (!values.email) {
+      errors.email = "Email is required";
+      // setIsSubmitting(false);
+    } else {
+      let emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{3,5}$/i;
+      if (!emailRegEx.test(values.email)) {
+        errors.email = "Email is not valid";
+        // setIsSubmitting(false);
+      }
+    }
+    if (!values.phone) {
+      errors.phone = "Phone number is required";
+      // setIsSubmitting(false);
+    } else {
+      let phoneRegEx = /[9][6-9]\d{8}/;
+
+      if (!phoneRegEx.test(values.phone)) {
+        errors.phone = "Phone number is not valid";
+        // setIsSubmitting(false);
+      }
+    }
+    if (!values.password) {
+      errors.password = "Password is valid";
+      // setIsSubmitting(false);
+    } else {
+      let passwordRegEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+      if (!passwordRegEx.test(values.password)) {
+        // setIsSubmitting(false);
+
+        errors.password =
+          "Password must contain atleast 6 characters, one uppercase, one lowercase, one special-character and one number ";
+      }
+    }
+
+    return errors;
+  };
+
+  // to handle form phone number input
+  const handleOnInput = (e) => {
+    let maxLength = 10;
+    if (e.target.value.length > 10) {
+      e.target.value = e.target.value.trim().slice(0, maxLength);
+    }
+  };
+
   useEffect(() => {
     dispatch(clearState());
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
   }, []);
-  //  redux store dispatch
-  const dispatch = useDispatch();
-  const { error, isLoading, success } = useSelector((state) => state.auth);
-  // yup validation
-  let schema = yup.object().shape({
-    username: yup
-      .string()
-      .test(
-        "no-special-characters",
-        "Username must not contain special characters",
-        (value) => /^[a-zA-Z0-9_]+$/.test(value)
-      )
-      .required("User name is required."),
-    password: yup
-      .string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@!$%*?&]{6,}$/,
-        "At least one uppercase letter,number, and  special character required."
-      )
-      .test(
-        "not-same-as-username",
-        "Password must not match the username",
-        function (value) {
-          const { username } = this.parent;
-          return value !== username;
-        }
-      )
-      .min(6, "At least 6 characters required.")
-      .required("Password is required."),
-    email: yup
-      .string()
-      .email()
-      .matches(
-        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}$/i,
-        "Invalid email address."
-      )
-      .required("Email is required."),
-  });
-  // formik form validation
-  const formik = useFormik({
-    initialValues: { username: "", password: "", email: "" },
-    onSubmit: (values) => {
-      dispatch(signUp(values));
-      const toastId = "alert";
-      // const existingToast = toast.isActive(toastId);
-      if (success) {
-        toast.success(`${"Welcome to Techbits."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      } else {
-        toast.error(`${"Sorry can't login."}`, {
-          toastId: toastId,
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    },
-    validationSchema: schema,
-  });
+
   const handleToggle = () => {
     setViewPassword((prevViewPassword) => !prevViewPassword);
   };
@@ -111,8 +123,14 @@ const SignUpPage = () => {
 
   // to show modal on error change
   useEffect(() => {
-    if ((error !== "") | (success !== "")) {
-      setToggleModal(true);
+    if (success) {
+      toastMessageSuccess(success);
+      setIsSubmitting(false);
+      navigate("/");
+    }
+    if (error) {
+      toastMessageError(error);
+      setIsSubmitting(false);
     }
   }, [error, success]);
   return (
@@ -126,16 +144,7 @@ const SignUpPage = () => {
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
           {/* to disable the navigation while loading-- lock the page */}
           <LoadingOverlayComponent openCloseOverlay={isLoading} />
-          <Modal
-            autoHeight={false}
-            error={error ? true : false}
-            info={success ? true : false}
-            toggleModal={setToggleModal}
-            openCloseModal={(error && toggleModal) || (success && toggleModal)}
-            modalMessage={success ? success : error}
-            top={true}
-            navigate={"/"}
-          />
+
           <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <div className="h-20 w-full flex justify-center items-center gap-4 ">
               <Logo />
@@ -150,7 +159,7 @@ const SignUpPage = () => {
             {/* sign up form */}
             <form
               action=""
-              onSubmit={formik.handleSubmit}
+              onSubmit={handleSubmit}
               className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans`}>
               <label
                 htmlFor="username"
@@ -159,15 +168,16 @@ const SignUpPage = () => {
                   type="text"
                   name="username"
                   id="username"
+                  value={formValue.username}
+                  onChange={handleChange}
                   placeholder={"User name"}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
                   maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
-                {formik.errors.username && formik.touched.username && (
+                {formError?.username && (
                   <span className="text-red-600 p-2 px-2 text-[14px] max-h-[2.5rem] overflow-hidden flex justify-start items-center w-full">
-                    {formik.errors.username}
+                    {formError?.username}
                   </span>
                 )}
               </label>
@@ -178,25 +188,44 @@ const SignUpPage = () => {
                   type="email"
                   name="email"
                   id="email"
-                  onBlur={formik.handleBlur}
+                  value={formValue.email}
+                  onChange={handleChange}
                   placeholder={"Email"}
-                  onChange={formik.handleChange}
-                  maxLength={30}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
                 />
-                {formik.touched.email && formik.errors.email && (
+                {formError?.email && (
                   <span
                     className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
-                    {formik.errors.email}
+                    {formError?.email}
                   </span>
                 )}
               </label>
               <label
+                htmlFor="phone"
+                className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
+                <input
+                  type="number"
+                  name="phone"
+                  id="phone"
+                  onInput={handleOnInput}
+                  value={formValue?.phone}
+                  onChange={handleChange}
+                  placeholder={"Phone Number"}
+                  className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
+                  required
+                />
+                {formError?.phone && (
+                  <span
+                    className={`text-red-600 p-2 px-2 text-[14px] max-h-[1.5rem] overflow-hidden flex justify-start items-center w-full`}>
+                    {formError?.phone}
+                  </span>
+                )}
+              </label>
+
+              <label
                 htmlFor="password"
                 className="relative group flex flex-col justify-start items-start sm:w-auto w-3/5">
-                {/* <span className="text-[20px] w-full p-2 capitalize text-deep-purple">
-              Password
-            </span> */}
                 <span className="absolute right-3 top-3 text-deep-purple">
                   {viewPassword ? (
                     <AiFillEyeInvisible
@@ -216,59 +245,38 @@ const SignUpPage = () => {
                   type={togglePassword}
                   name="password"
                   id="password"
-                  onBlur={formik.handleBlur}
                   placeholder={"Password"}
-                  onChange={formik.handleChange}
                   maxLength={15}
+                  value={formValue?.password}
+                  onChange={handleChange}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
-                />{" "}
-                {formik.errors.password && formik.touched.password && (
-                  <span
-                    className={`text-red-600 p-2 px-2 text-[14px] max-h-[3rem] overflow-hidden flex justify-start items-center sm:w-full`}>
-                    {formik.errors.password}
-                  </span>
-                )}
+                  required
+                />
+                <span className="relative w-full min-h-[4rem] sm:min-h-[3rem] max-h-[5rem]">
+                  {formError?.password && (
+                    <span
+                      className={`absolute  text-red-600 p-2 px-2 text-[14px] max-h-[5rem] overflow-hidden flex justify-start items-center sm:w-full`}>
+                      {formError?.password}
+                    </span>
+                  )}
+                </span>
               </label>
-              <Button
-                onClick={formik.handleSubmit}
-                title={
-                  isLoading ? (
-                    <ImSpinner5 size={25} className="animate-spin" />
-                  ) : (
-                    "Register"
-                  )
-                }
-                color={false}
-                background={true}
-                fullWidth={true}
-              />
+              <button
+                type="submit"
+                className={`w-[60%] sm:w-full h-10 rounded-md ${
+                  isSubmitting ? "bg-black/70" : "bg-black"
+                } text-white`}>
+                {isSubmitting ? "Signing up... " : "Sign Up"}
+              </button>
             </form>
             <p className="w-full flex justify-center items-center px-5">
-              {/* {authType == "Log in" ? (
-            <span>
-              Create a new account?{" "}
-              <Link to={"/signup"} className="underline text-deep-purple">
-                Sign up
-              </Link>
-            </span>
-          ) : ( */}
               <span>
                 Already have an account?{" "}
                 <Link to={"/login"} className="underline text-deep-purple">
                   Log in
                 </Link>
               </span>
-              {/* )} */}
             </p>
-            {/* <div className="w-full flex justify-center items-center">
-          <GoogleLogin
-            clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-            buttonText="Sign Up with Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={"single_host_origin"}
-          />
-        </div> */}
           </div>
           <img
             src={signUpImage}

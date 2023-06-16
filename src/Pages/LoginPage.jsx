@@ -7,18 +7,21 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { login, clearState } from "../Store/authSlice";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
 import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
-import { toast } from "react-hot-toast";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const LoginPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const dispatch = useDispatch();
-  const { error, isLoading, success, showToast } = useSelector(
+  const { error, isLoading, success, isAuthenticated } = useSelector(
     (state) => state.auth
   );
   // for modal open and close
@@ -27,6 +30,8 @@ const LoginPage = () => {
   // const [loading, setLoading] = useState(false);
   // const navigate = useNavigate();
   // yup validation
+
+  const navigate = useNavigate();
   let schema = yup.object().shape({
     password: yup.string().required("Password is required."),
     email: yup.string().email().required("Email or user name is required."),
@@ -57,23 +62,19 @@ const LoginPage = () => {
   }, [viewPassword]);
   // to show modal on error change
   useEffect(() => {
-    if ((error !== "") | (success !== "")) {
-      setToggleModal(true);
+    if (error) {
+      toastMessageError("Wrong Password.");
     }
-  }, [error, success]);
+  }, [error]);
 
-  if (showToast) {
-    toast.success(`${"Welcome to Techbits."}`, {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      toastMessageSuccess("Welcome to Techbits.");
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+    }
+  }, [isAuthenticated]);
   return (
     <>
       {!showSignUpPage ? (
@@ -85,7 +86,7 @@ const LoginPage = () => {
         <div className="font-sans p-10 flex flex-col lg:flex-row justify-evenly items-center h-full w-full overflow-x-hidden">
           {/* to disable the navigation while loading-- lock the page */}
           <LoadingOverlayComponent openCloseOverlay={isLoading} />
-          <Modal
+          {/* <Modal
             autoHeight={false}
             error={error ? true : false}
             info={success ? true : false}
@@ -94,7 +95,7 @@ const LoginPage = () => {
             modalMessage={success ? success : error}
             top={true}
             navigate={"/"}
-          />
+          /> */}
           <div className="signup h-[40rem] min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <div className="h-20 w-full flex justify-center items-center gap-4 ">
               <Logo />
