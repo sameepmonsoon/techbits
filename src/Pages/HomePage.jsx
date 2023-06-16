@@ -12,15 +12,11 @@ import SkeletonCard from "../Components/Card/SkeletonCard";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const { isFetched, isLoading, currentBlogPosts } = useSelector(
-    (state) => state.blog
-  );
-  // const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  const { isLoading, currentBlogPosts } = useSelector((state) => state.blog);
   const [getSearchValue, setGetSearchValue] = useState("");
 
   useEffect(() => {
     dispatch(fetchAllBlogs());
-    // setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
   }, [dispatch]);
 
   const searchValueContent = (value) => {

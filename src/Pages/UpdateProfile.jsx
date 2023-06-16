@@ -3,7 +3,6 @@ import signUpImage from "../assets/update.svg";
 import userImage from "../assets/user.svg";
 import Button from "../Components/Button/Button";
 import { ImSpinner5 } from "react-icons/im";
-import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import HomeLayout from "../Layout/HomeLayout";
@@ -14,6 +13,10 @@ import { fetchAllBlogs } from "../Store/blogPostSlice";
 import { useNavigate } from "react-router-dom";
 import { validateUserInputForm } from "../Services/RegExValidation/RegExValidation";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import {
+  toastMessageError,
+  toastMessageSuccess,
+} from "../Services/Toast Messages/ToastMessages";
 const UpdateProfile = () => {
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,13 +49,15 @@ const UpdateProfile = () => {
 
     setFormValue({ ...formValue, [name]: value });
   };
-
+  console.log(message);
   // submit function
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage(validateUserInputForm(formValue));
-
+    if (selectedPhoto == null) {
+      setMessage({ ...message, ["photo"]: "Please upload new profile photo." });
+    }
     try {
       let profilePicture = null;
 
@@ -68,63 +73,21 @@ const UpdateProfile = () => {
         password: formValue?.password,
         phone: formValue?.phone,
       };
-console.log(updatedData);
       if (
         profilePicture != null &&
         Object.keys(validateUserInputForm(formValue)).length === 0
       ) {
-        console.log(updatedData);
         await HttpCalls.put("/auth/updateProfile", updatedData)
           .then((res) => {
             localStorage.setItem("user", JSON.stringify(res.data.result));
             dispatch(fetchAllBlogs());
             setIsLoading(false);
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${res.data.message}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.success(res.data.message, {
-                toastId: toastId,
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-            }
+            toastMessageSuccess(res.data.message);
           })
           .catch((err) => {
             setIsLoading(false);
-            const toastId = "alert";
-            const existingToast = toast.isActive(toastId);
-            if (existingToast) {
-              toast.update(toastId, {
-                render: `${err.response.data.error}`,
-                autoClose: 4000,
-              });
-            } else {
-              toast.error(`${err.response.data.error}`, {
-                toastId: toastId,
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                style: {
-                  width: "300px",
-                },
-              });
-            }
+
+            toastMessageError(err.response.data.error);
           });
       } else {
         setIsLoading(false);
@@ -245,7 +208,7 @@ console.log(updatedData);
       }
       setShowSignUpPage(true);
     }, 500);
-  }, []);
+  }, [currentUser, navigate]);
 
   return (
     <HomeLayout>
@@ -257,15 +220,7 @@ console.log(updatedData);
         <div className="font-sans p-2 flex flex-col lg:flex-row justify-evenly items-center h-full w-full ">
           {/* to disable the navigation while loading-- lock the page */}
           <LoadingOverlayComponent openCloseOverlay={isLoading} />
-          <Modal
-            autoHeight={false}
-            // error={error ? true : false}
-            // info={success ? true : false}
-            // toggleModal={setToggleModal}
-            // openCloseModal={(error && toggleModal) || (success && toggleModal)}
-            // modalMessage={success ? success : error}
-            bottom={true}
-          />
+
           <div className="signup min-h-[40rem] h-auto min-w-[25rem] font-sans p-2 flex flex-col gap-6 order-2 lg:order-1">
             <span className="flex px-2 justify-center text-[38px] sm:text-[48px] font-[600] text-gray-600 min-w-[30rem]">
               Update Your Profile
@@ -275,19 +230,20 @@ console.log(updatedData);
             <form
               action=""
               onSubmit={onSubmit}
-              className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-5 font-sans relative`}>
+              className={`p-5 w-full flex flex-col justify-center items-center sm:items-stretch gap-4 font-sans relative`}>
               <label
                 htmlFor="image"
                 className="w-full flex items-center justify-center">
                 {selectedPhoto ? (
                   <>
                     <input
+                      required
                       type="file"
                       name="image"
                       id="image"
                       hidden
                       onChange={handlePhotoChange}
-                    />{" "}
+                    />
                     <img
                       src={URL.createObjectURL(selectedPhoto)}
                       alt=""
@@ -296,7 +252,7 @@ console.log(updatedData);
                     />
                   </>
                 ) : (
-                  <>
+                  <div className="w-full h-auto flex flex-col gap-1 justify-center items-center">
                     <img
                       src={
                         currentUser?.profilePicture
@@ -307,19 +263,28 @@ console.log(updatedData);
                       className="h-40 w-40 object-cover cursor-pointer rounded-full"
                     />
                     <input
+                      required
                       type="file"
                       name="image"
                       id="image"
                       hidden
                       onChange={handlePhotoChange}
                     />
-                  </>
+                    {message?.photo && (
+                      <span className="relative w-full h-[4rem] sm:h-[2.8rem] py-[3px]">
+                        <span className="absolute w-full h-auto text-red-700 px-1  flex justify-center items-center">
+                          {message?.photo}
+                        </span>
+                      </span>
+                    )}
+                  </div>
                 )}
               </label>
               <label
                 htmlFor="username"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
                 <input
+                  required
                   type="text"
                   name="username"
                   id="username"
@@ -330,7 +295,7 @@ console.log(updatedData);
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
                 {message?.username && (
-                  <span className="relative w-full h-[4rem] sm:h-[2.8rem] py-[3px]">
+                  <span className="relative w-full h-[2rem] sm:h-[1.7rem] py-[3px]">
                     <span className="absolute w-full h-auto text-red-700 flex justify-start items-center px-1">
                       {message?.username}
                     </span>
@@ -341,6 +306,7 @@ console.log(updatedData);
                 htmlFor="email"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
                 <input
+                  required
                   type="email"
                   name="email"
                   id="email"
@@ -351,7 +317,7 @@ console.log(updatedData);
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
                 {message?.email && (
-                  <span className="relative w-full h-[4rem] sm:h-[2rem] py-[3px]">
+                  <span className="relative w-full h-[2rem] sm:h-[2rem] py-[3px]">
                     <span className="absolute w-full h-auto text-red-700 flex justify-start items-center px-1">
                       {message?.email}
                     </span>
@@ -362,6 +328,7 @@ console.log(updatedData);
                 htmlFor="number"
                 className="flex flex-col justify-start items-start  sm:w-auto w-3/5">
                 <input
+                  required
                   type="number"
                   name="phone"
                   id="phone"
@@ -373,7 +340,7 @@ console.log(updatedData);
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
                 />
                 {message?.phone && (
-                  <span className="relative w-full h-[4rem] sm:h-[2.8rem] py-[3px]">
+                  <span className="relative w-full h-[2rem] sm:h-[2rem] py-[3px]">
                     <span className="absolute w-full h-auto text-red-700 flex justify-start items-center px-1">
                       {message?.phone}
                     </span>
@@ -400,6 +367,7 @@ console.log(updatedData);
                   )}
                 </span>
                 <input
+                  required
                   type={togglePasswordName}
                   name="password"
                   id="password"
@@ -408,9 +376,8 @@ console.log(updatedData);
                   value={formValue?.password}
                   onChange={handleChange}
                   className={`border-[1px] text-[20px] border-gray-300 cursor-pointer hover:border-purple focus:outline-1 text-gray-600 focus:outline-purple/90 h-[3rem] w-full rounded-md px-4 `}
-                  required
                 />
-                <span className="relative w-full min-h-[4rem] sm:min-h-[3rem] max-h-[5rem]">
+                <span className="relative w-full py-1 sm:py-0 min-h-[5rem] sm:min-h-[2.5rem] max-h-[5rem]">
                   {message?.password && (
                     <span
                       className={`absolute  text-red-600 p-2 px-2 text-[14px] max-h-[5rem] overflow-hidden flex justify-start items-center sm:w-full`}>

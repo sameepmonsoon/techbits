@@ -12,6 +12,8 @@ const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  console.log("current user length", currentUser?._id);
   const username = currentUser?.username;
   const profilePicture = currentUser?.profilePicture;
   const dispatch = useDispatch();

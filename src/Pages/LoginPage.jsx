@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ImSpinner5 } from "react-icons/im";
-import Modal from "../Components/Modal/Modal";
 import LoadingOverlayComponent from "../Components/LoadingOverlayComponent";
 import PageLoadingSpinner from "../Components/PageLoadingSpinner/PageLoadingSpinner";
 import {
@@ -21,11 +20,11 @@ const LoginPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
   const [togglePassword, setTogglePassword] = useState("password");
   const dispatch = useDispatch();
-  const { error, isLoading, success, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
+  const { error, isLoading } = useSelector((state) => state.auth);
+
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
   // for modal open and close
-  const [toggleModal, setToggleModal] = useState(false);
   const [showSignUpPage, setShowSignUpPage] = useState(false);
   // const [loading, setLoading] = useState(false);
   // const navigate = useNavigate();
@@ -34,7 +33,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   let schema = yup.object().shape({
     password: yup.string().required("Password is required."),
-    email: yup.string().email().required("Email or user name is required."),
+    email: yup.string().required("Email or user name is required."),
   });
 
   // const location = useLocation();
@@ -68,13 +67,13 @@ const LoginPage = () => {
   }, [error]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (currentUser?._id) {
       toastMessageSuccess("Welcome to Techbits.");
       setTimeout(() => {
         navigate("/");
       }, 300);
     }
-  }, [isAuthenticated]);
+  }, [currentUser, navigate]);
   return (
     <>
       {!showSignUpPage ? (

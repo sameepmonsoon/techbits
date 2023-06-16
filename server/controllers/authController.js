@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 exports.updateProfile = async (req, res) => {
   try {
     const fileData = Buffer.from(req.body.profilePicture, "base64");
+    const { username, email, password, phone, userId } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findById(req.body.userId);
@@ -18,43 +19,41 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // const existingUserName = await User.findOne({
-    //   username: req.body.username,
-    // });
     if (req.body.username === existingUser.username) {
       return res.status(400).json({
         error: "Username is already taken. Please choose a different username.",
       });
     }
-    const { username, email, password, phone } = req.body;
-
+    const existingEmail = await User.findOne({ email: req.body.email });
+    if (existingEmail) {
+      return res.status(400).json({
+        error: "The email address you provided is already in use.",
+      });
+    }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    await User.update({
-      username,
-      email,
-      password: hash,
-      phone,
-      profilePicture: `data:image/png;base64,${fileData.toString("base64")}`,
-    });
-    // Update the user's username
 
+    // Update the user's username
+    existingUser.username = username;
+    existingUser.email = email;
+    existingUser.phone = phone;
+    existingUser.password = hash;
     // Update the user's profile picture
-    // existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
-    //   "base64"
-    // )}`;
+    existingUser.profilePicture = `data:image/png;base64,${fileData.toString(
+      "base64"
+    )}`;
 
     // Save the updated user data
+
     await existingUser.save();
     await Blog.updateMany(
       { userId: req.body.userId },
       { username: req.body.username }
     );
     const result = await User.findOne({ _id: req.body.userId });
-    console.log("the updated result is ", result);
     res.status(200).json({ result, message: "Profile updated successfully." });
   } catch (err) {
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ error: "Internal server error.inside catch" });
   }
 };
 
