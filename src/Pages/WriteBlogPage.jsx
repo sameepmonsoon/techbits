@@ -106,6 +106,11 @@ const WriteBlogPage = () => {
   const [openBlogCategory, setOpenBlogCategory] = useState(true);
   const handleChange = (event) => {
     setTextareaValue(event.target.value);
+    if (Object.keys(handleFormValidation(textareaValue)).length > 0) {
+      setFormErrors(true);
+    } else {
+      setFormErrors(false);
+    }
   };
 
   const adjustTextareaHeight = () => {
@@ -148,12 +153,12 @@ const WriteBlogPage = () => {
       Object.keys(handleFormValidation(textareaValue))
     );
 
-    if (Object.keys(handleFormValidation(textareaValue)).length > 0) {
-      setFormErrors(true);
-      setDisableSubmission(false);
-    } else {
-      setFormErrors(false);
-    }
+    // if (Object.keys(handleFormValidation(textareaValue)).length > 0) {
+    //   setFormErrors(true);
+    //   setDisableSubmission(false);
+    // } else {
+    //   setFormErrors(false);
+    // }
     const requestDataInitial = {
       username: currentUser.username,
       userId: currentUser._id,
@@ -373,7 +378,6 @@ const WriteBlogPage = () => {
 
   const renderSavedDraft = (draftId) => {
     mapDraftDataOrEditData(draftId, draftData);
- 
   };
 
   const handleViewDraft = () => {
