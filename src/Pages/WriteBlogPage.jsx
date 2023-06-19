@@ -119,7 +119,7 @@ const WriteBlogPage = () => {
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, [isFocused]);
+  }, []);
 
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
