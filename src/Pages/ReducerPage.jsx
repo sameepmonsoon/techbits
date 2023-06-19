@@ -1,4 +1,4 @@
-import { useId, useReducer, useState } from "react";
+import { useEffect, useId, useReducer, useState } from "react";
 import ReactQuill from "react-quill";
 import { toastMessageError } from "../Services/Toast Messages/ToastMessages";
 import Card from "../Components/Card/Card";
@@ -6,6 +6,8 @@ import { AiFillDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { v4 as uuid } from "uuid";
 const ReducerPage = () => {
+  const [localData, setLocalData] = useState(null);
+
   const initialState = [
     {
       id: 1,
@@ -33,12 +35,14 @@ const ReducerPage = () => {
           updatedState = [...state];
           updatedState?.push(action.payload);
         }
+        localStorage.setItem("localBlog", JSON.stringify(updatedState));
         return updatedState;
       case "read":
         return {};
       case "update":
         return {};
       case "delete":
+        console.log("to be deleted id", action.payload);
         return {};
       default:
         throw new Error();
@@ -51,6 +55,7 @@ const ReducerPage = () => {
   const handleAddBlog = () => {
     setShowForm(true);
   };
+
   const handleChange = (event) => {
     const { value, name } = event.target;
     // console.log(value, name);
@@ -92,8 +97,15 @@ const ReducerPage = () => {
   };
 
   const handleBLogDelete = (blogId) => {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa dddddd");
     dispatch({ type: "delete", payload: blogId });
   };
+
+  console.log("all state", state);
+
+  useEffect(() => {
+    setLocalData(JSON.parse(localStorage.getItem("localBLog")));
+  }, [initialState]);
   return (
     <div className="w-full h-[200vh] flex flex-col justify-start items-center p-1 gap-10">
       <div className="h-10 flex justify-center items-center w-auto">
@@ -175,9 +187,7 @@ const ReducerPage = () => {
                       Edit <FiEdit size={20} />
                     </span>
                     <span
-                      onClick={() => {
-                        handleBLogDelete(item?.id);
-                      }}
+                      onClick={handleBLogDelete}
                       className="cursor-pointer flex justify-start items-center gap-1 border-[1px] p-1 rounded-md hover:text-red-600 hover:border-red-600">
                       Delete <AiFillDelete size={20} />
                     </span>
