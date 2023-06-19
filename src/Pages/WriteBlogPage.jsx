@@ -25,7 +25,6 @@ const WriteBlogPage = () => {
   const { cardId } = useParams();
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
   const [formErrors, setFormErrors] = useState(null);
-  // const { isHovering } = useContext(BlogContext);
   const [diableSubmission, setDisableSubmission] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user"));
