@@ -21,14 +21,13 @@ const HomePage = () => {
     );
 
   function memoizeBlogLength(values) {
-    console.log("memoizeBlogLength", values.length);
     var currBlog = { totalLength: values?.length };
     return currBlog;
   }
 
   const memoized = useMemo(
     () => memoizeBlogLength(blogAfterSearchFilter),
-    [blogAfterSearchFilter.length]
+    [blogAfterSearchFilter?.length]
   );
   // const memoized = { totalLength: blogAfterSearchFilter?.length };
   // const memoized = useMemo(() => {}, []);

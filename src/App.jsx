@@ -13,6 +13,7 @@ import About from "./PageComponents/About/About";
 import UpdateProfile from "./Pages/UpdateProfile";
 import "react-toastify/dist/ReactToastify.css";
 import AllBlogs from "./Pages/AllBlogs";
+import ReducerPage from "./Pages/reducerPage";
 function App() {
   const router = createBrowserRouter([
     {
@@ -38,6 +39,7 @@ function App() {
     { path: "/read/:cardId", element: <ReadFullBlogPage /> },
     { path: "/update", element: <UpdateProfile /> },
     { path: "/blogs", element: <AllBlogs /> },
+    { path: "/useReducer", element: <ReducerPage /> },
   ]);
   return <RouterProvider router={router}></RouterProvider>;
 }

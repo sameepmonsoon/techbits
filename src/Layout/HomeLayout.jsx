@@ -7,6 +7,7 @@ const HomeLayout = ({ children, renderComponents }) => {
     { title: "Home", link: "/" },
     ,
     { title: "Blogs", link: "/blogs" },
+    { title: "Reducer", link: "/useReducer" },
   ];
   // Schedule the deletion after one hour
   const expirationTime = 3 * 60 * 60 * 1000;
