@@ -34,17 +34,21 @@ const Card = (prop) => {
           ? "w-[20rem] sm:w-[40rem] sm:h-[13rem] h-[28.2rem] gap-2 flex-col sm:flex-row"
           : "w-[22rem] sm:w-[24rem] h-[28.2rem] flex-col"
       } shadow-md shadow-gray-300 bg-white/80 backdrop-blur-sm  gap-2 flex justify-start items-start rounded-sm`}>
-      <img
-        src={cardImage}
-        alt=""
+      <div
         className={`${
           autoHeight
             ? "h-[50%] w-full"
             : row
-            ? "h-[60%] sm:h-full w-full sm:w-[50%] "
-            : "h-[60%]  w-full"
-        }  object-cover rounded-sm`}
-      />
+            ? "h-[60%] sm:h-full w-full sm:w-[55%] "
+            : "max-h-[60%]  w-full"
+        }  object-cover rounded-sm`}>
+        <img
+          src={cardImage}
+          alt=""
+          className={`
+        w-full h-full  object-cover rounded-sm`}
+        />
+      </div>
       <div className="flex flex-col justify-start items-start overflow-hidden w-full gap-1 p-3">
         <div className="text-deep-purple capitalize text-[16px] flex gap-1 justify-start items-center ">
           {tag} <span>{tag != "" && ""}</span>

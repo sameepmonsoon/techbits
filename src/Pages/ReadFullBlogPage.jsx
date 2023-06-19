@@ -117,13 +117,13 @@ const ReadFullBlogPage = () => {
     setAllBlogPostByUser(
       currentBlog?.filter((item) => item?.userId === creatorId)
     );
-  }, [cardId, creatorId, currentUserId]);
+  }, [cardId, creatorId, currentUserId, currentBlog, navigate]);
 
   useEffect(() => {
     if (currentUser == null) {
       navigate("/");
     }
-  }, []);
+  }, [currentUser, navigate]);
   const handleClickFollow = () => {
     HttpCalls.put("/auth/follow", {
       userId: creatorId,

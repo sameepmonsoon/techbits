@@ -89,7 +89,7 @@ const Navbar = ({ Links, fixed, border }) => {
       </div>
       {/*  for small devices modal*/}
       <div
-        className={`absolute transition-all z-10 min-h-full ease-in-out overflow-hidden border-b-[1px]  border-b-black/50  duration-900 flex sm:hidden flex-col justify-start items-center w-full right-0 top-[-4.2rem] border-l-[1px] ${
+        className={`absolute transition-all z-10 min-h-full ease-in-out overflow-hidden border-b-[1px]  border-b-black/50  duration-900 flex sm:hidden flex-col justify-start items-center w-full right-0 top-[-5rem] border-l-[1px] ${
           openModal && "left-[-200%] "
         } border-l-gray-100`}>
         <span className="absolute z-10 top-[10rem] right-4 cursor-pointer hover:text-[#53389E] text-[#9E77ED]/90">

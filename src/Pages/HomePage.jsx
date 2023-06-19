@@ -23,6 +23,7 @@ const HomePage = () => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   };
 
+  console.log("home page");
   return (
     <HomeLayout
       renderComponents={

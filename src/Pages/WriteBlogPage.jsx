@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BlogLayout from "../Layout/BlogLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -113,13 +113,13 @@ const WriteBlogPage = () => {
     }
   };
 
-  const adjustTextareaHeight = () => {
+  const adjustTextareaHeight = useCallback(() => {
     if (isFocused) {
       const textarea = document.getElementById("myTextarea");
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  };
+  }, []);
 
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -171,13 +171,13 @@ const WriteBlogPage = () => {
     };
 
     if (
-      (textareaValue.trim().length !== 0 &&
-        formErrors === false &&
+      (textareaValue.trim().length !== 0 && formErrors === false) ||
+      (formErrors === null &&
         selectedPhoto != null &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1) ||
-      (textareaValue.trim().length !== 0 &&
-        formErrors === false &&
+      (textareaValue.trim().length !== 0 && formErrors === false) ||
+      (formErrors === null &&
         selectedDraftPhoto != "" &&
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)
@@ -369,12 +369,12 @@ const WriteBlogPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [currentUser._id]);
 
   // to edit the blog if cardId is present
   useEffect(() => {
     mapDraftDataOrEditData(cardId, currentBlog);
-  }, [cardId]);
+  }, [cardId, currentBlog]);
 
   const renderSavedDraft = (draftId) => {
     mapDraftDataOrEditData(draftId, draftData);
@@ -386,7 +386,7 @@ const WriteBlogPage = () => {
 
   useEffect(() => {
     adjustTextareaHeight();
-  }, [textareaValue]);
+  }, [textareaValue, adjustTextareaHeight]);
 
   useEffect(() => {
     if (currentUser == null) {
@@ -394,7 +394,7 @@ const WriteBlogPage = () => {
     }
 
     setDataExtractedFromDraft(false);
-  }, []);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     if (isFocused && textAreaRef.current) {

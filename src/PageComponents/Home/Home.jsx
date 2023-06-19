@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../../Components/Card/Card";
-const Home = (userDetails) => {
+const Home = () => {
   const [currentUser, setCurrentUser] = useState();
   const [allBlogList, setAllBlogList] = useState([]);
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import Logo from "../Components/Logo/Logo";
 import Button from "../Components/Button/Button";
 import { CiUser } from "react-icons/ci";
@@ -10,10 +10,8 @@ export const BlogContext = createContext({
 });
 
 const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
-  const NavbarLinks = [{ title: "Publish", link: "/" }];
   const location = useLocation();
   const currentUserDetails = JSON.parse(localStorage.getItem("user"));
-  const [toggleModal, setToggleModal] = useState(true);
   const [isHovering, setIsHovering] = useState(true);
   const handleMouseEnter = (event) => {
     setIsHovering(event);
@@ -32,9 +30,7 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
   }, []);
 
   return (
-    <div
-      className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden "
-    >
+    <div className="min-h-screen w-full font-sans flex flex-col overflow-x-hidden ">
       <div className="border-b-[1px] bg-white backdrop-blur-sm">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex justify-start items-center gap-3 w-[20rem] sm:w-[30rem]">
@@ -61,7 +57,6 @@ const BlogLayout = ({ children, renderComponents, getIsSaved }) => {
                 onClick={() => {
                   setIsHovering((prev) => !prev);
                 }}
-     
               />
               {!isHovering && (
                 <div className="absolute right-2 top-[3.4rem] group-hover:flex hidden  cursor-pointer  group-hover:bg-white border-[1px] border-gray-300 shadow-sm  h-8 w-20 rounded-md overflow-hidden items-center justify-center">

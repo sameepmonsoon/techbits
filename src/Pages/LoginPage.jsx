@@ -43,7 +43,7 @@ const LoginPage = () => {
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
-  }, []);
+  }, [dispatch]);
   // formik form validation
   const formik = useFormik({
     initialValues: { password: "", email: "" },
