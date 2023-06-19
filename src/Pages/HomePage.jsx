@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -14,15 +14,31 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const { isLoading, currentBlogPosts } = useSelector((state) => state.blog);
   const [getSearchValue, setGetSearchValue] = useState("");
+  const blogAfterSearchFilter = currentBlogPosts
+    .slice(0, 6)
+    .filter((item) =>
+      item.titleContent.toLowerCase().split(" ").join().includes(getSearchValue)
+    );
+
+  function memoizeBlogLength(values) {
+    var currBlog = { totalLength: values?.length };
+    return currBlog;
+  }
+
+  const memoized = useMemo(
+    () => memoizeBlogLength(blogAfterSearchFilter),
+    [blogAfterSearchFilter?.length]
+  );
+  // const memoized = { totalLength: blogAfterSearchFilter?.length };
+  // const memoized = useMemo(() => {}, []);
 
   useEffect(() => {
     dispatch(fetchAllBlogs());
   }, [dispatch]);
 
-  const searchValueContent = (value) => {
+  const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
-  };
-
+  }, []);
   console.log("home page");
   return (
     <HomeLayout
@@ -38,78 +54,69 @@ const HomePage = () => {
                   <SkeletonCard />
                 </>
               ) : (
-                currentBlogPosts
-                  .slice(0, 6)
-                  .filter((item) =>
-                    item.titleContent
-                      .toLowerCase()
-                      .split(" ")
-                      .join()
-                      .includes(getSearchValue)
-                  )
-                  .map((item, index) => (
-                    <Card
-                      key={index}
-                      cardId={item._id}
-                      writerId={item.userId}
-                      tag={
-                        <div className="flex gap-2 overflow-hidden">
-                          {item.categoryList
-                            .filter(
-                              (category, index) =>
-                                category.id !== "" && index < 3
-                            )
-                            .map((category, categoryIndex) => {
-                              if (categoryIndex === 0 || categoryIndex == 2) {
-                                return (
-                                  <div
-                                    key={categoryIndex}
-                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-red-100/50 text-red-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                                    <span> {category.item}</span>
-                                  </div>
-                                );
-                              } else if (
-                                categoryIndex == 1 ||
-                                categoryIndex == 3
-                              ) {
-                                return (
-                                  <div
-                                    key={categoryIndex}
-                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-green-100/80 text-green-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                                    <span> {category.item}</span>
-                                  </div>
-                                );
-                              } else if (
-                                categoryIndex === 4 ||
-                                categoryIndex == 5
-                              ) {
-                                return (
-                                  <div
-                                    key={categoryIndex}
-                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-rose-100/70 text-rose-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                                    <span> {category.item}</span>
-                                  </div>
-                                );
-                              } else {
-                                return (
-                                  <div
-                                    key={categoryIndex}
-                                    className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
-                                    <span> {category.item}</span>
-                                  </div>
-                                );
-                              }
-                            })}
-                        </div>
-                      }
-                      cardTitle={item.titleContent}
-                      cardDescription={""}
-                      cardUserName={item.username}
-                      cardImage={item.selectedPhoto}
-                      cardPostDate={item.createdAt}
-                      cardUserImage={image}
-                    />
-                  ))
+                //
+                blogAfterSearchFilter.map((item, index) => (
+                  <Card
+                    key={index}
+                    cardId={item._id}
+                    writerId={item.userId}
+                    tag={
+                      <div className="flex gap-2 overflow-hidden">
+                        {item.categoryList
+                          .filter(
+                            (category, index) => category.id !== "" && index < 3
+                          )
+                          .map((category, categoryIndex) => {
+                            if (categoryIndex === 0 || categoryIndex == 2) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-red-100/50 text-red-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else if (
+                              categoryIndex == 1 ||
+                              categoryIndex == 3
+                            ) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-green-100/80 text-green-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else if (
+                              categoryIndex === 4 ||
+                              categoryIndex == 5
+                            ) {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-rose-100/70 text-rose-700 text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div
+                                  key={categoryIndex}
+                                  className="w-auto justify-center h-[1rem] max-w-[10rem] bg-purple/10 text-deep-purple text-[13px] font-[400] p-[px] gap-1 flex items-center whitespace-nowrap capitalize rounded-full px-2 py-3">
+                                  <span> {category.item}</span>
+                                </div>
+                              );
+                            }
+                          })}
+                      </div>
+                    }
+                    cardTitle={item.titleContent}
+                    cardDescription={""}
+                    cardUserName={item.username}
+                    cardImage={item.selectedPhoto}
+                    cardPostDate={item.createdAt}
+                    cardUserImage={image}
+                  />
+                ))
               )}
             </div>
           </div>
@@ -117,6 +124,7 @@ const HomePage = () => {
             <InfoSection
               infoText={"Join 1000+ startups growing with blog"}
               infoImage={infoImage}
+              info={memoized}
             />
           </div>
         </>

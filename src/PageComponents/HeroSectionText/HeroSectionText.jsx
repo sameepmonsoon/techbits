@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import Button from "../../Components/Button/Button";
 
 const HeroSectionText = ({ align, color, getSearchValue }) => {
@@ -7,8 +7,12 @@ const HeroSectionText = ({ align, color, getSearchValue }) => {
     // setSearchValue(e?.target?.value);
   };
   const handleSubmit = () => {
-    getSearchValue(searchContent.current?.value);
+    if (searchContent.current.value) {
+      getSearchValue(searchContent.current?.value);
+    }
   };
+
+  console.log("consoling inside hero section");
   return (
     <div
       className={`p-1 font-sans flex flex-col justify-center ${
@@ -54,4 +58,4 @@ const HeroSectionText = ({ align, color, getSearchValue }) => {
   );
 };
 
-export default HeroSectionText;
+export default memo(HeroSectionText);
