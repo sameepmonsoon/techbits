@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -14,6 +14,9 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const { isLoading, currentBlogPosts } = useSelector((state) => state.blog);
   const [getSearchValue, setGetSearchValue] = useState("");
+
+  // const memoized = useMemo(() => ({}), []);
+  const memoized = { totalLength: currentBlogPosts.length };
 
   useEffect(() => {
     dispatch(fetchAllBlogs());
@@ -117,6 +120,7 @@ const HomePage = () => {
             <InfoSection
               infoText={"Join 1000+ startups growing with blog"}
               infoImage={infoImage}
+              info={memoized}
             />
           </div>
         </>

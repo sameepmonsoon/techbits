@@ -12,7 +12,7 @@ const HeroSectionText = ({ align, color, getSearchValue }) => {
     }
   };
 
-  console.log("ma hero ho");
+  console.log("consoling inside hero section");
   return (
     <div
       className={`p-1 font-sans flex flex-col justify-center ${

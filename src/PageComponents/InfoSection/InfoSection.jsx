@@ -1,8 +1,17 @@
 import { memo } from "react";
 import { AiFillStar } from "react-icons/ai";
 import Button from "../../Components/Button/Button";
-const InfoSection = ({ infoText, infoImage }) => {
-  console.log("I am inside info section.");
+function checkPropsBlogLength(prevBlogLength, currBlogLength) {
+  console.log("prev total length", prevBlogLength.info.totalLength);
+  console.log("next total length", currBlogLength.info.totalLength);
+
+  return (
+    prevBlogLength?.info?.totalLength === currBlogLength?.info?.totalLength
+  );
+}
+
+const InfoSection = ({ infoText, infoImage, info }) => {
+  console.log("I am inside info section.", info);
   return (
     <div className="font-sans flex flex-col gap-5 sm:gap-0 sm:flex-row w-full px-5 h-auto py-20 overflow-hidden">
       <div className="flex flex-col justify-start items-start flex-1 gap-4">
@@ -47,4 +56,4 @@ const InfoSection = ({ infoText, infoImage }) => {
   );
 };
 
-export default memo(InfoSection);
+export default memo(InfoSection, checkPropsBlogLength);
