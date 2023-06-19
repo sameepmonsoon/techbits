@@ -17,7 +17,6 @@ import CommentBox from "../PageComponents/CommentBox/CommentBox";
 import { toastMessageSuccess } from "../Services/Toast Messages/ToastMessages";
 const ReadFullBlogPage = () => {
   const navigate = useNavigate();
-
   // state for delete modal open/close
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   // to show comment
@@ -28,7 +27,6 @@ const ReadFullBlogPage = () => {
   const [likeComment, setLikeComment] = useState([]);
   const { cardId } = useParams();
   const [currentBlog, setCurrentBlog] = useState([]);
-
   // flag for the blog posted by the currentuse
   const [currentUserBlog, setCurrentUserBlog] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
@@ -78,7 +76,6 @@ const ReadFullBlogPage = () => {
   };
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     HttpCalls.post(`/blogReact/get`, { blogId: cardId })
       .then((res) => {
         setLikeComment(res.data.findAll[0]);
@@ -120,6 +117,8 @@ const ReadFullBlogPage = () => {
   }, [cardId, creatorId, currentUserId, currentBlog, navigate]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
     if (currentUser == null) {
       navigate("/");
     }
