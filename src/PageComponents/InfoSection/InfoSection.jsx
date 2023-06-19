@@ -2,21 +2,21 @@ import { memo, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import Button from "../../Components/Button/Button";
 
-var currentBlogLength;
+// var currentBlogLength;
 // memo custom function
-function checkPropsBlogLength(prevBlogLength, currBlogLength) {
-  currentBlogLength = currBlogLength?.info?.totalLength;
-  return (
-    prevBlogLength?.info?.totalLength === currBlogLength?.info?.totalLength
-  );
-}
+// function checkPropsBlogLength(prevBlogLength, currBlogLength) {
+//   currentBlogLength = currBlogLength?.info?.totalLength;
+//   return (
+//     prevBlogLength?.info?.totalLength === currBlogLength?.info?.totalLength
+//   );
+// }
 
 const InfoSection = ({ infoText, infoImage, info }) => {
   const [showTotalBLog, setShowTotalBLog] = useState(null);
 
   const handleButtonClick = () => {
-    console.log("click", currentBlogLength);
-    setShowTotalBLog(currentBlogLength);
+    console.log("click", info?.totalLength);
+    setShowTotalBLog(info?.totalLength);
   };
   console.log("I am inside info section.", info);
   return (
@@ -74,4 +74,4 @@ const InfoSection = ({ infoText, infoImage, info }) => {
   );
 };
 
-export default memo(InfoSection, checkPropsBlogLength);
+export default memo(InfoSection);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -14,15 +14,24 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const { isLoading, currentBlogPosts } = useSelector((state) => state.blog);
   const [getSearchValue, setGetSearchValue] = useState("");
-
   const blogAfterSearchFilter = currentBlogPosts
     .slice(0, 6)
     .filter((item) =>
       item.titleContent.toLowerCase().split(" ").join().includes(getSearchValue)
     );
 
-  // const memoized = useMemo(() => ({}), []);
-  const memoized = { totalLength: blogAfterSearchFilter?.length };
+  function memoizeBlogLength(values) {
+    console.log("memoizeBlogLength", values.length);
+    var currBlog = { totalLength: values?.length };
+    return currBlog;
+  }
+
+  const memoized = useMemo(
+    () => memoizeBlogLength(blogAfterSearchFilter),
+    [blogAfterSearchFilter.length]
+  );
+  // const memoized = { totalLength: blogAfterSearchFilter?.length };
+  // const memoized = useMemo(() => {}, []);
 
   useEffect(() => {
     dispatch(fetchAllBlogs());
@@ -31,7 +40,6 @@ const HomePage = () => {
   const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   }, []);
-
   console.log("home page");
   return (
     <HomeLayout
