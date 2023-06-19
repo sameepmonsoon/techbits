@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -19,9 +19,9 @@ const HomePage = () => {
     dispatch(fetchAllBlogs());
   }, [dispatch]);
 
-  const searchValueContent = (value) => {
+  const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
-  };
+  }, []);
 
   console.log("home page");
   return (
