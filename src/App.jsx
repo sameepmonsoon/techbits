@@ -1,5 +1,11 @@
 import "./App.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+  createBrowserRouter,
+} from "react-router-dom";
 import HomePage from "./Pages/HomePage";
 import SignUpPage from "./Pages/SignUpPage";
 import LoginPage from "./Pages/LoginPage";
@@ -14,33 +20,75 @@ import UpdateProfile from "./Pages/UpdateProfile";
 import "react-toastify/dist/ReactToastify.css";
 import AllBlogs from "./Pages/AllBlogs";
 import ReducerPage from "./Pages/reducerPage";
+import ProtectedRoute from "./Services/Protected Route/ProtectedRoute";
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <HomePage />,
-    },
-    {
-      path: "/profile",
-      element: <ProfilePage />,
-      children: [
-        { path: "", element: <Home /> },
-        {
-          path: "bookmarks",
-          element: <Bookmarks />,
-        },
-        { path: "about", element: <About /> },
-      ],
-    },
-    { path: "/signup", element: <SignUpPage /> },
-    { path: "/login", element: <LoginPage /> },
-    { path: "/forgetPassword", element: <ForgetPasswordPage /> },
-    { path: "/writeBlog/:cardId?", element: <WriteBlogPage /> },
-    { path: "/read/:cardId", element: <ReadFullBlogPage /> },
-    { path: "/update", element: <UpdateProfile /> },
-    { path: "/blogs", element: <AllBlogs /> },
-    { path: "/useReducer", element: <ReducerPage /> },
-  ]);
-  return <RouterProvider router={router}></RouterProvider>;
+  // const router = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <HomePage />,
+  //   },
+  //   {
+  //     path: "/profile",
+  //     element: <ProfilePage />,
+  //     children: [
+  //       { path: "", element: <Home /> },
+  //       {
+  //         path: "bookmarks",
+  //         element: <Bookmarks />,
+  //       },
+  //       { path: "about", element: <About /> },
+  //     ],
+  //   },
+  //   { path: "/signup", element: <SignUpPage /> },
+  //   { path: "/login", element: <LoginPage /> },
+  //   { path: "/forgetPassword", element: <ForgetPasswordPage /> },
+  //   { path: "/writeBlog/:cardId?", element: <WriteBlogPage /> },
+  //   { path: "/read/:cardId", element: <ReadFullBlogPage /> },
+  //   { path: "/update", element: <UpdateProfile /> },
+  //   { path: "/blogs", element: <AllBlogs /> },
+  //   { path: "/useReducer", element: <ReducerPage /> },
+  // ]);
+  // return <RouterProvider router={router}></RouterProvider>;
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }>
+          <Route path="" element={<Home />} />
+          <Route path="bookmarks" element={<Bookmarks />} />
+          <Route path="about" element={<About />} />
+        </Route>
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgetPassword" element={<ForgetPasswordPage />} />
+        <Route
+          path="/writeBlog/:cardId?"
+          element={
+            <ProtectedRoute>
+              <WriteBlogPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/read/:cardId" element={<ReadFullBlogPage />} />
+        <Route
+          path="/update"
+          element={
+            <ProtectedRoute>
+              <UpdateProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/blogs" element={<AllBlogs />} />
+        <Route path="/useReducer" element={<ReducerPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 export default App;

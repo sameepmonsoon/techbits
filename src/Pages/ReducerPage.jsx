@@ -35,10 +35,13 @@ const ReducerPage = () => {
         } else {
           updatedState = [...state];
           updatedState?.push(action.payload);
+          setShowForm(false);
+          setBlogValue(initialState);
         }
         return updatedState;
       case "read":
         if (blogExists) {
+          setShowForm(true);
           setEnableEdit(true);
           setButtonType("Update");
           setBlogValue({
@@ -60,13 +63,20 @@ const ReducerPage = () => {
           updatedState = state?.filter(
             (item) => item?.id !== "" && item !== undefined
           );
+          setShowForm(false);
+          setBlogValue({});
           setEnableEdit(false);
           setButtonType("publish");
         }
         return updatedState;
       case "delete":
+        window.scrollTo({ top: 0, behavior: "smooth" });
         if (blogExists) {
           updatedState = state?.filter((item) => item.id !== action.payload);
+          setShowForm(false);
+          setBlogValue({});
+          setEnableEdit(false);
+          setButtonType("publish");
         }
         return updatedState;
       default:
@@ -80,12 +90,15 @@ const ReducerPage = () => {
   };
   const handleChange = (event) => {
     const { value, name } = event.target;
+    setFormErrors(formValidation(blogValue));
     if (enableEdit) {
       setBlogValue({ ...blogValue, [name]: value });
     } else {
-      if (name === "title")
+      if (name === "title") {
         setBlogValue({ ...blogValue, [name]: value, id: uuid() });
-      else setBlogValue({ ...blogValue, [name]: value });
+      } else {
+        setBlogValue({ ...blogValue, [name]: value });
+      }
     }
   };
   const handleImageChange = (event) => {
@@ -94,13 +107,20 @@ const ReducerPage = () => {
     const name = event.target.name;
     reader.onloadend = () => {
       setBlogValue({ ...blogValue, [name]: reader.result });
+      formErrors.photo = "";
+      // setFormErrors(formValidation(blogValue));
     };
-
+    reader.onerror = () => {
+      setFormErrors(formValidation(blogValue));
+    };
     reader.readAsDataURL(files);
   };
   const formValidation = (values) => {
     let errors = {};
-    if (!values?.title) {
+    const emptyTitle = values?.title?.trim()?.length;
+    const emptyBody = values?.body?.replace(/<(.|\n)*?>/g, "").trim()?.length;
+    // console.log(values?.body, "empty ", emptyBody);
+    if (emptyTitle === 0) {
       errors.title = "title can't be empty ";
     } else {
       let titleRegEx = /^[a-zA-Z]/;
@@ -108,20 +128,44 @@ const ReducerPage = () => {
         errors.title = "title must not contain numbers.";
       }
     }
+
+    if (!values?.photo) {
+      errors.photo = "Please choose photo ";
+    }
+
+    if (values?.body == undefined || emptyBody === 0) {
+      errors.body = "BLog body can't be empty ";
+    }
     return errors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormErrors(formValidation(blogValue));
+
     if (Object.keys(formErrors).length !== 0) {
-      toastMessageError(formErrors?.title);
-    } else {
-      if (enableEdit) {
+      toastMessageError(
+        formErrors?.photo
+          ? formErrors?.photo
+          : formErrors?.title
+          ? formErrors.title
+          : formErrors.body
+          ? formErrors.body
+          : "Internal Error"
+      );
+    }
+    if (
+      Object.keys(blogValue).length !== 0 &&
+      !Array.isArray(blogValue) &&
+      Object.keys(formErrors).length === 0
+    ) {
+      if (enableEdit && state.id != "") {
         dispatch({ type: "update", payload: blogValue });
       }
       if (state.length < 0 || !enableEdit)
         dispatch({ type: "create", payload: blogValue });
+    }
+    if (Object.keys(blogValue).length === 0) {
+      toastMessageError("Can't post empty blog.");
     }
   };
 
@@ -137,6 +181,9 @@ const ReducerPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  useEffect(() => {
+    setFormErrors(formValidation(blogValue));
+  }, [blogValue]);
   return (
     <div className="w-full h-[200vh] flex flex-col justify-start items-center p-1 gap-10">
       <div className="h-10 flex justify-center items-center w-auto">
@@ -151,32 +198,38 @@ const ReducerPage = () => {
       </div>
       {showForm && (
         <form
-          className="w-[50%] p-2 h-auto  flex flex-col justify-start items-center gap-5 border-[1px] rounded-md"
+          className="w-full md:w-[50%] p-2 h-auto  flex flex-col justify-start items-center gap-5 border-[1px] rounded-md"
           onSubmit={handleSubmit}>
           <textarea
             value={blogValue?.title}
             type="text"
             id="title"
             name="title"
-            placeholder="type"
-            className="border-[1px] p-1 w-[50%]"
+            placeholder="Blog Title"
+            className="border-[1px] p-1 w-full md:w-[50%]"
             onChange={handleChange}
           />
-          <div className="h-auto w-full flex flex-col justify-center items-start sm:flex-row">
-            <img
-              src={blogValue?.photo && blogValue?.photo}
-              alt="No image chosen"
-              className="h-40 w-40 rounded-md border-[1px] order-2 object-cover"
-            />
+          <label
+            htmlFor="image"
+            className="h-auto w-full flex flex-col justify-center items-center md:items-start md:flex-row gap-2 sm:gap-0">
+            {blogValue.photo && (
+              <img
+                src={blogValue?.photo && blogValue?.photo}
+                alt="No image chosen"
+                className="h-40 w-40 rounded-md border-[1px] order-2 object-cover"
+              />
+            )}
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               name="photo"
-              className="w-[30%]"
-            />{" "}
-          </div>
-          <div className="w-[50%] h-auto">
+              id="image"
+              placeholder="Choose Image"
+              className="w-full md:w-[30%] order-2 sm:order-2"
+            />
+          </label>
+          <div className="w-full md:w-[50%] h-auto">
             <ReactQuill
               value={blogValue?.body}
               onChange={(e) =>
@@ -194,7 +247,7 @@ const ReducerPage = () => {
                   matchVisual: false,
                 },
               }}
-              placeholder="Start typing..."
+              placeholder="Blog Body"
             />
           </div>
 
@@ -203,10 +256,19 @@ const ReducerPage = () => {
           </button>
         </form>
       )}
+
+      <p className="w-full h-10 justify-center flex bg-gray-200 items-center">
+        Blogs
+      </p>
       <div className="flex justify-center items-center gap-10 flex-wrap py-5">
         {state?.length &&
           state
-            ?.filter((item) => item?.title !== "")
+            ?.filter(
+              (item) =>
+                item?.title !== "" &&
+                Object.keys(item).length > 0 &&
+                !Array.isArray(item)
+            )
             .map((item, index) => (
               <Card
                 key={index}
