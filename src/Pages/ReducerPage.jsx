@@ -108,7 +108,6 @@ const ReducerPage = () => {
     reader.onloadend = () => {
       setBlogValue({ ...blogValue, [name]: reader.result });
       formErrors.photo = "";
-      // setFormErrors(formValidation(blogValue));
     };
     reader.onerror = () => {
       setFormErrors(formValidation(blogValue));
@@ -119,7 +118,6 @@ const ReducerPage = () => {
     let errors = {};
     const emptyTitle = values?.title?.trim()?.length;
     const emptyBody = values?.body?.replace(/<(.|\n)*?>/g, "").trim()?.length;
-    // console.log(values?.body, "empty ", emptyBody);
     if (emptyTitle === 0) {
       errors.title = "title can't be empty ";
     } else {
