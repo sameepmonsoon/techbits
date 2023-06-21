@@ -5,93 +5,19 @@ import Card from "../Components/Card/Card";
 import { AiFillDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { v4 as uuid } from "uuid";
+import {
+  localBlogInitialState,
+  localBlogReducer,
+} from "../Hooks/useReducerCustom";
 const ReducerPage = () => {
-  const [showForm, setShowForm] = useState(false);
   const [blogValue, setBlogValue] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  const [enableEdit, setEnableEdit] = useState(false);
-  const [buttonType, setButtonType] = useState("Publish");
-  const initialState = [
-    {
-      id: 1,
-      title: "",
-      photo: "",
-      body: "",
-    },
-  ];
+  const [state, dispatch] = useReducer(localBlogReducer, localBlogInitialState);
 
-  function reducer(state, action) {
-    let updatedState;
-    const sameId =
-      state.length && state?.some((item) => item?.id === action.payload.id);
-    const blogExists = state?.find((item) => item?.id === action.payload);
-    const blogExistsForEdit = state?.find(
-      (item) => item?.id === action.payload.id
-    );
-    switch (action.type) {
-      case "create":
-        if (sameId) {
-          updatedState = [...state];
-        } else {
-          updatedState = [...state];
-          updatedState?.push(action.payload);
-          setShowForm(false);
-          setBlogValue(initialState);
-        }
-        return updatedState;
-      case "read":
-        if (blogExists) {
-          setShowForm(true);
-          setEnableEdit(true);
-          setButtonType("Update");
-          setBlogValue({
-            id: blogExists.id,
-            title: blogExists.title,
-            body: blogExists.body,
-            photo: blogExists.photo,
-          });
-          updatedState = [...state];
-        }
-        return updatedState;
-      case "update":
-        if (blogExistsForEdit) {
-          blogExistsForEdit.id = action.payload.id;
-          blogExistsForEdit.title = action.payload.title;
-          blogExistsForEdit.body = action.payload.body;
-          blogExistsForEdit.photo = action.payload.photo;
-          updatedState = [...state, blogExists];
-          updatedState = state?.filter(
-            (item) => item?.id !== "" && item !== undefined
-          );
-          setShowForm(false);
-          setBlogValue({});
-          setEnableEdit(false);
-          setButtonType("publish");
-        }
-        return updatedState;
-      case "delete":
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        if (blogExists) {
-          updatedState = state?.filter((item) => item.id !== action.payload);
-          setShowForm(false);
-          setBlogValue({});
-          setEnableEdit(false);
-          setButtonType("publish");
-        }
-        return updatedState;
-      default:
-        throw new Error();
-    }
-  }
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const handleAddBlog = () => {
-    setShowForm(true);
-  };
   const handleChange = (event) => {
     const { value, name } = event.target;
     setFormErrors(formValidation(blogValue));
-    if (enableEdit) {
+    if (state.enableEdit) {
       setBlogValue({ ...blogValue, [name]: value });
     } else {
       if (name === "title") {
@@ -156,22 +82,21 @@ const ReducerPage = () => {
       !Array.isArray(blogValue) &&
       Object.keys(formErrors).length === 0
     ) {
-      if (enableEdit && state.id != "") {
-        dispatch({ type: "update", payload: blogValue });
+      if (state?.enableEdit && state.blog.length != 0) {
+        dispatch({ type: "updateBlog", payload: blogValue });
       }
-      if (state.length < 0 || !enableEdit)
-        dispatch({ type: "create", payload: blogValue });
+      if (state?.blog?.length < 0 || !state?.enableEdit)
+        dispatch({ type: "createBlog", payload: blogValue });
     }
     if (Object.keys(blogValue).length === 0) {
       toastMessageError("Can't post empty blog.");
     }
   };
 
-  const handleBLogDelete = (blogId) => {
-    dispatch({ type: "delete", payload: blogId });
-  };
   const handleBLogEdit = (blogId) => {
-    dispatch({ type: "read", payload: blogId });
+    dispatch({ type: "setEditBlog", payload: blogId });
+
+    setBlogValue(state?.editBlog);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -181,7 +106,18 @@ const ReducerPage = () => {
 
   useEffect(() => {
     setFormErrors(formValidation(blogValue));
-  }, [blogValue]);
+  }, [blogValue, state]);
+
+  useEffect(() => {
+    console.log("inside useeffect for set edit vals", state?.editBlog);
+    console.log("inside useeffect for blogvals vals", blogValue);
+    if (state?.editBlog) setBlogValue(state?.editBlog);
+
+    if (state?.clearForm) {
+      setBlogValue(localBlogInitialState);
+    }
+  }, [state.editBlog, state.clearForm, state.enableEdit]);
+
   return (
     <div className="w-full h-[200vh] flex flex-col justify-start items-center p-1 gap-10">
       <div className="h-10 flex justify-center items-center w-auto">
@@ -190,11 +126,11 @@ const ReducerPage = () => {
       <div className="h-10 flex justify-center items-center w-auto">
         <button
           className="w-40 h-10 p-2 border-[1px] rounded-md"
-          onClick={handleAddBlog}>
+          onClick={() => dispatch({ type: "toggleForm" })}>
           Add BLog
         </button>
       </div>
-      {showForm && (
+      {state.showForm && (
         <form
           className="w-full md:w-[50%] p-2 h-auto  flex flex-col justify-start items-center gap-5 border-[1px] rounded-md"
           onSubmit={handleSubmit}>
@@ -250,7 +186,7 @@ const ReducerPage = () => {
           </div>
 
           <button className="w-40 h-10 border-[1px] rounded-md bg-gray-100 border-gray-300">
-            {buttonType}
+            {state.buttonType}
           </button>
         </form>
       )}
@@ -259,8 +195,8 @@ const ReducerPage = () => {
         Blogs
       </p>
       <div className="flex justify-center items-center gap-10 flex-wrap py-5">
-        {state?.length &&
-          state
+        {state?.blog?.length &&
+          state?.blog
             ?.filter(
               (item) =>
                 item?.title !== "" &&
@@ -284,7 +220,7 @@ const ReducerPage = () => {
                     </span>
                     <span
                       onClick={() => {
-                        handleBLogDelete(item?.id);
+                        dispatch({ type: "delete", payload: item?.id });
                       }}
                       className="cursor-pointer flex justify-start items-center gap-1 border-[1px] p-1 rounded-md hover:text-red-600 hover:border-red-600">
                       Delete <AiFillDelete size={20} />
