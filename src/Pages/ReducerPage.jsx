@@ -1,18 +1,16 @@
-import { useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import { toastMessageError } from "../Services/Toast Messages/ToastMessages";
 import Card from "../Components/Card/Card";
 import { AiFillDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { v4 as uuid } from "uuid";
-import {
-  localBlogInitialState,
-  localBlogReducer,
-} from "../Hooks/useReducerCustom";
+
+import { LocalBlogContext } from "../App";
 const ReducerPage = () => {
+  const { state, dispatch } = useContext(LocalBlogContext);
   const [blogValue, setBlogValue] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  const [state, dispatch] = useReducer(localBlogReducer, localBlogInitialState);
   const handleChange = (event) => {
     const { value, name } = event.target;
     setFormErrors(formValidation(blogValue));
@@ -106,9 +104,7 @@ const ReducerPage = () => {
     setFormErrors(formValidation(blogValue));
   }, [blogValue, state]);
 
-  // useEffect(() => {
-  //   setBlogValue({});
-  // }, [state.clearForm]);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <div className="w-full h-[200vh] flex flex-col justify-start items-center p-1 gap-10">

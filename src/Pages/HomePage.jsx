@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import HomeLayout from "../Layout/HomeLayout";
 import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
@@ -9,9 +9,13 @@ import infoImage from "../assets/rezvani-IIDZ77VDVQE-unsplash.jpg";
 import { fetchAllBlogs } from "../Store/blogPostSlice";
 import { useDispatch, useSelector } from "react-redux";
 import SkeletonCard from "../Components/Card/SkeletonCard";
-
+import { LocalBlogContext } from "../App";
+import { AiFillDelete } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
 const HomePage = () => {
-  const dispatch = useDispatch();
+  const { state, dispatch } = useContext(LocalBlogContext);
+  console.log("local reducer state", state);
+  const dispatchRedux = useDispatch();
   const { isLoading, currentBlogPosts } = useSelector((state) => state.blog);
   const [getSearchValue, setGetSearchValue] = useState("");
   const blogAfterSearchFilter = currentBlogPosts
@@ -33,8 +37,8 @@ const HomePage = () => {
   // const memoized = useMemo(() => {}, []);
 
   useEffect(() => {
-    dispatch(fetchAllBlogs());
-  }, [dispatch]);
+    dispatchRedux(fetchAllBlogs());
+  }, [dispatchRedux]);
 
   const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
@@ -47,6 +51,44 @@ const HomePage = () => {
           <div className="font-sans flex flex-col justify-center items-center w-full ">
             <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
             <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
+              {state?.blog &&
+                state?.blog
+                  ?.filter(
+                    (item) =>
+                      item?.title !== "" &&
+                      Object.keys(item).length > 0 &&
+                      !Array.isArray(item)
+                  )
+                  .map((item, index) => (
+                    <Card
+                      key={index}
+                      cardId={item?.id}
+                      cardTitle={item?.title}
+                      cardDescription={item?.body}
+                      cardUserName={
+                        <div className="flex gap-2 justify-start items-center w-full">
+                          <span
+                            onClick={() => {
+                              // handleBLogEdit(item?.id);
+                            }}
+                            className="cursor-pointer flex justify-center items-center gap-2 border-[1px] p-1 rounded-md w-20 hover:text-green-600 hover:border-green-600">
+                            Edit <FiEdit size={20} />
+                          </span>
+                          <span
+                            onClick={() => {
+                              dispatch({
+                                type: "delete",
+                                payload: item?.id,
+                              });
+                            }}
+                            className="cursor-pointer flex justify-start items-center gap-1 border-[1px] p-1 rounded-md hover:text-red-600 hover:border-red-600">
+                            Delete <AiFillDelete size={20} />
+                          </span>
+                        </div>
+                      }
+                      cardImage={item?.photo}
+                    />
+                  ))}
               {isLoading ? (
                 <>
                   <SkeletonCard />
