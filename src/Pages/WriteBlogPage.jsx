@@ -401,11 +401,7 @@ const WriteBlogPage = () => {
       textAreaRef.current.focus();
     }
   }, [isFocused]);
-  // function listener(e) {
-  //   console.log(e.key);
-  // }
-  // const enter = document.addEventListener("keydown", listener);
-  // console.log(enter);
+
   return (
     <BlogLayout renderComponents={""} getIsSaved={isSaved}>
       {showDraftModal && (
