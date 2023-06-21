@@ -13,7 +13,6 @@ const ReducerPage = () => {
   const [blogValue, setBlogValue] = useState({});
   const [formErrors, setFormErrors] = useState({});
   const [state, dispatch] = useReducer(localBlogReducer, localBlogInitialState);
-
   const handleChange = (event) => {
     const { value, name } = event.target;
     setFormErrors(formValidation(blogValue));
@@ -65,7 +64,6 @@ const ReducerPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (Object.keys(formErrors).length !== 0) {
       toastMessageError(
         formErrors?.photo
@@ -94,9 +92,9 @@ const ReducerPage = () => {
   };
 
   const handleBLogEdit = (blogId) => {
+    var editBlog = state.blog.find((item) => item.id === blogId);
+    setBlogValue(editBlog);
     dispatch({ type: "setEditBlog", payload: blogId });
-
-    setBlogValue(state?.editBlog);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -108,15 +106,9 @@ const ReducerPage = () => {
     setFormErrors(formValidation(blogValue));
   }, [blogValue, state]);
 
-  useEffect(() => {
-    console.log("inside useeffect for set edit vals", state?.editBlog);
-    console.log("inside useeffect for blogvals vals", blogValue);
-    if (state?.editBlog) setBlogValue(state?.editBlog);
-
-    if (state?.clearForm) {
-      setBlogValue(localBlogInitialState);
-    }
-  }, [state.editBlog, state.clearForm, state.enableEdit]);
+  // useEffect(() => {
+  //   setBlogValue({});
+  // }, [state.clearForm]);
 
   return (
     <div className="w-full h-[200vh] flex flex-col justify-start items-center p-1 gap-10">
@@ -126,7 +118,10 @@ const ReducerPage = () => {
       <div className="h-10 flex justify-center items-center w-auto">
         <button
           className="w-40 h-10 p-2 border-[1px] rounded-md"
-          onClick={() => dispatch({ type: "toggleForm" })}>
+          onClick={() => {
+            setBlogValue({});
+            dispatch({ type: "toggleForm" });
+          }}>
           Add BLog
         </button>
       </div>
