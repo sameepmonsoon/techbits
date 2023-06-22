@@ -8,11 +8,10 @@ export const localBlogInitialState = {
 };
 
 export function localBlogReducer(state, action) {
-  let updatedState;
-
   switch (action.type) {
     case "createBlog":
       var newBLog = [...state.blog, action.payload];
+
       return {
         ...state,
         blog: newBLog,
@@ -22,24 +21,20 @@ export function localBlogReducer(state, action) {
       };
 
     case "setEditBlog":
-      updatedState = state?.blog?.find((item) => item.id === action.payload);
-      console.log("inside set edit");
       return {
         ...state,
-        editBlog: updatedState,
         enableEdit: true,
         showForm: true,
         buttonType: "Update",
       };
     case "updateBlog":
-      var findUpdateIndex = state?.blog
-        .map((item) => item.id)
-        .indexOf(action.payload.id);
-      var updatedVal = { ...state };
-
-      updatedVal.blog[findUpdateIndex] = action.payload;
+      var blog = state?.blog?.map((item) => {
+        if (item.id == action.payload.id) return action.payload;
+        else return item;
+      });
       return {
-        ...updatedVal,
+        ...state,
+        blog,
         buttonType: "publish",
         enableEdit: false,
         showForm: false,
@@ -47,7 +42,6 @@ export function localBlogReducer(state, action) {
         editBlog: {},
       };
     case "delete":
-      window.scrollTo({ top: 0, behavior: "smooth" });
       var blogsAfterDelete = { ...state };
       blogsAfterDelete.blog = blogsAfterDelete?.blog?.filter(
         (item) => item.id !== action.payload
@@ -56,7 +50,7 @@ export function localBlogReducer(state, action) {
         ...blogsAfterDelete,
         editBlog: {},
         buttonType: "publish",
-        clearForm: !state.clearForm,
+        clearForm: true,
         showForm: false,
       };
     case "toggleForm":
@@ -66,6 +60,7 @@ export function localBlogReducer(state, action) {
         buttonType: "publish",
         enableEdit: false,
       };
+
     default:
       throw new Error();
   }
