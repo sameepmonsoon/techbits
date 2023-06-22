@@ -28,7 +28,6 @@ export function localBlogReducer(state, action) {
         buttonType: "Update",
       };
     case "updateBlog":
-      console.log(action.payload);
       var blog = state?.blog?.map((item) => {
         if (item.id == action.payload.id) return action.payload;
         else return item;

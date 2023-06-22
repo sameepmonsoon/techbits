@@ -43,7 +43,6 @@ const HomePage = () => {
   const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   }, []);
-  console.log("home page");
   return (
     <HomeLayout
       renderComponents={
