@@ -55,7 +55,7 @@ function App() {
     <LocalBlogContext.Provider value={{ state, dispatch }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/:id?" element={<HomePage name="hello" />} />
           <Route
             path="/profile"
             element={

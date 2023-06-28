@@ -213,7 +213,7 @@ const WriteBlogPage = () => {
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
             //this part is  refactored using chatgpt
-            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.3);
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 1);
             var requestData = {
               ...requestDataInitial,
               selectedPhoto: compressedDataUrl,

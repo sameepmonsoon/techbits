@@ -4,29 +4,25 @@ import HeroSectionText from "../PageComponents/HeroSectionText/HeroSectionText";
 import Card from "../Components/Card/Card";
 import image from "../assets/amr-taha-PksS6SX-t-c-unsplash.jpg";
 import { Outlet } from "react-router-dom";
-import { fetchAllBlogs } from "../Store/blogPostSlice";
+// import { fetchAllBlogs } from "../Store/blogPostSlice";
 import { useDispatch } from "react-redux";
-import SkeletonCard from "../Components/Card/SkeletonCard";
-
-const AllBlogs = () => {
+import withFetch from "../Layout/HOC";
+const AllBlogs = (props) => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentBlogPosts, setCurrentBlogPosts] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
   const [getSearchValue, setGetSearchValue] = useState("");
   const searchValueContent = (value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   };
-  // effects
   useEffect(() => {
-    dispatch(fetchAllBlogs());
-    setCurrentBlogPosts(JSON.parse(localStorage.getItem("currentBlogPosts")));
+    // dispatch(fetchAllBlogs());
   }, [dispatch]);
 
   useEffect(() => {
     console.log("loadinngg");
 
     setIsLoading(false);
-  }, [currentBlogPosts]);
+  }, [props?.currentList?.getAllBlog]);
 
   return (
     <BlogsPageLayout
@@ -39,19 +35,18 @@ const AllBlogs = () => {
       }>
       <>
         <div className="font-sans flex flex-col justify-center items-center w-full ">
-          {/* <p className="text-[18px] font-[700] capitalize">Recent Posts</p> */}
           <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
-            {isLoading ? (
-              <>
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-              </>
-            ) : (
-              currentBlogPosts
-                // .slice(1, 6)
-                .filter((item) =>
-                  item.titleContent
+            {
+              // isLoading ? (
+              // <>
+              //   <SkeletonCard />
+              //   <SkeletonCard />
+              //   <SkeletonCard />
+              // </>
+              // ) : (
+              props?.currentList?.getAllBlog
+                ?.filter((item) =>
+                  item?.titleContent
                     .toLowerCase()
                     .split(" ")
                     .join()
@@ -201,13 +196,15 @@ const AllBlogs = () => {
                     );
                   }
                 })
-            )}
+              // )
+            }
           </div>
         </div>
       </>
       <Outlet />
+      {props.children}
     </BlogsPageLayout>
   );
 };
 
-export default AllBlogs;
+export default withFetch(AllBlogs, "/blogPost/getAll");
