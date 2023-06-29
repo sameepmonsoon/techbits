@@ -20,19 +20,20 @@ import { LocalBlogContext } from "../App";
 import { AiFillDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import withFetch from "../Layout/HOC";
+import InputComponent from "../Components/InputComponent/InputComponent";
+import { useDeferredValue } from "react";
 const HomePage = (props) => {
   const { id } = useParams();
-  const reducerBlogRef = useRef([]);
+  const reducerBlogRef = useRef(null);
   const { state, dispatch } = useContext(LocalBlogContext);
   const dispatchRedux = useDispatch();
-  console.log(reducerBlogRef.current);
   const [getSearchValue, setGetSearchValue] = useState("");
   const blogAfterSearchFilter = props?.currentBlogPosts
     .slice(0, 6)
     .filter((item) =>
       item.titleContent.toLowerCase().split(" ").join().includes(getSearchValue)
     );
-
+  const deferredBlogFilter = useDeferredValue(blogAfterSearchFilter);
   function memoizeBlogLength(values) {
     var currBlog = { totalLength: values?.length };
     return currBlog;
@@ -46,7 +47,6 @@ const HomePage = (props) => {
   useEffect(() => {
     dispatchRedux(fetchAllBlogs());
   }, [dispatchRedux]);
-
   const searchValueContent = useCallback((value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   }, []);
@@ -54,14 +54,12 @@ const HomePage = (props) => {
   //for scroll position
 
   useEffect(() => {
-    // const elementOne = document?.getElementById("myDiv");
     const elementtwo = document?.getElementById("focusDiv");
-    const ele = elementtwo && elementtwo?.getBoundingClientRect();
-    // : elementOne?.getBoundingClientRect();
-    // const queryOne = elementOne?.getAttribute("data-name");
-    if (elementtwo) elementtwo.style.backgroundColor = "yellow";
-    elementtwo &&
-      window.scrollTo({ top: ele?.top, left: ele?.left, behavior: "smooth" });
+    // const ele = elementtwo && elementtwo?.getBoundingClientRect();
+
+    if (elementtwo) elementtwo.scrollIntoView({ behavior: "smooth" });
+    // elementtwo &&
+    // window.scrollTo({ top: ele?.top, left: ele?.left, behavior: "smooth" });
   }, [state?.blog]);
 
   return (
@@ -140,7 +138,7 @@ const HomePage = (props) => {
                 //   </>
                 // ) : (
 
-                blogAfterSearchFilter.map((item, index) => (
+                deferredBlogFilter.map((item, index) => (
                   <Card
                     key={index}
                     cardId={item._id}
@@ -215,6 +213,14 @@ const HomePage = (props) => {
           </div>
         </>
       }>
+      <div className="forwardRef w-full bg-red-200 flex gap-5">
+        <InputComponent ref={reducerBlogRef} />
+        <button
+          className="border-2"
+          onClick={() => (reducerBlogRef.current.value = "clicked")}>
+          Click Me !
+        </button>
+      </div>
       <HeroSectionText align={"center"} getSearchValue={searchValueContent} />
       {props.children}
       <Outlet />
