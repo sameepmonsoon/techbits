@@ -7,13 +7,12 @@ const withFetch = (Component, url) => {
     const { currentBlogPosts } = useSelector((state) => state.blog);
     const [currentList, setCurrentList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    console.log("current list", currentList);
 
     useEffect(() => {
       console.log("fetchhh");
       HttpCalls.get(url)
         .then((res) => {
-          setCurrentList(res.data);
+          setCurrentList([]);
         })
         .catch((err) => {
           console.log(err);

@@ -2,7 +2,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -22,14 +21,25 @@ import { FiEdit } from "react-icons/fi";
 import withFetch from "../Layout/HOC";
 import InputComponent from "../Components/InputComponent/InputComponent";
 import { useDeferredValue } from "react";
+import { useQuery } from "@tanstack/react-query";
 const HomePage = (props) => {
   const { id } = useParams();
   const reducerBlogRef = useRef(null);
   const { state, dispatch } = useContext(LocalBlogContext);
   const dispatchRedux = useDispatch();
   const [getSearchValue, setGetSearchValue] = useState("");
+  const { data, isFetching } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const result = await fetch("http://localhost:8000/blogPost/getAll")
+        .then((res) => res.json())
+        .catch((ee) => console.log(ee));
+      return result;
+    },
+  });
+  console.log(data?.getAllBlog, isFetching);
   const blogAfterSearchFilter = props?.currentBlogPosts
-    .slice(0, 6)
+    ?.slice(0, 6)
     .filter((item) =>
       item.titleContent.toLowerCase().split(" ").join().includes(getSearchValue)
     );
@@ -55,11 +65,7 @@ const HomePage = (props) => {
 
   useEffect(() => {
     const elementtwo = document?.getElementById("focusDiv");
-    // const ele = elementtwo && elementtwo?.getBoundingClientRect();
-
     if (elementtwo) elementtwo.scrollIntoView({ behavior: "smooth" });
-    // elementtwo &&
-    // window.scrollTo({ top: ele?.top, left: ele?.left, behavior: "smooth" });
   }, [state?.blog]);
 
   return (
@@ -105,11 +111,7 @@ const HomePage = (props) => {
                         cardDescription={item?.body}
                         cardUserName={
                           <div className="flex gap-2 justify-start items-center w-full">
-                            <span
-                              onClick={() => {
-                                // handleBLogEdit(item?.id);
-                              }}
-                              className="cursor-pointer flex justify-center items-center gap-2 border-[1px] p-1 rounded-md w-20 hover:text-green-600 hover:border-green-600">
+                            <span className="cursor-pointer flex justify-center items-center gap-2 border-[1px] p-1 rounded-md w-20 hover:text-green-600 hover:border-green-600">
                               Edit <FiEdit size={20} />
                             </span>
                             <span
@@ -130,14 +132,6 @@ const HomePage = (props) => {
               </div>
               <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
               {
-                // props?.isLoading ? (
-                //   <>
-                //     <SkeletonCard />
-                //     <SkeletonCard />
-                //     <SkeletonCard />
-                //   </>
-                // ) : (
-
                 deferredBlogFilter.map((item, index) => (
                   <Card
                     key={index}
@@ -221,6 +215,7 @@ const HomePage = (props) => {
           Click Me !
         </button>
       </div>
+
       <HeroSectionText align={"center"} getSearchValue={searchValueContent} />
       {props.children}
       <Outlet />

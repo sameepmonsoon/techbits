@@ -57,7 +57,7 @@ const Card = (prop) => {
         </div>
         <div className="text-black capitalize w-full flex justify-between items-start h-[4.5rem] py -2 text-[17px] font-800">
           <span>{cardTitle}</span>
-          <Link to={`/${cardId}`}>
+          <Link to={`/read/${cardId}`}>
             <MdArrowOutward
               size={23}
               className="text-black/70 hover:text-black"

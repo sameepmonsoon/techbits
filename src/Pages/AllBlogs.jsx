@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import withFetch from "../Layout/HOC";
 const AllBlogs = (props) => {
   const dispatch = useDispatch();
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [getSearchValue, setGetSearchValue] = useState("");
   const searchValueContent = (value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
@@ -208,3 +208,5 @@ const AllBlogs = (props) => {
 };
 
 export default withFetch(AllBlogs, "/blogPost/getAll");
+
+
