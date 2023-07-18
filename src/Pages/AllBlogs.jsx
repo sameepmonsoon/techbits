@@ -14,9 +14,6 @@ const AllBlogs = (props) => {
   const searchValueContent = (value) => {
     setGetSearchValue(value.toLowerCase().split(" ").join());
   };
-  useEffect(() => {
-    // dispatch(fetchAllBlogs());
-  }, [dispatch]);
 
   useEffect(() => {
     console.log("loadinngg");
@@ -44,7 +41,7 @@ const AllBlogs = (props) => {
               //   <SkeletonCard />
               // </>
               // ) : (
-              props?.currentList?.getAllBlog
+              props?.currentBlogPosts
                 ?.filter((item) =>
                   item?.titleContent
                     .toLowerCase()
@@ -202,11 +199,9 @@ const AllBlogs = (props) => {
         </div>
       </>
       <Outlet />
-      {props.children}
+      {/* {props.children} */}
     </BlogsPageLayout>
   );
 };
 
 export default withFetch(AllBlogs, "/blogPost/getAll");
-
-

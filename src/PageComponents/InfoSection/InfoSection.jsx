@@ -37,17 +37,17 @@ const InfoSection = ({ infoText, infoImage, info }) => {
             background={true}
           />
         </span>
-        <span>Total Length of the current blogs:</span>
+        {/* <span>Total Length of the current blogs:</span>
         <span className="h-10 w-40 text-black justify-center flex items-center p-1 rounded-sm border-[1px]">
           {showTotalBLog}
-        </span>
-        <span>
+        </span> */}
+        {/* <span>
           <button
             onClick={handleButtonClick}
             className="bg-gray-200 border-[1px] border-black p-1 rounded-sm">
             Show Total Length
           </button>
-        </span>
+        </span> */}
       </div>
       <div className="font-sans relative w-auto sm:w-[28rem] min-h-[10rem] sm:h-[28rem]">
         <img src={infoImage} alt="" className="h-full w-full object-cover" />

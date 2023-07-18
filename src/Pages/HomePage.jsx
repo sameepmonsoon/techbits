@@ -73,9 +73,9 @@ const HomePage = (props) => {
       renderComponents={
         <>
           <div className="font-sans flex flex-col justify-center items-center w-full ">
-            <p className="text-[18px] font-[700] capitalize">All Users</p>
+            {/* <p className="text-[18px] font-[700] capitalize">All Users</p> */}
             <div className="flex justify-center items-center gap-[8rem] flex-wrap py-10 w-full">
-              <div className="w-full h-full flex justify-center items-center gap-10 flex-wrap ">
+              {/* <div className="w-full h-full flex justify-center items-center gap-10 flex-wrap ">
                 {props?.currentList?.userList &&
                   props?.currentList?.userList.map((item, index) => (
                     <div
@@ -92,8 +92,8 @@ const HomePage = (props) => {
                       <div className="username">{item.username}</div>
                     </div>
                   ))}
-              </div>
-              <div className="flex w-full h-auto gap-10 justify-center items-center flex-wrap ">
+              </div> */}
+              {/* <div className="flex w-full h-auto gap-10 justify-center items-center flex-wrap ">
                 {state?.blog &&
                   state?.blog
                     ?.filter(
@@ -129,8 +129,8 @@ const HomePage = (props) => {
                         cardImage={item?.photo}
                       />
                     ))}
-              </div>
-              <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
+              </div> */}
+              {/* <p className="text-[18px] font-[700] capitalize">Recent Posts</p> */}
               {
                 deferredBlogFilter.map((item, index) => (
                   <Card
@@ -207,14 +207,14 @@ const HomePage = (props) => {
           </div>
         </>
       }>
-      <div className="forwardRef w-full bg-red-200 flex gap-5">
+      {/* <div className="forwardRef w-full bg-red-200 flex gap-5">
         <InputComponent ref={reducerBlogRef} />
         <button
           className="border-2"
           onClick={() => (reducerBlogRef.current.value = "clicked")}>
           Click Me !
         </button>
-      </div>
+      </div> */}
 
       <HeroSectionText align={"center"} getSearchValue={searchValueContent} />
       {props.children}

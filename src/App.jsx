@@ -43,14 +43,14 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgetPassword" element={<ForgetPasswordPage />} />
           <Route
-            path="/writeBlog/:cardId?"
+            path="/writeBlog/:cardId"
             element={
               <ProtectedRoute>
                 <WriteBlogPage />
               </ProtectedRoute>
             }
           />
-          <Route path="/read/:cardId" element={<ReadFullBlogPage />} />
+          <Route path="/read/:cardId?" element={<ReadFullBlogPage />} />
           <Route
             path="/update"
             element={
@@ -60,7 +60,7 @@ function App() {
             }
           />
           <Route path="/blogs" element={<AllBlogs />} />
-          <Route path="/useReducer" element={<ReducerPage />} />
+          {/* <Route path="/useReducer" element={<ReducerPage />} /> */}
         </Routes>
       </BrowserRouter>
     </LocalBlogContext.Provider>

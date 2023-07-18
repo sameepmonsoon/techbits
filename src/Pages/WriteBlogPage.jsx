@@ -23,6 +23,7 @@ import {
 const WriteBlogPage = () => {
   //  for edit blog
   const { cardId } = useParams();
+  console.log(cardId);
   const currentBlog = JSON.parse(localStorage.getItem("currentBlogPosts"));
   const [formErrors, setFormErrors] = useState(null);
   // const { isHovering } = useContext(BlogContext);
@@ -119,7 +120,7 @@ const WriteBlogPage = () => {
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, []);
+  }, [isFocused]);
 
   // for photo and text area
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -182,18 +183,16 @@ const WriteBlogPage = () => {
         !isQuillEmpty(editorContent) &&
         categoryListItem.length != 1)
     ) {
-      console.log(requestDataInitial);
       // when its normal publishing
       if (selectedPhoto) {
         const fileReader = new FileReader();
-
         //this part is  refactored
         fileReader.onload = function () {
           const img = new Image();
           img.onload = function () {
             const canvas = document.createElement("canvas");
-            const MAX_WIDTH = 800; // Maximum width of the compressed image
-            const MAX_HEIGHT = 800; // Maximum height of the compressed image
+            const MAX_WIDTH = 800;
+            const MAX_HEIGHT = 800;
             let width = img.width;
             let height = img.height;
 
@@ -212,14 +211,12 @@ const WriteBlogPage = () => {
             canvas.height = height;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
-            //this part is  refactored using chatgpt
             const compressedDataUrl = canvas.toDataURL("image/jpeg", 1);
             var requestData = {
               ...requestDataInitial,
               selectedPhoto: compressedDataUrl,
             };
 
-            console.log(requestData);
             HttpCalls.post(apiEndPoints, requestData)
               .then(() => {
                 dispatch(fetchAllBlogs());
@@ -253,7 +250,6 @@ const WriteBlogPage = () => {
           selectedPhoto: selectedDraftPhoto,
         };
 
-        console.log(requestData);
         HttpCalls.post(apiEndPoints, requestData)
           .then((response) => {
             // dispatch(fetchAllBlogs());
@@ -328,7 +324,6 @@ const WriteBlogPage = () => {
   const handleFormValidation = (values) => {
     let errors = {};
     const contentTitleRegEx = /^[a-zA-Z\s.?a-zA-z]+\.?\??$/;
-    console.log(contentTitleRegEx.test(values));
     if (!contentTitleRegEx.test(values)) {
       errors.contentTitle = "The Title must be string only.";
     }
@@ -369,12 +364,12 @@ const WriteBlogPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [currentUser._id]);
+  }, [currentUser?._id]);
 
   // to edit the blog if cardId is present
   useEffect(() => {
     mapDraftDataOrEditData(cardId, currentBlog);
-  }, [cardId, currentBlog]);
+  }, [cardId]);
 
   const renderSavedDraft = (draftId) => {
     mapDraftDataOrEditData(draftId, draftData);

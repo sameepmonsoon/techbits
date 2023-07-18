@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { HttpCalls } from "../utils/HttpCalls";
 import SkeletonCard from "../Components/Card/SkeletonCard";
+import { fetchAllBlogs } from "../Store/blogPostSlice";
 const withFetch = (Component, url) => {
   return function HOCComp(props) {
     const { currentBlogPosts } = useSelector((state) => state.blog);
+    const dispatch = useDispatch();
     const [currentList, setCurrentList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+      dispatch(fetchAllBlogs());
+    }, [dispatch]);
 
     useEffect(() => {
-      console.log("fetchhh");
       HttpCalls.get(url)
         .then((res) => {
           setCurrentList([]);
@@ -27,12 +31,18 @@ const withFetch = (Component, url) => {
         currentList={currentList}
         isLoading={isLoading}
         {...props}>
+        {" "}
+        <p className="text-[18px] font-[700] capitalize">Recent Posts</p>
         {isLoading && (
-          <div className="flex gap-10 w-full h-full justify-center align-center">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
+          <>
+            <br />
+            <br />
+            <div className="flex sm:gap-10 flex-wrap lg:flex-nowrap w-full h-full justify-center align-center p-10">
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          </>
         )}
       </Component>
     );
