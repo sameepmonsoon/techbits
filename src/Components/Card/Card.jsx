@@ -11,6 +11,7 @@ const Card = (prop) => {
     cardPostDate,
     row,
     autoHeight,
+    ...props
   } = prop;
   const parser = new DOMParser();
   const doc = parser.parseFromString(cardDescription, "text/html");
@@ -27,6 +28,7 @@ const Card = (prop) => {
 
   return (
     <div
+      {...props}
       className={`font-sans ${
         autoHeight
           ? "sm:w-[35rem] md:w-[55rem] w-[22rem]  h-[28.2rem] sm:h-[28rem] flex-col"

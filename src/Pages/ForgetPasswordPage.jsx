@@ -25,7 +25,7 @@ const ForgetPasswordPage = () => {
     setTimeout(() => {
       setShowSignUpPage(true);
     }, 500);
-  }, [dispatch]);
+  }, []);
   //  redux store dispatch
   const dispatch = useDispatch();
   const { error, isLoading, success } = useSelector((state) => state.auth);
@@ -118,7 +118,7 @@ const ForgetPasswordPage = () => {
               </span>
             </div>
             <span className="flex px-2 justify-center text-[38px] sm:text-[48px] font-[600] text-gray-600 min-w-[30rem]">
-              Sign Up to TechBits
+             Forget Password
             </span>
 
             {/* sign up form */}

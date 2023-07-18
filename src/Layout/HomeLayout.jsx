@@ -1,19 +1,17 @@
-import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
 import Footer from "../Pages/Footer";
 
 const HomeLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [
     { title: "Home", link: "/" },
-    ,
+
     { title: "Blogs", link: "/blogs" },
-    { title: "Reducer", link: "/useReducer" },
+    // { title: "Reducer", link: "/useReducer" },
   ];
   // Schedule the deletion after one hour
   const expirationTime = 3 * 60 * 60 * 1000;
 
   setTimeout(() => {
-    // Delete the item from local storage
     localStorage.removeItem("user");
   }, expirationTime);
   return (

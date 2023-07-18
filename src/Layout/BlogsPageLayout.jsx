@@ -1,11 +1,9 @@
-import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
 import Footer from "../Pages/Footer";
 
 const BlogsPageLayout = ({ children, renderComponents }) => {
   const NavbarLinks = [
     { title: "Home", link: "/" },
-    ,
     { title: "Blogs", link: "/blogs" },
   ];
   return (

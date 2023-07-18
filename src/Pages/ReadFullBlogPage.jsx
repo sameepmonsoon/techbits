@@ -476,7 +476,7 @@ const ReadFullBlogPage = () => {
                 </div>
               </div>
             ))}
-            {showComment && (
+            {/* {showComment && (
               <div className="">
                 <CommentBox
                   cardId={cardId}
@@ -484,7 +484,7 @@ const ReadFullBlogPage = () => {
                   commentAdded={setCommentUpdated}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           {/* container for similar blogs ---based on category  */}

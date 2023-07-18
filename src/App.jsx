@@ -20,42 +20,14 @@ import {
   localBlogInitialState,
   localBlogReducer,
 } from "./Hooks/useReducerCustom";
-
 export const LocalBlogContext = createContext(localBlogInitialState);
 function App() {
-  // const router = createBrowserRouter([
-  //   {
-  //     path: "/",
-  //     element: <HomePage />,
-  //   },
-  //   {
-  //     path: "/profile",
-  //     element: <ProfilePage />,
-  //     children: [
-  //       { path: "", element: <Home /> },
-  //       {
-  //         path: "bookmarks",
-  //         element: <Bookmarks />,
-  //       },
-  //       { path: "about", element: <About /> },
-  //     ],
-  //   },
-  //   { path: "/signup", element: <SignUpPage /> },
-  //   { path: "/login", element: <LoginPage /> },
-  //   { path: "/forgetPassword", element: <ForgetPasswordPage /> },
-  //   { path: "/writeBlog/:cardId?", element: <WriteBlogPage /> },
-  //   { path: "/read/:cardId", element: <ReadFullBlogPage /> },
-  //   { path: "/update", element: <UpdateProfile /> },
-  //   { path: "/blogs", element: <AllBlogs /> },
-  //   { path: "/useReducer", element: <ReducerPage /> },
-  // ]);
-  // return <RouterProvider router={router}></RouterProvider>;
   const [state, dispatch] = useReducer(localBlogReducer, localBlogInitialState);
   return (
     <LocalBlogContext.Provider value={{ state, dispatch }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/:id?" element={<HomePage name="hello" />} />
           <Route
             path="/profile"
             element={
@@ -71,14 +43,14 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgetPassword" element={<ForgetPasswordPage />} />
           <Route
-            path="/writeBlog/:cardId?"
+            path="/writeBlog/:cardId"
             element={
               <ProtectedRoute>
                 <WriteBlogPage />
               </ProtectedRoute>
             }
           />
-          <Route path="/read/:cardId" element={<ReadFullBlogPage />} />
+          <Route path="/read/:cardId?" element={<ReadFullBlogPage />} />
           <Route
             path="/update"
             element={
@@ -88,7 +60,7 @@ function App() {
             }
           />
           <Route path="/blogs" element={<AllBlogs />} />
-          <Route path="/useReducer" element={<ReducerPage />} />
+          {/* <Route path="/useReducer" element={<ReducerPage />} /> */}
         </Routes>
       </BrowserRouter>
     </LocalBlogContext.Provider>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logo from "../Logo/Logo";
 import { Link, useLocation } from "react-router-dom";
 import Button from "../Button/Button";
+import PropTypes from "prop-types";
 import {
   RxCross1,
   CiMenuBurger,
@@ -9,8 +10,9 @@ import {
   CiUser,
 } from "react-icons/all";
 import { useSelector } from "react-redux";
-const Navbar = ({ Links, fixed, border }) => {
-  const location = useLocation();
+const Navbar = (props) => {
+  const { Links, fixed, border } = props;
+
   const [openModal, setOpenModal] = useState(true);
   // function
   const handleToggle = () => {
@@ -22,9 +24,10 @@ const Navbar = ({ Links, fixed, border }) => {
     (state) => state.auth
   );
   const currentLoggedUser = JSON.parse(localStorage.getItem("user"));
+  const location = useLocation();
   return (
     <>
-      <div
+      <nav
         className={`font-sans w-full z-[10] h-[4rem] flex justify-start items-center gap-10 px-4 0  bg-white/90 backdrop-blur-sm  ${
           border ? "border-b-[1px] border-b-gray-100" : "border-b-0"
         } overflow-hidden`}>
@@ -86,7 +89,7 @@ const Navbar = ({ Links, fixed, border }) => {
             <CiMenuBurger size={25} onClick={handleToggle} />
           </span>
         </div>
-      </div>
+      </nav>
       {/*  for small devices modal*/}
       <div
         className={`absolute transition-all z-10 min-h-full ease-in-out overflow-hidden border-b-[1px]  border-b-black/50  duration-900 flex sm:hidden flex-col justify-start items-center w-full right-0 top-[-5rem] border-l-[1px] ${
@@ -152,4 +155,17 @@ const Navbar = ({ Links, fixed, border }) => {
   );
 };
 
+Navbar.propTypes = {
+  Links: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      link: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  border: PropTypes.bool,
+};
+Navbar.defaultProps = {
+  Links: [{ title: "Home", link: "/" }],
+  border: false,
+};
 export default Navbar;

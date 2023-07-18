@@ -43,7 +43,6 @@ const blogPostSlice = createSlice({
       })
       .addCase(fetchAllBlogs.pending, (state) => {
         state.error = "";
-
         state.success = "";
       })
       .addCase(fetchAllBlogs.rejected, (state, action) => {
