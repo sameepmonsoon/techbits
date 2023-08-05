@@ -1,11 +1,9 @@
 import axios from "axios";
 const token = localStorage.getItem("locaToken");
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://techbits-backend.onrender.com/",
   headers: { Authorization: `Bearer ${token}` },
 });
-
-
 
 // create a axios insterceptor here
 axiosInstance.interceptors.request.use(
