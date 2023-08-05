@@ -40,7 +40,7 @@ const SignUpPage = () => {
   // handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    // setIsSubmitting(true);
+    setIsSubmitting(true);
     setFormError(validate(formValue));
     if (Object.keys(validate(formValue)).length === 0) {
       dispatch(signUp(formValue));
@@ -62,33 +62,33 @@ const SignUpPage = () => {
 
     if (!values.email) {
       errors.email = "Email is required";
-      // setIsSubmitting(false);
+      setIsSubmitting(false);
     } else {
       let emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{3,5}$/i;
       if (!emailRegEx.test(values.email)) {
         errors.email = "Email is not valid";
-        // setIsSubmitting(false);
+        setIsSubmitting(false);
       }
     }
     if (!values.phone) {
       errors.phone = "Phone number is required";
-      // setIsSubmitting(false);
+      setIsSubmitting(false);
     } else {
       let phoneRegEx = /[9][6-9]\d{8}/;
 
       if (!phoneRegEx.test(values.phone)) {
         errors.phone = "Phone number is not valid";
-        // setIsSubmitting(false);
+        setIsSubmitting(false);
       }
     }
     if (!values.password) {
       errors.password = "Password is valid";
-      // setIsSubmitting(false);
+      setIsSubmitting(false);
     } else {
       let passwordRegEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
       if (!passwordRegEx.test(values.password)) {
-        // setIsSubmitting(false);
+        setIsSubmitting(false);
 
         errors.password =
           "Password must contain atleast 6 characters, one uppercase, one lowercase, one special-character and one number ";
